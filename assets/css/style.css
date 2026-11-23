@@ -663,7 +663,28 @@ section{padding:64px 0 0}
 }
 
 /* ===== PAGE ZOOM (mobile view only: phones + tablets, up to 960px wide): shows the site at 95% instead of 100%.
-   Change .95 to 1 for normal size, .9 for smaller, .85 for even smaller. Desktop is not affected. ===== */
+   Change .9 to 1 for normal size, .85 for smaller, .95 for slightly smaller. Desktop is not affected. ===== */
 @media(max-width:960px){
  html{zoom:.95}
+}
+
+/* =====================================================================
+   FEATURED COLLECTION CARDS: identical structure whatever the content is
+   - every card stretches to the same height, picture box has a fixed ratio
+   - brand / model / details stay on ONE line each (long text is cut with "...") so the text block is always the same height
+   - the price + "Add to cart" row is always pinned to the bottom of the card
+   - wide cards: price on the left, button on the right. Narrow cards (phones): price on top, full-width button under it,
+     for EVERY card at the same time (decided by the card's own width, never by how long a price is)
+   ===================================================================== */
+.card{display:flex;flex-direction:column;container-type:inline-size}
+.card .img{flex:none}
+.card .info{flex:1;display:flex;flex-direction:column;min-width:0}
+.card .info>b,.card .info>span{display:block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .info .buy{margin-top:auto;flex-wrap:nowrap}
+.card .info .buy>b{flex:none;white-space:nowrap}
+.card .info .add{flex:none}
+@container (max-width:243px){
+ .card .info .buy{flex-direction:column;align-items:stretch;gap:12px}
+ .card .info .buy>b{font-size:15px}
+ .card .info .add{width:100%;justify-content:center}
 }
