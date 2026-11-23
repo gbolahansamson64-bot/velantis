@@ -124,8 +124,8 @@ section{padding:64px 0 0}
 .card .img svg{height:100%;filter:drop-shadow(0 10px 10px rgba(60,40,10,.18))}
 .tag{position:absolute;left:10px;top:10px;font-size:8px;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:10px;border:1px solid var(--ink)}
 .tag.gold{background:var(--gold);border-color:var(--gold);color:#fff}
-.fav{position:absolute;right:10px;top:10px;color:var(--ink)}
-.fav svg{width:16px;height:16px}
+.fav{position:absolute;right:6px;top:6px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;padding:0;color:var(--ink);cursor:pointer;z-index:3}
+.fav svg{width:21px;height:21px}
 .fav[aria-pressed=true] svg{fill:var(--gold);stroke:var(--gold)}
 .card .info{padding:14px 14px 14px;font-size:12px}
 .card .info b{font-weight:500;font-size:13px;display:block}
@@ -194,7 +194,22 @@ section{padding:64px 0 0}
 .life{position:relative;overflow:hidden;isolation:isolate;display:flex;align-items:center;margin-top:34px;min-height:clamp(330px,29vw,470px);border-radius:26px;background:#120b07;
  border:1px solid rgba(214,176,116,.35);box-shadow:0 22px 50px rgba(40,25,8,.28);transform:translateZ(0)}
 .life-bg{position:absolute;inset:0;z-index:0;overflow:hidden}
-.life-img{display:block;width:100%;height:100%;object-fit:cover;object-position:72% 50%;transform-origin:78% 52%;will-change:transform;animation:lifeZoom 20s ease-in-out infinite alternate}
+/* PHOTO SLIDER: photos are stacked and crossfade slowly. Fade length = --life-fade (bigger = slower/calmer). How long each photo stays = SHOW_MS in script.js.
+   The photo leaving stays solid until the new one has fully faded in, so there is never a dark dip between photos. */
+.life{--life-fade:2.6s}
+.life-img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;object-position:72% 50%;transform-origin:78% 52%;will-change:transform,opacity;animation:lifeZoom 20s ease-in-out infinite alternate;
+ opacity:0;z-index:0;transition:opacity 0s linear var(--life-fade)}
+.life-img.is-active{opacity:1;z-index:1;transition:opacity var(--life-fade) ease-in-out}
+/* slider dots: the current one is a gold pill, the others small round dots; the pill glides to the next dot with each photo */
+.life-dots{position:absolute;z-index:5;left:29.5%;bottom:24px;display:flex;align-items:center}
+.life-dots[hidden]{display:none}
+.life-dot{position:relative;flex:none;width:20px;height:22px;padding:0;border:0;background:none;cursor:pointer;transition:width .8s ease}
+.life-dot::before{content:"";position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:999px;background:rgba(205,210,214,.5);transition:width .8s ease,margin .8s ease,background .8s ease}
+.life-dot:hover::before{background:rgba(235,238,240,.8)}
+.life-dot.is-active{width:40px}
+.life-dot.is-active::before{width:26px;margin-left:-13px;background:#e3a648}
+.life-dot:focus-visible{outline:2px solid #e3a648;outline-offset:2px;border-radius:999px}
+@media(prefers-reduced-motion:reduce){.life-img,.life-img.is-active{transition:none}.life-dot,.life-dot::before{transition:none}}
 @keyframes lifeZoom{from{transform:scale(1.02) translate3d(0,0,0)}to{transform:scale(1.14) translate3d(-1.5%,-1%,0)}}
 /* drifting golden light dots over the blurred background */
 .life-fx{position:absolute;inset:-8%;z-index:1;pointer-events:none;mix-blend-mode:screen;
@@ -370,6 +385,8 @@ section{padding:64px 0 0}
  html{scroll-behavior:auto}
  *,*::before,*::after{transition:none!important;animation:none!important}
  .track-p u{transform:none}
+ /* The bottom-nav loading ring is feedback, not decoration: it keeps rolling even when the phone has "reduce motion" / "remove animations" on */
+ .mn-spin{animation:mnSpin .75s linear infinite!important}
 }
 
 /* ===== MOBILE BACKGROUND IMAGE (phones and small screens; desktop keeps background-image.png) ===== */
@@ -493,12 +510,14 @@ section{padding:64px 0 0}
 
 /* lifestyle banner: phone + tablet = picture (hand + watch) on top, all the text at the bottom: small title, heading, paragraph, then the button last */
 @media(max-width:960px){
- .life{display:flex;flex-direction:column;justify-content:flex-start;min-height:0;border-radius:22px}
+ .life{display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;min-height:0;border-radius:22px}
  .life-bg{top:0;bottom:auto;height:336px;-webkit-mask-image:linear-gradient(180deg,#000 52%,transparent 100%);mask-image:linear-gradient(180deg,#000 52%,transparent 100%)}
  .life-img{object-position:78% 45%;transform-origin:72% 40%}
+ /* phone + tablet: dots sit at the bottom of the card, centred under the button. Tune bottom to move them up/down. */
+ .life-dots{left:50%;top:auto;bottom:14px;transform:translateX(-50%)}
  /* picture sits in the top part so the text never covers the watch; tune the 45% to move it up/down */
  .life-shade{background:linear-gradient(180deg,rgba(14,9,5,.3) 0,transparent 24%,transparent 46%,rgba(14,9,5,.82) 66%,rgba(14,9,5,.96) 100%)}
- .life-copy{position:static;max-width:none;margin-top:255px;padding:0 24px 28px}
+ .life-copy{position:static;max-width:none;margin-top:236px;padding:0 24px 58px}
  .life-eyebrow{position:absolute;z-index:4;top:34px;left:24px;right:24px}
  .life-btn{height:46px;padding:0 22px;margin-top:20px}
 }
@@ -687,4 +706,27 @@ section{padding:64px 0 0}
  .card .info .buy{flex-direction:column;align-items:stretch;gap:12px}
  .card .info .buy>b{font-size:15px}
  .card .info .add{width:100%;justify-content:center}
+}
+
+/* Bottom nav: loading ring on the tapped link while the next page opens (see BOTTOM NAV LOADING RING in header.js).
+   Speed = .75s in the animation line (smaller = faster). Colour = the gold in border-top-color. */
+.mnav a.is-loading{color:#e7b95f}
+.mnav a.is-loading svg.i{display:none}
+.mn-spin{display:block;box-sizing:border-box;flex:none;width:calc(clamp(24px,6.4vw,30px) - 6px);height:calc(clamp(24px,6.4vw,30px) - 6px);margin:3px;
+ border:2.5px solid rgba(231,185,95,.25);border-top-color:#e7b95f;border-radius:50%;will-change:transform;animation:mnSpin .75s linear infinite}
+@keyframes mnSpin{to{transform:rotate(360deg)}}
+
+/* Featured collection: picture card is clickable */
+.card .img{cursor:pointer}
+.card .img .watch{transition:transform .4s ease}
+.card .img:hover .watch{transform:scale(1.04)}
+.card .img:focus-visible{outline:2px solid #c9a24a;outline-offset:3px}
+
+/* PAGE-TO-PAGE TRANSITION: when moving between the site's pages (Home <-> Shop ...) the page you are leaving stays on screen until the next one is
+   ready, then fades into it, so there is never a blank white screen in between. Supported by current Chrome, Edge and Safari; older browsers just open
+   the page normally. Fade length = .3s below. Every page must load this file (style.css). */
+@view-transition{navigation:auto}
+::view-transition-group(root){animation-duration:.3s}
+@media(prefers-reduced-motion:reduce){
+ @view-transition{navigation:none}
 }

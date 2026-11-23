@@ -457,3 +457,8 @@ html.ct-open{overflow:hidden}
 @media(max-width:640px){
  .sx{--sx-top:calc(var(--mbh) + 12px)}
 }
+
+/* SWIPE TO CLOSE (header.js): let the browser keep vertical scrolling in the cart, and hand us the sideways drags;
+   the search bar gets every drag so it can be swiped up. Touch screens only. */
+.ct-panel,.ct-ov{touch-action:pan-y}
+.sx{touch-action:none}

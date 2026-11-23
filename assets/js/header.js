@@ -447,3 +447,166 @@
   render();
  })();
 })();
+
+/* ---------- BOTTOM NAV LOADING RING (phone + tablet) ----------
+   When a visitor taps a bottom-nav link that opens another page (Home, Shop, and any page you add later), the icon of that link
+   turns into a small gold ring that rolls in circles until the new page opens, so a slow page never feels like a dead tap.
+   Links that only scroll or open a panel (href="#") and links to the page you are already on are ignored. */
+(()=>{
+ const norm=p=>p.replace(/\/index\.html$/,'/').replace(/\/$/,'')||'/';
+ const clear=()=>document.querySelectorAll('.mnav a.is-loading').forEach(a=>{
+  a.classList.remove('is-loading');a.removeAttribute('aria-busy');
+  const s=a.querySelector('.mn-spin');if(s)s.remove();
+ });
+ document.addEventListener('click',e=>{
+  const a=e.target.closest('.mnav a[href]');
+  if(!a||e.defaultPrevented||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||a.target==='_blank')return;
+  const h=a.getAttribute('href');if(!h||h.charAt(0)==='#')return;
+  let u;try{u=new URL(a.href,location.href)}catch(x){return}
+  if(u.origin===location.origin&&norm(u.pathname)===norm(location.pathname))return;
+  clear();
+  a.classList.add('is-loading');a.setAttribute('aria-busy','true');
+  const s=document.createElement('i');s.className='mn-spin';s.setAttribute('aria-hidden','true');
+  a.insertBefore(s,a.querySelector('svg.i'));
+  setTimeout(clear,10000); /* safety: if the page never opens, the ring stops after 10 seconds */
+ });
+ window.addEventListener('pageshow',clear); /* Back button: a page restored from memory must not keep spinning */
+})();
+
+/* ---------- SWIPE TO CLOSE (phone + tablet touch screens) ----------
+   The X buttons still work exactly as before. On top of that:
+     - CART: drag the cart sideways (either direction) and let go: it slides away and closes. Short drags spring back.
+     - SEARCH: drag the search bar upward and let go: it closes.
+   Only touch / pen is used (a mouse on desktop is not affected). Vertical scrolling inside the cart still works normally.
+   The panels are closed by pressing their own X button, so every bit of the existing close behaviour (focus, paused slider, etc.) is reused. */
+(()=>{
+ const $=id=>document.getElementById(id);
+ const ct=$('cartPanel'),sx=$('sx');
+ let dragged=false;
+ /* a drag must never count as a tap on whatever button the finger started on */
+ document.addEventListener('click',e=>{if(dragged){e.preventDefault();e.stopPropagation();dragged=false}},true);
+ const settle=()=>setTimeout(()=>{dragged=false},60);
+
+ /* shared drag helper: axis 'x' or 'y', onMove(delta), onEnd(delta, velocityPxPerMs) */
+ function drag(host,axis,{canStart,onMove,onEnd,onCancel}){
+  let id=null,x0=0,y0=0,t0=0,lastD=0,lastT=0,vel=0,live=false;
+  host.addEventListener('pointerdown',e=>{
+   if(e.pointerType==='mouse'||!e.isPrimary||!canStart(e))return;
+   id=e.pointerId;x0=e.clientX;y0=e.clientY;t0=lastT=performance.now();lastD=0;vel=0;live=false;
+  });
+  host.addEventListener('pointermove',e=>{
+   if(e.pointerId!==id)return;
+   const dx=e.clientX-x0,dy=e.clientY-y0,d=axis==='x'?dx:dy;
+   if(!live){
+    if(Math.abs(dx)<10&&Math.abs(dy)<10)return;
+    const main=axis==='x'?Math.abs(dx)>Math.abs(dy):Math.abs(dy)>Math.abs(dx);
+    if(!main){id=null;return} /* the visitor is scrolling the other way: leave it alone */
+    live=true;dragged=true;try{host.setPointerCapture(id)}catch(x){}
+   }
+   const now=performance.now();
+   if(now>lastT){vel=(d-lastD)/(now-lastT);lastD=d;lastT=now}
+   onMove(d);
+  });
+  const end=e=>{
+   if(e.pointerId!==id)return;
+   const was=live;id=null;live=false;
+   if(!was)return;
+   if(e.type==='pointercancel'){onCancel();settle();return}
+   onEnd(lastD,vel);settle();
+  };
+  host.addEventListener('pointerup',end);
+  host.addEventListener('pointercancel',end);
+ }
+
+ /* when a panel opens again, wipe the leftover inline drag styles */
+ const watch=(el,clear)=>{if(el)new MutationObserver(()=>{if(el.classList.contains('open'))clear()}).observe(el,{attributes:true,attributeFilter:['class']})};
+
+ /* ----- CART: swipe sideways ----- */
+ if(ct){
+  const panel=ct.querySelector('.ct-panel'),ov=$('ctOv'),X=$('ctClose');
+  const clear=()=>{panel.style.transition='none';panel.style.transform='';ov.style.transition='none';ov.style.opacity='';void panel.offsetWidth;panel.style.transition='';ov.style.transition=''};
+  watch(ct,clear);
+  const isOpen=()=>ct.classList.contains('open');
+  drag(ct,'x',{
+   canStart:()=>isOpen(),
+   onMove:d=>{
+    panel.style.transition='none';ov.style.transition='none';
+    panel.style.transform='translateX('+d+'px)';
+    ov.style.opacity=String(Math.max(0,1-Math.abs(d)/panel.offsetWidth));
+   },
+   onEnd:(d,v)=>{
+    const w=panel.offsetWidth;
+    if(Math.abs(d)>w*.3||Math.abs(v)>.5){
+     const dir=(Math.abs(v)>.5?Math.sign(v):Math.sign(d))||1;
+     panel.style.transition='transform .28s cubic-bezier(.4,0,.8,.4)';ov.style.transition='opacity .28s ease';
+     panel.style.transform='translateX('+dir*(w+40)+'px)';ov.style.opacity='0';
+     setTimeout(()=>{X.click();setTimeout(clear,650)},230);
+    }else{ /* not far enough: spring back */
+     panel.style.transition='transform .3s cubic-bezier(.2,.8,.2,1)';ov.style.transition='opacity .3s ease';
+     panel.style.transform='translateX(0)';ov.style.opacity='1';
+     setTimeout(clear,320);
+    }
+   },
+   onCancel:()=>{panel.style.transition='transform .3s ease';panel.style.transform='translateX(0)';ov.style.transition='opacity .3s ease';ov.style.opacity='1';setTimeout(clear,320)}
+  });
+ }
+
+ /* ----- SEARCH: swipe up ----- */
+ if(sx){
+  const wrap=sx.querySelector('.sx-wrap'),X=$('sxClose');
+  const clear=()=>{wrap.style.transition='none';wrap.style.transform='';wrap.style.opacity='';void wrap.offsetWidth;wrap.style.transition=''};
+  watch(sx,clear);
+  const isOpen=()=>sx.classList.contains('open');
+  drag(sx,'y',{
+   canStart:()=>isOpen(),
+   onMove:d=>{
+    const up=Math.min(0,d);
+    wrap.style.transition='none';wrap.style.transform='translateY('+up+'px)';
+    wrap.style.opacity=String(Math.max(0,1+up/260));
+   },
+   onEnd:(d,v)=>{
+    if(d<-60||v<-.4){
+     wrap.style.transition='transform .24s ease,opacity .24s ease';wrap.style.transform='translateY(-140%)';wrap.style.opacity='0';
+     setTimeout(()=>{X.click();setTimeout(clear,1000)},200);
+    }else{
+     wrap.style.transition='transform .3s cubic-bezier(.2,.8,.2,1),opacity .3s ease';wrap.style.transform='';wrap.style.opacity='';
+     setTimeout(clear,320);
+    }
+   },
+   onCancel:()=>{wrap.style.transition='transform .3s ease,opacity .3s ease';wrap.style.transform='';wrap.style.opacity='';setTimeout(clear,320)}
+  });
+ }
+})();
+
+/* ---------- PAGE PRE-LOADING ----------
+   Once this page has finished loading, the browser quietly fetches the other pages it links to (and the style/script files those pages need),
+   so tapping Home or Shop opens from memory: a much shorter wait. Nothing is shown. It is skipped on slow connections and data-saver mode. */
+(()=>{
+ const c=navigator.connection;
+ if(c&&(c.saveData||/(^|-)2g$/.test(c.effectiveType||'')))return;
+ const norm=p=>p.replace(/\/index\.html$/,'/').replace(/\/$/,'')||'/';
+ let have=new Set();
+ const pre=(href,as)=>{
+  if(have.has(href))return;have.add(href);
+  const l=document.createElement('link');l.rel='prefetch';l.href=href;if(as)l.as=as;document.head.appendChild(l);
+ };
+ const run=()=>{
+  have=new Set([...document.querySelectorAll('link[rel=stylesheet][href],script[src]')].map(n=>new URL(n.getAttribute('href')||n.getAttribute('src'),location.href).href));
+  const pages=new Map();
+  document.querySelectorAll('a[href]').forEach(a=>{
+   let u;try{u=new URL(a.href,location.href)}catch(x){return}
+   if(u.origin!==location.origin||!/\.html$|\/$/.test(u.pathname)||norm(u.pathname)===norm(location.pathname))return;
+   pages.set(norm(u.pathname),u.origin+u.pathname);
+  });
+  [...pages.values()].slice(0,4).forEach(url=>{
+   fetch(url,{credentials:'same-origin'}).then(r=>r.ok?r.text():'').then(t=>{
+    if(!t)return;
+    const d=new DOMParser().parseFromString(t,'text/html');
+    d.querySelectorAll('link[rel=stylesheet][href]').forEach(l=>pre(new URL(l.getAttribute('href'),url).href,'style'));
+    d.querySelectorAll('script[src]').forEach(s=>pre(new URL(s.getAttribute('src'),url).href,'script'));
+   }).catch(()=>{});
+  });
+ };
+ const go=()=>(window.requestIdleCallback||(f=>setTimeout(f,1500)))(run);
+ document.readyState==='complete'?go():window.addEventListener('load',go,{once:true});
+})();

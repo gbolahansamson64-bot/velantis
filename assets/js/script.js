@@ -30,6 +30,22 @@ const step=()=>track.querySelector('.card').offsetWidth+14;
 tl.onclick=()=>track.scrollBy({left:-step(),behavior:'smooth'});
 tr.onclick=()=>track.scrollBy({left:step(),behavior:'smooth'});
 
+/* Featured collection: clicking a card's picture opens the shop page (heart button still works on its own) */
+track.querySelectorAll('.card .img').forEach(img=>{
+  img.setAttribute('role','link');
+  img.setAttribute('tabindex','0');
+  img.setAttribute('aria-label','View in shop');
+});
+track.addEventListener('click',e=>{
+  if(e.target.closest('.fav'))return;      /* heart button: don't navigate */
+  if(e.target.closest('.img'))location.href='shop.html';
+});
+track.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ')&&e.target.matches('.card .img')){
+    e.preventDefault();location.href='shop.html';
+  }
+});
+
 const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,'0');
 const FALLBACK="/assets/images/millie-hero.png"; /* shown if a slide's image file is missing */
@@ -246,6 +262,38 @@ if(mnav){
  window.addEventListener('resize',sync);window.addEventListener('load',sync);
  t.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();n.click()}if(e.key==='ArrowLeft'){e.preventDefault();p.click()}});
  sync();
+})();
+
+/* ---------- LIFESTYLE PHOTO SLIDER ----------
+   Slowly crossfades the banner photos and moves the dots with them. SHOW_MS = how long each photo stays (7000 = 7 seconds);
+   the fade length itself is --life-fade in style.css. It only runs while the banner is on screen and the tab is open.
+   Clicking a dot jumps to that photo. A photo whose file is missing is skipped and its dot is removed. */
+(()=>{
+ const L=document.getElementById('legacy'),box=L&&L.querySelector('.life-dots');if(!L||!box)return;
+ const SHOW_MS=7000;
+ let items=[...L.querySelectorAll('.life-img')].map((img,n)=>({img,dot:box.children[n]})).filter(it=>it.dot);
+ let i=0,timer=null,onScreen=false;
+ const show=n=>{
+  if(!items.length)return;
+  i=(n+items.length)%items.length;
+  items.forEach((it,k)=>{const on=k===i;it.img.classList.toggle('is-active',on);it.dot.classList.toggle('is-active',on);it.dot.setAttribute('aria-current',on?'true':'false')});
+ };
+ const stop=()=>{clearInterval(timer);timer=null};
+ const start=()=>{stop();if(items.length>1&&onScreen&&!document.hidden)timer=setInterval(()=>show(i+1),SHOW_MS)};
+ const drop=it=>{
+  const was=it.img.classList.contains('is-active');
+  it.img.remove();it.dot.remove();items=items.filter(x=>x!==it);
+  if(was)show(0);else i=Math.max(0,items.findIndex(x=>x.img.classList.contains('is-active')));
+  if(items.length<2){box.hidden=true;stop()}
+ };
+ items.slice().forEach((it,k)=>{
+  it.dot.addEventListener('click',()=>{show(items.indexOf(it));start()});
+  it.img.addEventListener('error',()=>drop(it));
+  if(it.img.complete&&!it.img.naturalWidth&&it.img.getAttribute('src'))drop(it);
+ });
+ document.addEventListener('visibilitychange',()=>document.hidden?stop():start());
+ if('IntersectionObserver' in window)new IntersectionObserver(([e])=>{onScreen=e.isIntersecting;onScreen?start():stop()},{threshold:.2}).observe(L);
+ else{onScreen=true;start()}
 })();
 
 /* ---------- NEWSLETTER BANNER ----------

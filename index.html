@@ -184,7 +184,14 @@
 
 <!-- LIFESTYLE BANNER (animated). Picture: /assets/images/wristwatch.png. The motion is pure CSS (see "LIFESTYLE BANNER" in style.css). id="legacy" is kept: the nav "About" link points here. -->
 <div class="life" id="legacy">
-  <div class="life-bg"><img class="life-img" src="/assets/images/wristwatch.png" alt="Silver Velantis watch on a wrist in warm golden light" loading="lazy" decoding="async"></div>
+  <!-- PHOTO SLIDER: each <img class="life-img"> below is one slide and each <button class="life-dot"> is its dot (same order). To add a photo, copy one img line and one dot line.
+       The first slide has class is-active. If a photo file is missing, it is skipped automatically (with its dot). -->
+  <div class="life-bg">
+   <img class="life-img is-active" src="/assets/images/wristwatch.png" alt="Silver Velantis watch on a wrist in warm golden light" decoding="async">
+   <img class="life-img" src="/assets/images/luxury-watch.png" alt="Velantis luxury watch" loading="lazy" decoding="async">
+   <img class="life-img" src="/assets/images/luxury-gold-watch.png" alt="Gold Velantis watch with a black dial against a dark golden backdrop" loading="lazy" decoding="async">
+   <img class="life-img" src="/assets/images/shop-banner.png" alt="Silver Velantis watch resting on dark fabric in warm golden light" loading="lazy" decoding="async">
+  </div>
   <div class="life-fx" aria-hidden="true"></div>
   <div class="life-sweep" aria-hidden="true"></div>
   <div class="life-shade" aria-hidden="true"></div>
@@ -193,6 +200,12 @@
    <h2>More Than a Watch,<br>It’s a Statement.</h2>
    <p class="life-lede">For the ambitious, the focused, and the dreamers.<br>Velantis keeps you on time, in style.</p>
    <a class="life-btn" href="shop.html">Explore Collection <svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </div>
+  <div class="life-dots" role="group" aria-label="Choose photo">
+   <button type="button" class="life-dot is-active" aria-label="Show photo 1" aria-current="true"></button>
+   <button type="button" class="life-dot" aria-label="Show photo 2" aria-current="false"></button>
+   <button type="button" class="life-dot" aria-label="Show photo 3" aria-current="false"></button>
+   <button type="button" class="life-dot" aria-label="Show photo 4" aria-current="false"></button>
   </div>
  </div>
 </div></section>
