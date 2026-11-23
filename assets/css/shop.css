@@ -10,7 +10,22 @@ body{background:var(--bg)}
 
 /* ---------- BANNER ---------- */
 .sh-banner{position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;min-height:clamp(220px,22vw,300px);border-radius:clamp(14px,1.8vw,22px);background:#1a0f08;color:#fff;box-shadow:0 20px 40px -26px rgba(60,35,10,.6)}
-.sh-banner-img{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;object-position:right center}
+/* PHOTO SLIDER (same behaviour as the home page lifestyle banner): photos are stacked and crossfade slowly while a gentle zoom runs on each one.
+   Fade length = --sh-fade (bigger = calmer). How long each photo stays = SHOW_MS in shop.js. The photo leaving stays solid until the new one has fully faded in, so there is never a dark dip. */
+.sh-banner{--sh-fade:2.6s}
+.sh-banner-bg{position:absolute;inset:0;z-index:-2;overflow:hidden}
+.sh-slide{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;object-position:right center;transform-origin:78% 52%;will-change:transform,opacity;animation:shZoom 20s ease-in-out infinite alternate;opacity:0;z-index:0;transition:opacity 0s linear var(--sh-fade)}
+.sh-slide.is-active{opacity:1;z-index:1;transition:opacity var(--sh-fade) ease-in-out}
+@keyframes shZoom{from{transform:scale(1.02) translate3d(0,0,0)}to{transform:scale(1.14) translate3d(-1.5%,-1%,0)}}
+/* slider dots: the current one is a gold pill, the others small round dots; the pill glides to the next dot with each photo */
+.sh-dots{position:absolute;z-index:3;left:50%;bottom:14px;transform:translateX(-50%);display:flex;align-items:center}
+.sh-dots[hidden]{display:none}
+.sh-dot{position:relative;flex:none;width:20px;height:22px;padding:0;border:0;background:none;cursor:pointer;transition:width .8s ease}
+.sh-dot::before{content:"";position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:999px;background:rgba(205,210,214,.5);transition:width .8s ease,margin .8s ease,background .8s ease}
+.sh-dot:hover::before{background:rgba(235,238,240,.8)}
+.sh-dot.is-active{width:40px}
+.sh-dot.is-active::before{width:26px;margin-left:-13px;background:#e3a648}
+.sh-dot:focus-visible{outline:2px solid #e3a648;outline-offset:2px;border-radius:999px}
 .sh-banner::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(18,10,5,.84) 0%,rgba(18,10,5,.55) 38%,rgba(18,10,5,0) 68%)}
 .sh-banner-copy{max-width:min(100%,640px);padding:clamp(26px,3.4vw,52px) clamp(22px,4.2vw,64px)}
 .sh-eyebrow{display:flex;align-items:center;gap:16px;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:#e9d4a8}
@@ -201,6 +216,7 @@ body{background:var(--bg)}
 @media(max-width:640px){
  :root{--shop-top:calc(var(--mbh,72px) + 14px)}
  .sh-banner{min-height:250px}
+ .sh-banner-copy{padding-bottom:46px}
  .sh-banner::before{background:linear-gradient(90deg,rgba(18,10,5,.88) 0%,rgba(18,10,5,.55) 70%,rgba(18,10,5,.3) 100%)}
  .sh-cta{height:44px;padding:0 20px;font-size:13px}
  .sh-view{display:none}
@@ -223,6 +239,8 @@ body{background:var(--bg)}
 }
 @media(prefers-reduced-motion:reduce){
  .sh-filters,.sh-ov,.sh-cta,.sh-add,.sh-card{transition:none}
+ .sh-slide,.sh-slide.is-active,.sh-dot,.sh-dot::before{transition:none}
+ .sh-slide{animation:none}
  .sh-nl-form.bad{animation:none}
 }
 .sh-grid[hidden]{display:none}

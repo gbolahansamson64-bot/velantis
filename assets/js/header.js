@@ -158,6 +158,8 @@
  burger.onclick=()=>toggleMenu(menu.hidden);
  menu.addEventListener('click',e=>{if(e.target.closest('a'))toggleMenu(false)});
  document.addEventListener('keydown',e=>{if(e.key==='Escape')toggleMenu(false)});
+ /* tap/click anywhere outside the open menu (and outside the hamburger button) closes it. Capture phase, so it still works when another button stops the click from bubbling. */
+ document.addEventListener('click',e=>{if(!menu.hidden&&!menu.contains(e.target)&&!burger.contains(e.target))toggleMenu(false)},true);
 
  /* header turns solid once the page is scrolled */
  const bar=document.querySelector('.bar');

@@ -50,12 +50,25 @@
  <!-- BANNER. Picture: /assets/images/shop-banner.png (change the file name in the src below). The words are real text laid over it. -->
  <section class="sh-wrap" aria-labelledby="shTitle">
   <div class="sh-banner">
-   <img class="sh-banner-img" src="/assets/images/shop-banner.png" alt="" fetchpriority="high" decoding="async">
+   <!-- PHOTO SLIDER (same idea as the home page lifestyle banner): each <img class="sh-slide"> is one slide and each <button class="sh-dot"> is its dot (same order).
+        To add a photo, copy one img line and one dot line. The first slide has class is-active. If a photo file is missing it is skipped automatically (with its dot). -->
+   <div class="sh-banner-bg">
+    <img class="sh-slide is-active" src="/assets/images/shop-banner.png" alt="" fetchpriority="high" decoding="async">
+    <img class="sh-slide" src="/assets/images/wristwatch.png" alt="" loading="lazy" decoding="async">
+    <img class="sh-slide" src="/assets/images/luxury-watch.png" alt="" loading="lazy" decoding="async">
+    <img class="sh-slide" src="/assets/images/luxury-gold-watch.png" alt="" loading="lazy" decoding="async">
+   </div>
    <div class="sh-banner-copy">
     <p class="sh-eyebrow">Velantis Shop</p>
     <h1 id="shTitle">Explore Our Collection.</h1>
     <p class="sh-lede">Find the perfect timepiece that matches your style.</p>
     <a class="sh-cta" href="#products">Browse with Confidence <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+   </div>
+   <div class="sh-dots" role="group" aria-label="Choose banner photo">
+    <button type="button" class="sh-dot is-active" aria-label="Show photo 1" aria-current="true"></button>
+    <button type="button" class="sh-dot" aria-label="Show photo 2" aria-current="false"></button>
+    <button type="button" class="sh-dot" aria-label="Show photo 3" aria-current="false"></button>
+    <button type="button" class="sh-dot" aria-label="Show photo 4" aria-current="false"></button>
    </div>
   </div>
  </section>
