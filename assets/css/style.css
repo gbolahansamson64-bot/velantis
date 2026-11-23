@@ -4,6 +4,8 @@
 @property --g3{syntax:'<color>';inherits:true;initial-value:rgba(110,72,42,.35)}
 :root{--bg:#faf8f3;--sand:#f1ebdf;--sand2:#e8dfcf;--ink:#1c1a17;--mute:#7b756b;--gold:#a88655;--line:#e6dfd2;--serif:'Cormorant Garamond',Georgia,serif;--sans:'Jost',system-ui,sans-serif;--max:1560px;--tan:#b99877}
 *{box-sizing:border-box;margin:0;padding:0}
+/* removes the blue/grey tap flash on phones (tap highlight) */
+html,body,*{-webkit-tap-highlight-color:transparent;-webkit-tap-highlight-color:rgba(0,0,0,0)}
 html{scroll-behavior:smooth;scroll-padding-top:70px}
 body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-weight:400;line-height:1.5;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
