@@ -102,9 +102,11 @@ body{background:var(--bg)}
 @media(min-width:961px){.sh-grid{--hw:max(190px,calc((min(100vw,1560px) - 2*clamp(24px,4vw,72px) - 56px)/5));grid-template-columns:repeat(3,var(--hw));justify-content:start}}
 .sh-card{position:relative;display:flex;flex-direction:column;height:100%;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:var(--sh-card);transition:box-shadow .25s,border-color .25s}
 .sh-card:hover{border-color:#dccaa4;box-shadow:0 18px 34px -24px rgba(80,50,15,.55)}
-.sh-pic{position:relative;overflow:hidden;aspect-ratio:1/1.12;background:radial-gradient(ellipse at 50% 42%,#fbf3e3,#f1e1c6 72%)}
+.sh-pic{position:relative;flex:none;overflow:hidden;aspect-ratio:1/1.12;background:radial-gradient(ellipse at 50% 42%,#fbf3e3,#f1e1c6 72%)}
 .sh-pic .sh-w{position:absolute;left:50%;top:6%;transform:translateX(-50%);height:88%;width:auto;filter:drop-shadow(0 10px 10px rgba(60,40,10,.22))}
-.sh-pic .sh-img{position:absolute;inset:6% 14%;width:72%;height:88%;max-width:none;object-fit:contain;filter:drop-shadow(0 10px 10px rgba(60,40,10,.22))}
+/* Product photo: fills the whole picture box edge to edge, whatever its size or shape. The box keeps its own fixed shape (aspect-ratio above), so a photo can never make it taller or wider.
+   cover = fills the box completely and crops a little off the edges if the photo has a different shape; change to "contain" to always show the whole photo with soft bars at the sides. */
+.sh-pic .sh-img{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;object-position:center}
 .sh-badge{position:absolute;left:10px;top:10px;z-index:2;display:inline-flex;align-items:center;height:26px;padding:0 12px;border-radius:999px;font-size:11.5px;font-weight:500}
 .sh-badge.best{background:var(--sh-btn-deep);color:#fff}
 .sh-badge.new{border:1px solid #e3d2ae;background:rgba(255,253,248,.92);color:#3a2e1d}
@@ -135,7 +137,7 @@ body{background:var(--bg)}
 /* list view */
 .sh-grid.list{grid-template-columns:1fr}
 .list .sh-card{flex-direction:row}
-.list .sh-pic{flex:none;width:clamp(150px,22vw,220px);aspect-ratio:1/1}
+.list .sh-pic{flex:none;align-self:flex-start;width:clamp(150px,22vw,220px);aspect-ratio:1/1}
 .list .sh-info{align-content:center;padding:18px clamp(16px,2.4vw,28px)}
 .list .sh-name{font-size:16px}
 .list .sh-desc{display:block}
