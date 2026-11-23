@@ -209,7 +209,15 @@ body{background:var(--bg)}
  .sh-nl-btn{padding:0 18px}
 }
 @media(max-width:360px){
- .sh-grid{grid-template-columns:minmax(0,1fr)}
+ /* small phones (360px wide and under) keep 2 columns too: the cards are just a little more compact */
+ .sh-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .sh-info{padding:10px 10px 12px;column-gap:6px}
+ .sh-name{font-size:12.5px}
+ .sh-price{font-size:14px}
+ .sh-rate{font-size:11px;gap:4px}
+ .sh-add{width:30px;height:30px}
+ .sh-badge{left:8px;top:8px;height:22px;padding:0 9px;font-size:10.5px}
+ .sh-fav{right:4px;top:4px;width:32px;height:32px}
 }
 @media(prefers-reduced-motion:reduce){
  .sh-filters,.sh-ov,.sh-cta,.sh-add,.sh-card{transition:none}

@@ -662,8 +662,8 @@ section{padding:64px 0 0}
  .hero{padding-top:calc(var(--mbh) + 9vw)}
 }
 
-/* ===== PAGE ZOOM (mobile view only: phones + tablets, up to 960px wide): shows the site at 90% instead of 100%.
-   Change .9 to 1 for normal size, .85 for smaller, .95 for slightly smaller. Desktop is not affected. ===== */
+/* ===== PAGE ZOOM (mobile view only: phones + tablets, up to 960px wide): shows the site at 95% instead of 100%.
+   Change .95 to 1 for normal size, .9 for smaller, .85 for even smaller. Desktop is not affected. ===== */
 @media(max-width:960px){
- html{zoom:.9}
+ html{zoom:.95}
 }
