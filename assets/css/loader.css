@@ -1,0 +1,25 @@
+/* =====================================================================
+   LOADING SCREEN (loader.css) - the styles for the loading screen built by loader.js.
+   Load it in the <head> of every page that should show the loading screen (before the page paints), together with loader.js:
+
+       <link rel="stylesheet" href="/assets/css/loader.css">
+       <script src="/assets/js/loader.js"></script>
+
+   Quick tuning: background = the radial-gradient colours, logo size = .ld-logo width, bar colours = .ld-bar u.
+   The site's own animations are held until the screen is gone, so the page's intro plays when it opens.
+   ===================================================================== */
+html.loading{overflow:hidden}
+.loader{position:fixed;inset:0;z-index:300;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 45%,#fffaf0,#f1e6d3 70%,#e8dcc6)}
+.loader.done{display:none}
+.ld-in{display:grid;justify-items:center;gap:clamp(22px,3vw,34px);padding:0 24px}
+.ld-logo{display:block;width:clamp(150px,22vw,280px);height:auto;max-height:30vh;object-fit:contain;animation:ldIn 1s cubic-bezier(.2,.8,.2,1) both,ldPulse 2.4s ease-in-out 1s infinite}
+.ld-bar{width:clamp(120px,16vw,200px);height:2px;border-radius:2px;overflow:hidden;background:rgba(127,84,32,.2)}
+.ld-bar u{display:block;height:100%;text-decoration:none;background:linear-gradient(90deg,#c9a572,#7f5420);transform-origin:left;transform:scaleX(0);animation:ldFill 1.8s cubic-bezier(.4,0,.2,1) .2s 2 forwards}
+@keyframes ldIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes ldPulse{50%{opacity:.72}}
+@keyframes ldFill{to{transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){
+ .ld-bar u{transform:none}
+}
+/* hold every animation behind the loader until it is gone */
+html.loading body>:not(.loader),html.loading body>:not(.loader) *,html.loading body>:not(.loader) *::before,html.loading body>:not(.loader) *::after{animation-play-state:paused!important}

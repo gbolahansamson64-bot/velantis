@@ -1,0 +1,40 @@
+/* =====================================================================
+   FOOTER STYLES (footer.css) - everything for the site footer built by footer.js.
+   Load it AFTER style.css.
+   ===================================================================== */
+footer .logo img{height:90px}
+
+/* footer */
+footer.ft{position:relative;margin-top:clamp(48px,6vw,80px);color:#4b463f;font-size:13px;border-top:1px solid rgba(168,134,85,.4);
+ background:radial-gradient(ellipse 46% 70% at 12% 0%,rgba(214,170,82,.16),transparent 70%),linear-gradient(180deg,#f6efe2 0%,#efe5d1 100%)}
+.ft::before{content:"";position:absolute;top:-1px;left:50%;width:min(520px,60%);height:1px;transform:translateX(-50%);background:linear-gradient(90deg,transparent,#c9a572,transparent)}
+.ft .wrap{padding-top:clamp(44px,5vw,72px)}
+.ft-grid{display:grid;grid-template-columns:1.5fr .8fr .9fr 1.1fr;gap:clamp(28px,4vw,72px);align-items:start}
+.ft-logo{display:inline-block;line-height:0}
+.ft-logo img{height:clamp(54px,5vw,76px);width:auto;display:block;mix-blend-mode:multiply}
+.ft-about{margin-top:22px;max-width:36ch;font-size:13.5px;line-height:1.7;color:#5a544a}
+.ft-soc{display:flex;gap:12px;margin-top:24px}
+.ft-soc a{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#8a6a38;border:1px solid rgba(168,134,85,.5);background:rgba(255,255,255,.45);transition:background .25s,color .25s,border-color .25s,transform .25s}
+.ft-soc a:hover{background:linear-gradient(135deg,#e6c98f,#c9a572);color:#1a0f0a;border-color:transparent;transform:translateY(-3px)}
+.ft-soc svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.ft-col h4{position:relative;margin-bottom:24px;padding-bottom:12px;font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#1c1a17}
+.ft-col h4::after{content:"";position:absolute;left:0;bottom:0;width:26px;height:1px;background:#a88655}
+.ft-col ul{list-style:none;display:grid;gap:15px}
+.ft-col li{font-size:13.5px;line-height:1.6}
+.ft-col a{color:#4b463f;transition:color .2s,padding-left .2s}
+.ft-col ul a:hover{color:#a88655;padding-left:5px}
+.ft-contact li span{color:#7b756b}
+.ft-contact li a:hover{padding-left:0}
+.ft-bottom{margin-top:clamp(36px,4vw,56px);padding:22px 0 26px;border-top:1px solid rgba(168,134,85,.3);text-align:center;font-size:12px;letter-spacing:.03em;color:#7b756b}
+.ft-bottom span{display:block;margin-top:6px;font-size:9.5px;letter-spacing:.28em;text-transform:uppercase;color:#a88655}
+@media(max-width:960px){
+ .ft-grid{grid-template-columns:repeat(3,1fr);gap:36px 24px}
+ .ft-brand{grid-column:1/-1}
+ .ft-about{max-width:46ch}
+}
+@media(max-width:640px){
+ .ft-grid{grid-template-columns:1fr 1fr}
+ .ft-contact{grid-column:1/-1}
+ .ft-col h4{margin-bottom:20px}
+ .ft-col ul{gap:13px}
+}

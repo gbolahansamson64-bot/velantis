@@ -1,0 +1,459 @@
+/* =====================================================================
+   HEADER STYLES (header.css) - everything for the site header built by header.js:
+   the top bar, the floating pill nav (desktop), the hamburger menu (phone + tablet), the search bar,
+   the account panel and the cart panel (with the fly-to-cart watch).
+   Load it AFTER style.css. The rules are in the same order they had in style.css.
+   ===================================================================== */
+/* the header gets its own side spacing so it also works on pages that have no hero (same values the hero uses) */
+.bar{--pad:clamp(24px,4vw,66px)}
+@media(max-width:640px){.bar{--pad:clamp(20px,5.5vw,40px)}}
+
+.bar{position:fixed;inset:0 0 auto;z-index:100;height:5.6vw;min-height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 var(--pad);background:linear-gradient(180deg,rgba(6,3,2,.55),rgba(6,3,2,.3));-webkit-backdrop-filter:blur(14px) saturate(130%);backdrop-filter:blur(14px) saturate(130%);transition:background .35s,box-shadow .35s}
+.bar.scrolled{background:rgba(8,4,3,.62);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.links a,.tools{text-shadow:0 1px 6px rgba(0,0,0,.6)}
+.bar::after{content:"";position:absolute;left:var(--pad);right:var(--pad);bottom:0;border-top:1px solid rgba(200,160,110,.22)}
+.brand{display:block;line-height:0}
+.brand img{height:clamp(34px,3.8vw,60px);width:auto;display:block}
+.links{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;gap:clamp(18px,2.4vw,40px);font-family:var(--serif);font-weight:600;font-size:clamp(11px,.82vw,14px);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+.links a{padding:8px 0;border-bottom:1px solid transparent;transition:color .2s}
+.links a:hover{color:#d8bd86}
+.links a[aria-current]{border-color:#d3b57c}
+.tools{display:flex;align-items:center;gap:clamp(14px,1.6vw,26px)}
+.tools svg.i{width:clamp(17px,1.5vw,24px);height:clamp(17px,1.5vw,24px);stroke-width:1.3}
+.cart{position:relative;display:block;line-height:0}
+.cart span{position:absolute;top:-7px;right:-9px;background:#c9a572;color:#1a0f0a;font-size:10px;font-weight:500;width:17px;height:17px;border-radius:50%;display:grid;place-items:center;line-height:1}
+.burger{display:none;gap:6px;justify-items:end;padding:8px}
+.burger span{display:block;height:1.5px;width:26px;background:#fff}
+.burger span+span{width:16px}
+.menu{position:absolute;top:calc(100% + 6px);right:var(--pad);min-width:190px;list-style:none;padding:10px 4px;background:#1c100b;border:1px solid #3d2a1c;border-radius:12px;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.menu[hidden]{display:none}
+.menu a{display:block;padding:10px 18px}
+.menu a:hover{color:#d8bd86}
+
+@media(max-width:960px){
+ .bar{height:76px;min-height:0}
+ .links{display:none}
+ .burger{display:grid}
+}
+@media(max-width:640px){
+
+ /* header: logo left, search + bag + menu right, full-width gold line under it */
+ .bar{height:var(--bh);min-height:0}
+ .bar::after{left:0;right:0;border-top:1px solid rgba(214,176,116,.5)}
+ .brand img{height:clamp(44px,12.5vw,64px)}
+ .tools{gap:clamp(16px,5vw,26px)}
+ .tools svg.i{width:clamp(21px,5.6vw,26px);height:clamp(21px,5.6vw,26px)}
+ .tools button[aria-label="Account"]{display:none}
+}
+/* =====================================================================
+   FLOATING PILL NAV (desktop only, 961px and wider)
+   Logo pill on the left, links in one frosted pill in the centre with a sliding gold highlight,
+   round search / account / cart buttons and a "Shop Now" button on the right.
+   Phone and tablet headers (hamburger + bottom nav) are untouched.
+   Quick tuning: --nh = height of every pill/button, --glass = pill fill, --glass-line = pill border.
+   ===================================================================== */
+.nav-cta{display:none}
+@media(min-width:961px){
+ .bar{--nh:clamp(46px,3.5vw,56px);--glass:rgba(18,10,6,.6);--glass-line:rgba(214,176,116,.3);
+  background:none;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;pointer-events:none}
+ .bar.scrolled{background:none;box-shadow:none;--glass:rgba(14,8,5,.86)}
+ .bar::after{display:none}
+ .bar>*{pointer-events:auto}
+ .links,.tools{text-shadow:none}
+
+ /* shared frosted glass look */
+ .brand,.links,.tools button:not(.burger),.cart{background:var(--glass);border:1px solid var(--glass-line);
+  -webkit-backdrop-filter:blur(16px) saturate(130%);backdrop-filter:blur(16px) saturate(130%);box-shadow:0 10px 30px rgba(0,0,0,.28);
+  transition:background .3s,border-color .3s,color .25s}
+
+ /* logo pill */
+ .brand{display:flex;align-items:center;height:var(--nh);padding:0 clamp(16px,1.6vw,26px);border-radius:999px}
+ .brand img{height:clamp(26px,2.7vw,40px)}
+
+ /* centre links pill */
+ .links{height:var(--nh);padding:4px;gap:2px;align-items:center;border-radius:999px;font-size:clamp(11px,.82vw,14px)}
+ .links a{position:relative;z-index:1;display:flex;align-items:center;height:100%;padding:0 clamp(13px,1.45vw,24px);
+  border:0;border-radius:999px;color:rgba(241,234,223,.86);transition:color .25s,background .25s}
+ .links a:hover{color:#fff;background:rgba(214,176,116,.14)}
+ .links a[aria-current]{background:linear-gradient(135deg,#e6c98f,#c9a572);color:#1a0f0a;font-weight:700}
+ .links a[aria-current]:hover{color:#1a0f0a}
+ /* sliding gold highlight (created by script.js; without JS the active link keeps its own gold fill) */
+ .links.has-pill a[aria-current],.links.has-pill a[aria-current]:hover{background:none}
+ .links .pill{position:absolute;left:0;top:4px;bottom:4px;width:0;z-index:0;border-radius:999px;pointer-events:none;
+  background:linear-gradient(135deg,#e6c98f,#c9a572);box-shadow:0 4px 14px rgba(201,165,114,.35)}
+ .links .pill.ready{transition:transform .45s cubic-bezier(.2,.8,.2,1),width .45s cubic-bezier(.2,.8,.2,1)}
+
+ /* right side: round buttons + cart badge */
+ .tools{gap:10px}
+ .tools button:not(.burger),.cart{width:var(--nh);height:var(--nh);display:grid;place-items:center;border-radius:50%;color:#f1eadf}
+ .tools button:not(.burger):hover,.cart:hover{background:rgba(214,176,116,.22);border-color:rgba(214,176,116,.7);color:#fff}
+ .cart span{top:-3px;right:-3px;width:20px;height:20px;border:2px solid #120a06;font-weight:600}
+
+ /* "Shop Now" button with round icon (wide desktops only) */
+ .nav-cta{align-items:center;gap:14px;height:var(--nh);padding:0 6px 0 clamp(18px,1.7vw,26px);border-radius:999px;
+  background:linear-gradient(135deg,#e6c98f,#c9a572);color:#1a0f0a;font-family:var(--serif);font-weight:700;
+  font-size:clamp(11px,.82vw,14px);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;
+  box-shadow:0 10px 26px rgba(201,165,114,.28);transition:filter .25s,box-shadow .25s}
+ .nav-cta:hover{filter:brightness(1.07);box-shadow:0 12px 30px rgba(201,165,114,.42)}
+ .nav-cta-ic{display:grid;place-items:center;width:calc(var(--nh) - 12px);height:calc(var(--nh) - 12px);border-radius:50%;background:#1a0f0a;color:#e6c98f}
+ .nav-cta-ic svg.i{width:16px;height:16px;transition:transform .25s}
+ .nav-cta:hover .nav-cta-ic svg.i{transform:translateX(3px)}
+}
+@media(min-width:1280px){
+ .nav-cta{display:inline-flex}
+}
+
+/* header */
+.bar{background:linear-gradient(180deg,rgba(250,240,228,.7),rgba(250,240,228,.45))}
+.bar.scrolled{background:rgba(250,244,236,.92);box-shadow:0 6px 20px rgba(80,55,25,.12)}
+.bar::after{border-top-color:rgba(154,106,42,.45)}
+.links a,.tools{text-shadow:none;color:#14100c}
+.links a:hover{color:#7f5420}
+.links a[aria-current]{border-color:#7f5420}
+.cart span{background:#7f5420;color:#fff}
+.burger span{background:#14100c}
+.menu{background:#faf5ec;border-color:#e6dfd2;color:#14100c;box-shadow:0 10px 30px rgba(80,55,25,.15)}
+.menu a:hover{color:#7f5420}
+@media(max-width:640px){
+ .bar::after{border-top-color:rgba(154,106,42,.5)}
+}
+
+/* =====================================================================
+   NAV: white text on a dark warm glass bar (same look as the search/account icons)
+   ===================================================================== */
+.bar{background:linear-gradient(180deg,rgba(30,17,8,.62),rgba(30,17,8,.38))}
+.bar.scrolled{background:rgba(26,15,8,.88);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.bar::after{border-top-color:rgba(214,176,116,.45)}
+.links a,.tools{color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.links a:hover,.tools button:hover{color:#e6c98f}
+.links a[aria-current]{color:#fff;border-color:#d3b57c}
+.cart span{background:#c9a572;color:#1a0f0a}
+.burger span{background:#fff}
+.menu{background:#1c100b;border-color:#3d2a1c;color:#fff;box-shadow:none}
+.menu a:hover{color:#e6c98f}
+
+/* header (desktop 961px+): the bar stays transparent at the top of the page. Once you scroll, a cream + gold frosted band
+   fades in behind the floating pills (same cream/gold look as the search bar, account panel and cart).
+   The band is a separate layer (.bar::before) so the pills' own glass is not nested inside another blur.
+   Quick tuning: the two rgba() colours = band tint (raise .94/.9 for more solid), blur(18px) = frost amount, border-bottom = gold line. */
+@media(min-width:961px){
+ .bar,.bar.scrolled{background:none!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+ .bar::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(252,246,234,.94),rgba(244,232,212,.9));
+  border-bottom:1px solid rgba(201,165,114,.6);
+  box-shadow:inset 0 -1px 0 rgba(255,255,255,.65),0 10px 28px rgba(60,40,10,.14);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%);
+  opacity:0;transition:opacity .35s ease}
+ .bar.scrolled::before{opacity:1}
+}
+
+/* =====================================================================
+   SEARCH BAR (all screen sizes)
+   Cream pill bar with a dark arrow button, a round X beside it and a "Quick searches" panel underneath.
+   While open, the whole site's animations are paused (html.sx-open) and resume when it closes.
+   Quick tuning: --sx-dim = page darkening, --sx-w = bar width, --sx-h = bar height, --sx-xs = X button size.
+   ===================================================================== */
+.sx{--sx-dim:rgba(20,12,6,.38);--sx-w:600px;--sx-h:60px;--sx-xs:56px;--sx-gap:14px;--sx-gold:#d4b27c;--sx-c1:#f9efdf;--sx-c2:#ecdcc2;--sx-ink:#2b221b;
+ --sx-top:calc(max(68px,5.6vw) + 10px);--sx-right:clamp(24px,4vw,66px);
+ position:fixed;inset:0;z-index:200;visibility:hidden;pointer-events:none;transition:visibility 0s linear .95s}
+.sx.open{visibility:visible;pointer-events:auto;transition-delay:0s}
+.sx-ov{position:absolute;inset:0;background:transparent;cursor:pointer;transition:background .5s ease .35s}
+.sx.open .sx-ov{background:var(--sx-dim);transition:background .45s ease}
+
+.sx-wrap{position:absolute;top:var(--sx-top);right:var(--sx-right);width:min(calc(var(--sx-w) + var(--sx-xs) + var(--sx-gap)),calc(100vw - 2*var(--sx-right)));
+ display:grid;grid-template-columns:minmax(0,1fr) var(--sx-xs);column-gap:var(--sx-gap);row-gap:16px;align-items:start}
+
+/* the bar: drops down, then stretches open from the right */
+.sx-box{grid-column:1;grid-row:1;height:var(--sx-h);opacity:0;transform:translateY(-22px) scale(.96);transform-origin:100% 0;
+ filter:drop-shadow(0 14px 26px rgba(30,17,8,.3));transition:opacity .35s ease .55s,transform .4s ease .55s}
+.sx.open .sx-box{opacity:1;transform:none;transition:opacity .35s ease,transform .55s cubic-bezier(.2,.9,.25,1.12)}
+.sx-in{position:relative;display:flex;align-items:center;gap:14px;height:100%;padding:0 7px 0 24px;border-radius:999px;
+ background:linear-gradient(180deg,var(--sx-c1),var(--sx-c2));border:1.5px solid var(--sx-gold);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -2px 8px rgba(168,134,85,.2);
+ clip-path:inset(0 0 0 calc(100% - var(--sx-h)) round 999px);
+ transition:clip-path .6s cubic-bezier(.7,0,.84,.3) .2s,border-color .25s}
+.sx.open .sx-in{clip-path:inset(0 0 0 0 round 999px);transition:clip-path .7s cubic-bezier(.2,.8,.2,1) .18s,border-color .25s}
+.sx-in:focus-within{border-color:#b98f52}
+.sx-ic{flex:none;width:22px;height:22px;color:var(--sx-ink);stroke-width:1.5}
+.sx-sep{flex:none;width:1px;height:26px;background:rgba(43,34,27,.55)}
+.sx-box input{flex:1;min-width:0;height:100%;border:0;outline:0;background:none;color:var(--sx-ink);font:400 15.5px/1 var(--sans);letter-spacing:.01em;-webkit-appearance:none;appearance:none}
+.sx-box input::placeholder{color:#6f6252;opacity:1}
+.sx-box input::-webkit-search-cancel-button,.sx-box input::-webkit-search-decoration{-webkit-appearance:none;appearance:none}
+.sx-go{flex:none;display:grid;place-items:center;width:88px;height:calc(var(--sx-h) - 15px);border-radius:999px;color:#f6ead2;
+ background:linear-gradient(180deg,#3b281a,#120a06);box-shadow:inset 0 0 0 1px rgba(214,176,116,.45),0 4px 10px rgba(0,0,0,.25)}
+.sx-go svg{width:22px;height:22px;stroke-width:1.8;transition:transform .25s}
+.sx-go:hover svg{transform:translateX(3px)}
+
+/* round X */
+.sx-x{grid-column:2;grid-row:1;align-self:center;width:var(--sx-xs);height:var(--sx-xs);border-radius:50%;display:grid;place-items:center;color:var(--sx-ink);
+ background:linear-gradient(180deg,var(--sx-c1),var(--sx-c2));border:1.5px solid var(--sx-gold);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 10px 22px rgba(30,17,8,.3)}
+.sx-x svg{width:20px;height:20px;stroke-width:1.8;transition:transform .25s}
+.sx-x:hover{background:#1c100b;color:#f6ead2}
+.sx-x:hover svg{transform:rotate(90deg)}
+
+/* quick searches panel (same width as the bar, little notch on top) */
+.sx-panel{grid-column:1;grid-row:2;position:relative;padding:20px 24px 24px;border-radius:26px;
+ background:linear-gradient(180deg,#f9efdf,#efe0c8);border:1.5px solid var(--sx-gold);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 18px 34px rgba(30,17,8,.3)}
+.sx-panel::before{content:"";position:absolute;top:-8.5px;left:50%;width:14px;height:14px;background:#f9efdf;border-left:1.5px solid var(--sx-gold);border-top:1.5px solid var(--sx-gold);border-top-left-radius:3px;transform:translateX(-50%) rotate(45deg)}
+.sx-lbl{display:flex;align-items:center;gap:12px;margin-bottom:16px;font-size:10.5px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:#5d4d3a}
+.sx-lbl::after{content:"";width:54px;border-top:1px solid rgba(168,134,85,.65)}
+.sx-chips{display:flex;flex-wrap:wrap;gap:10px}
+.sx-chip{flex:1 1 auto;height:40px;padding:0 18px;border-radius:999px;border:1.5px solid #c9a572;background:linear-gradient(180deg,#fcf6ea,#f1e3cc);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.9);font-family:var(--serif);font-weight:600;font-size:15px;letter-spacing:.01em;white-space:nowrap;color:var(--sx-ink);text-align:center;
+ transition:background .2s,color .2s,border-color .2s}
+.sx-chip:hover{background:#2b1b11;border-color:#2b1b11;color:#f6ead2}
+
+/* icon, text and arrow fade in once the bar is stretching open; X and panel follow */
+.sx-ic,.sx-sep,.sx-box input,.sx-go{opacity:0;transition:opacity .2s ease .05s}
+.sx.open .sx-ic,.sx.open .sx-sep,.sx.open .sx-box input,.sx.open .sx-go{opacity:1;transition:opacity .4s ease .4s}
+.sx-x,.sx-panel{opacity:0;transform:translateY(-10px);transition:opacity .25s ease,transform .3s ease,background .2s,color .2s}
+.sx.open .sx-x,.sx.open .sx-panel{opacity:1;transform:none;transition:opacity .4s ease .35s,transform .5s cubic-bezier(.2,.8,.2,1) .35s,background .2s,color .2s}
+
+/* while the search is open the site's animations stand still; they continue when it closes */
+html.sx-open *,html.sx-open *::before,html.sx-open *::after{animation-play-state:paused!important}
+
+@media(max-width:960px){
+ .sx{--sx-top:90px;--sx-right:16px;--sx-h:56px;--sx-xs:52px}
+}
+@media(max-width:640px){
+ .sx{--sx-top:calc(clamp(72px,15vw,96px) + 12px);--sx-right:14px;--sx-h:54px;--sx-xs:48px;--sx-gap:10px}
+ .sx-in{padding-left:18px;gap:11px}
+ .sx-go{width:64px}
+ .sx-panel{padding:18px 16px}
+ .sx-chip{flex:1 1 calc(50% - 5px);padding:0 10px;font-size:14px}
+}
+
+/* =====================================================================
+   ACCOUNT PANEL (desktop only, 961px and wider)
+   Drops down under the header account icon, same cream + gold look as the search bar, with Sign In / Sign Up tabs.
+   Closing plays the opening in reverse (content fades, card lifts, overlay fades).
+   Quick tuning: --ac-w = panel width, --ac-dim = page darkening, --ac-gold = border colour.
+   ===================================================================== */
+.ac{display:none}
+@media(min-width:961px){
+ .ac{--ac-dim:rgba(20,12,6,.38);--ac-w:440px;--ac-gold:#d4b27c;--ac-c1:#f9efdf;--ac-c2:#efe0c8;--ac-ink:#2b221b;--ac-mute:#6f6252;--ac-n:86%;
+  --ac-top:calc(max(68px,5.6vw) + 10px);--ac-right:clamp(24px,4vw,66px);
+  display:block;position:fixed;inset:0;z-index:200;visibility:hidden;pointer-events:none;transition:visibility 0s linear .85s}
+ .ac.open{visibility:visible;pointer-events:auto;transition-delay:0s}
+ .ac-ov{position:absolute;inset:0;background:transparent;cursor:pointer;transition:background .5s ease .3s}
+ .ac.open .ac-ov{background:var(--ac-dim);transition:background .45s ease}
+
+ /* the whole card drops down from the icon (and lifts back up when closing) */
+ .ac-wrap{position:absolute;top:var(--ac-top);right:var(--ac-right);width:min(var(--ac-w),calc(100vw - 2*var(--ac-right)));
+  opacity:0;transform:translateY(-22px) scale(.96);transform-origin:var(--ac-n) 0;filter:drop-shadow(0 18px 34px rgba(30,17,8,.3));
+  transition:opacity .35s ease .3s,transform .4s ease .3s}
+ .ac.open .ac-wrap{opacity:1;transform:none;transition:opacity .35s ease,transform .55s cubic-bezier(.2,.9,.25,1.12)}
+ /* little notch pointing at the account icon (position is set by script.js) */
+ .ac-wrap::before{content:"";position:absolute;z-index:2;top:-8.5px;left:var(--ac-n);width:14px;height:14px;background:var(--ac-c1);
+  border-left:1.5px solid var(--ac-gold);border-top:1.5px solid var(--ac-gold);border-top-left-radius:3px;transform:translateX(-50%) rotate(45deg)}
+
+ .ac-card{position:relative;z-index:1;max-height:calc(100vh - var(--ac-top) - 18px);overflow:auto;scrollbar-width:none;padding:30px 30px 28px;border-radius:28px;
+  background:linear-gradient(180deg,var(--ac-c1),var(--ac-c2));border:1.5px solid var(--ac-gold);box-shadow:inset 0 1px 0 rgba(255,255,255,.8);color:var(--ac-ink)}
+ .ac-card::-webkit-scrollbar{display:none}
+
+ /* content fades up one block after another (fast fade out when closing) */
+ .ac-card>*{opacity:0;transform:translateY(8px);transition:opacity .2s ease,transform .2s ease,background .2s,color .2s}
+ .ac.open .ac-card>*{opacity:1;transform:none;transition:opacity .4s ease var(--d,.3s),transform .5s cubic-bezier(.2,.8,.2,1) var(--d,.3s),background .2s,color .2s}
+ .ac-head{--d:.3s;padding-right:56px}
+ .ac-tabs{--d:.38s}
+ .ac-pane{--d:.46s}
+ .ac-x{--d:.5s}
+
+ /* heading */
+ .ac-title{font-family:var(--serif);font-weight:600;font-size:clamp(34px,2.7vw,42px);line-height:1;letter-spacing:.04em;text-transform:uppercase}
+ .ac-title span{display:block}
+ .ac-title span+span{margin-top:4px;font-style:italic;color:#9a7340}
+ .ac-sub{margin-top:12px;font-size:13px;line-height:1.5;color:var(--ac-mute)}
+
+ /* round X */
+ .ac-x{position:absolute;top:22px;right:22px;z-index:3;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:var(--ac-ink);
+  background:linear-gradient(180deg,#fcf6ea,#f1e3cc);border:1.5px solid var(--ac-gold);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 6px 14px rgba(30,17,8,.18)}
+ .ac-x svg{width:18px;height:18px;stroke-width:1.8;transition:transform .25s}
+ .ac-x:hover{background:#1c100b;color:#f6ead2}
+ .ac-x:hover svg{transform:rotate(90deg)}
+
+ /* Sign In / Sign Up switch with a sliding dark pill */
+ .ac-tabs{position:relative;display:grid;grid-template-columns:1fr 1fr;margin-top:24px;padding:5px;border-radius:999px;background:rgba(43,34,27,.07);border:1px solid rgba(168,134,85,.45)}
+ .ac-slider{position:absolute;top:5px;bottom:5px;left:5px;width:calc(50% - 5px);border-radius:999px;background:linear-gradient(180deg,#3b281a,#120a06);
+  box-shadow:inset 0 0 0 1px rgba(214,176,116,.45),0 4px 10px rgba(0,0,0,.22);transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+ .ac-tabs[data-tab="up"] .ac-slider{transform:translateX(100%)}
+ .ac-tab{position:relative;z-index:1;height:44px;font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#5d4d3a;transition:color .3s}
+ .ac-tab[aria-selected="true"]{color:#f6ead2}
+
+ /* forms */
+ .ac-pane{margin-top:22px}
+ .ac-pane[hidden]{display:none}
+ .ac-pane:not([hidden]){animation:acPane .45s cubic-bezier(.2,.8,.2,1)}
+ @keyframes acPane{from{opacity:0;transform:translateY(10px)}}
+ .ac-field+.ac-field{margin-top:18px}
+ .ac-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+ .ac-lbl{font-size:10.5px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:#5d4d3a}
+ .ac-forgot{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#7f5420;border-bottom:1px solid currentColor;padding-bottom:1px;transition:color .2s}
+ .ac-forgot:hover{color:var(--ac-ink)}
+ .ac-in{position:relative;display:flex;align-items:center;height:54px;border-radius:16px;background:rgba(255,252,245,.8);border:1.5px solid rgba(168,134,85,.5);
+  transition:border-color .25s,box-shadow .25s,background .25s}
+ .ac-in:focus-within{border-color:#b98f52;background:#fffdf8;box-shadow:0 0 0 4px rgba(201,165,114,.22)}
+ .ac-in input{flex:1;min-width:0;height:100%;padding:0 18px;border:0;outline:0;background:none;font:400 15px/1 var(--sans);color:var(--ac-ink)}
+ .ac-in input::placeholder{color:#8d7f6c;opacity:1}
+ .ac-eye{flex:none;width:48px;height:100%;display:grid;place-items:center;color:var(--ac-mute);transition:color .2s}
+ .ac-eye:hover{color:var(--ac-ink)}
+ .ac-eye svg{width:20px;height:20px;stroke-width:1.5}
+ .ac-eye .slash{opacity:0;transition:opacity .2s}
+ .ac-eye.on .slash{opacity:1}
+
+ /* slanted dark button with a gold offset shadow */
+ .ac-go{display:flex;align-items:center;justify-content:center;gap:14px;width:calc(100% - 8px);height:56px;margin:28px 0 8px;border-radius:14px;color:#f6ead2;
+  background:linear-gradient(180deg,#3b281a,#120a06);box-shadow:inset 0 0 0 1px rgba(214,176,116,.4),7px 7px 0 #c9a572;transform:skewX(-10deg);
+  font-size:12px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;transition:transform .25s,box-shadow .25s}
+ .ac-go>*{transform:skewX(10deg);transition:transform .25s}
+ .ac-go svg{width:20px;height:20px;stroke-width:1.8}
+ .ac-go:hover{transform:skewX(-10deg) translate(2px,2px);box-shadow:inset 0 0 0 1px rgba(214,176,116,.4),5px 5px 0 #c9a572}
+ .ac-go:hover svg{transform:skewX(10deg) translateX(4px)}
+
+ .ac-foot{margin-top:20px;text-align:center;font-size:12px;color:var(--ac-mute)}
+ .ac-link{font-weight:500;color:var(--ac-ink);border-bottom:1px solid currentColor;transition:color .2s}
+ .ac-link:hover{color:#7f5420}
+
+ /* while the panel is open the page's animations stand still (the panel's own keep running) */
+ html.ac-open body>:not(.ac),html.ac-open body>:not(.ac) *,html.ac-open body>:not(.ac) *::before,html.ac-open body>:not(.ac) *::after{animation-play-state:paused!important}
+}
+/* desktop nav: keep the pill at its original width with 4 links */
+@media(min-width:961px){
+ .links{width:clamp(480px,37vw,640px)}
+ .links a{flex:1;justify-content:center;padding:0 8px}
+}
+
+/* =====================================================================
+   CART PANEL (all screen sizes)
+   Cream + gold, same look as the search bar and account panel. Slides in from the right (a bottom-aligned sheet on phones).
+   Quick tuning: --ct-w = panel width, --ct-dim = page darkening, --ct-gold = border colour.
+   ===================================================================== */
+.ct{--ct-w:440px;--ct-dim:rgba(20,12,6,.45);--ct-gold:#d4b27c;--ct-ink:#2b221b;--ct-mute:#6f6252;--ct-line:rgba(168,134,85,.32);
+ position:fixed;inset:0;z-index:250;visibility:hidden;pointer-events:none;transition:visibility 0s linear .5s}
+.ct.open{visibility:visible;pointer-events:auto;transition-delay:0s}
+.ct-ov{position:absolute;inset:0;background:var(--ct-dim);opacity:0;cursor:pointer;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);transition:opacity .4s ease}
+.ct.open .ct-ov{opacity:1}
+.ct-panel{position:absolute;top:12px;right:12px;bottom:12px;width:min(var(--ct-w),calc(100vw - 24px));display:flex;flex-direction:column;overflow:hidden;
+ border-radius:28px;background:linear-gradient(180deg,#f9efdf,#efe0c8);border:1.5px solid var(--ct-gold);color:var(--ct-ink);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 24px 60px rgba(30,17,8,.4);
+ transform:translateX(calc(100% + 24px));transition:transform .45s cubic-bezier(.6,0,.8,.3)}
+.ct.open .ct-panel{transform:none;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+
+.ct-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:26px 28px 20px;border-bottom:1px solid var(--ct-line)}
+.ct-head h2{display:flex;align-items:center;gap:12px;font-size:clamp(30px,2.4vw,36px);font-weight:600;line-height:1;letter-spacing:.04em;text-transform:uppercase}
+.ct-head em{font-style:italic;color:#9a7340}
+.ct-n{display:grid;place-items:center;min-width:26px;height:26px;padding:0 7px;border-radius:13px;background:#1c100b;color:#e6c98f;font:600 12px/1 var(--sans);letter-spacing:0}
+.ct.empty .ct-n{display:none}
+.ct-x{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:var(--ct-ink);background:linear-gradient(180deg,#fcf6ea,#f1e3cc);
+ border:1.5px solid var(--ct-gold);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 6px 14px rgba(30,17,8,.18);transition:background .2s,color .2s}
+.ct-x svg{width:18px;height:18px;stroke-width:1.8;transition:transform .25s}
+.ct-x:hover{background:#1c100b;color:#f6ead2}
+.ct-x:hover svg{transform:rotate(90deg)}
+
+.ct-body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:16px 28px;scrollbar-width:thin;scrollbar-color:#c9a572 transparent}
+.ct-item{flex:none;display:grid;grid-template-columns:84px minmax(0,1fr);gap:16px;padding:14px;border-radius:22px;background:#fffbf2;border:1px solid rgba(168,134,85,.35);box-shadow:0 8px 20px rgba(60,40,10,.08)}
+.ct-th{aspect-ratio:1;display:grid;place-items:center;padding:9px;border-radius:16px;background:#f6ecd9;border:1px solid rgba(168,134,85,.3)}
+.ct-th svg{height:100%;filter:drop-shadow(0 6px 6px rgba(60,40,10,.2))}
+.ct-b{display:block;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ct-mute)}
+.ct-m{display:block;margin-top:2px;font-family:var(--serif);font-weight:600;font-size:20px;line-height:1.15}
+.ct-d{display:block;margin-top:2px;font-size:11.5px;color:var(--ct-mute)}
+.ct-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
+.ct-q{display:inline-flex;align-items:center;gap:2px;height:36px;padding:0 4px;border-radius:999px;background:#f1e3cc}
+.ct-q button{width:28px;height:28px;border-radius:50%;font-size:16px;line-height:1;background:#1c100b;color:#f6ead2;transition:filter .2s}
+.ct-q button:hover{filter:brightness(1.5)}
+.ct-q span{min-width:24px;text-align:center;font-size:13px;font-weight:500}
+.ct-p{font-size:15px;font-weight:500}
+.ct-rm{flex:none;width:34px;height:34px;display:grid;place-items:center;border-radius:50%;border:1.5px solid rgba(179,64,47,.35);background:#fdecea;color:#b3402f;transition:background .2s,color .2s,border-color .2s}
+.ct-rm svg{width:17px;height:17px;stroke-width:1.5}
+.ct-rm:hover{background:#b3402f;border-color:#b3402f;color:#fff}
+
+.ct-empty{display:grid;justify-items:center;gap:10px;padding:72px 8px 24px;text-align:center}
+.ct-empty-ic{display:grid;place-items:center;width:76px;height:76px;margin-bottom:8px;border-radius:50%;border:1.5px solid var(--ct-gold);background:#fcf6ea;color:#9a7340}
+.ct-empty-ic svg{width:32px;height:32px;stroke-width:1.3}
+.ct-empty h3{font-size:28px;font-weight:600}
+.ct-empty p{max-width:24ch;font-size:13px;line-height:1.6;color:var(--ct-mute)}
+.ct-empty .ct-go{width:auto;margin-top:16px;padding:0 34px}
+
+.ct-foot{padding:20px 28px calc(24px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--ct-line);background:rgba(255,252,245,.45)}
+.ct.empty .ct-foot{display:none}
+.ct-sub{display:flex;align-items:baseline;justify-content:space-between;font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:#5d4d3a}
+.ct-sub b{font-family:var(--serif);font-weight:600;font-size:30px;letter-spacing:0;color:var(--ct-ink)}
+.ct-note{margin:4px 0 18px;font-size:11.5px;color:var(--ct-mute)}
+.ct-go{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;height:56px;border-radius:999px;color:#f6ead2;
+ background:linear-gradient(180deg,#3b281a,#120a06);box-shadow:inset 0 0 0 1px rgba(214,176,116,.45),0 8px 18px rgba(30,17,8,.25);
+ font-size:12px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;transition:filter .25s}
+.ct-go:hover{filter:brightness(1.25)}
+.ct-go svg{width:20px;height:20px;stroke-width:1.8;transition:transform .25s}
+.ct-go:hover svg{transform:translateX(4px)}
+.ct-more{display:block;width:100%;margin-top:14px;text-align:center;font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#7f5420;transition:color .2s}
+.ct-more:hover{color:var(--ct-ink)}
+
+html.ct-open{overflow:hidden}
+
+@media(max-width:640px){
+ .ct-panel{top:8px;right:8px;bottom:8px;left:8px;width:auto;border-radius:24px}
+ .ct-head{padding:22px 20px 16px}
+ .ct-body{padding:14px 16px}
+ .ct-foot{padding:18px 20px calc(20px + env(safe-area-inset-bottom,0px))}
+ .ct-item{grid-template-columns:72px minmax(0,1fr);gap:14px;padding:12px}
+}
+
+/* fly-to-cart: the copy of the watch that travels to the cart icon, and the little pop of the icon when it arrives */
+.ct-fly{position:fixed;z-index:260;pointer-events:none;will-change:transform,opacity;transform-origin:50% 50%}
+.ct-fly svg{display:block;width:100%;height:100%;filter:drop-shadow(0 12px 16px rgba(40,25,5,.4))}
+/* the pop is played on the bag icon and the number only, never on the frosted .cart button itself (scaling a blurred glass element inside the blurred header made the header flicker) */
+.cart.pop svg.i,.cart.pop span{animation:cartPop .55s cubic-bezier(.3,1.6,.5,1)}
+@keyframes cartPop{0%{transform:scale(1)}40%{transform:scale(1.3)}100%{transform:scale(1)}}
+.ct-th img.watch{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 6px 6px rgba(60,40,10,.2))}
+.ct-fly img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 12px 16px rgba(40,25,5,.4))}
+.ct-th img.watch:not([src]){visibility:hidden}
+
+/* HEADER FLICKER FIX (when adding to cart): keep the header on its own layer and make the flying watch cheaper to draw */
+.bar{transform:translateZ(0);backface-visibility:hidden}
+.ct-fly img,.ct-fly svg{filter:none}
+
+/* =====================================================================
+   MOBILE HEADER (phone + tablet, max-width 960px)
+   Layout: hamburger on the left, big centred logo, search + cart on the right (no account / wishlist icon).
+   Background: the same cream + gold frosted band the desktop header gets on scroll.
+   Quick tuning: --mbh = header height (the logo is 80% of it), the two rgba() colours = band tint,
+   .brand img max-width = how wide the logo may grow, .burger span widths = hamburger line lengths.
+   ===================================================================== */
+@media(max-width:960px){
+ :root{--mbh:clamp(84px,22vw,108px)}
+
+ /* cream + gold band (same as desktop), always visible */
+ .bar,.bar.scrolled{height:var(--mbh);min-height:0;padding:0 var(--pad);
+  background:linear-gradient(180deg,rgba(252,246,234,.96),rgba(244,232,212,.94));
+  border-bottom:1px solid rgba(201,165,114,.6);
+  box-shadow:inset 0 -1px 0 rgba(255,255,255,.65),0 8px 22px rgba(60,40,10,.12);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%)}
+ .bar::after{display:none}
+
+ /* logo: dead centre, big and crisp */
+ .brand{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block;line-height:0;z-index:1}
+ .brand img{height:calc(var(--mbh) * .8);width:auto;max-width:56vw;object-fit:contain;filter:contrast(1.08) saturate(1.12)}
+
+ /* tools row fills the bar: hamburger far left, search + cart far right */
+ .tools{flex:1;display:flex;align-items:center;gap:clamp(14px,4.5vw,24px);color:#2b221b;text-shadow:none}
+ .tools svg.i{width:clamp(23px,6.2vw,28px);height:clamp(23px,6.2vw,28px);stroke-width:1.5}
+ .tools #accountBtn,.tools .nav-cta{display:none}
+ .burger{order:-1;margin-right:auto;margin-left:-8px;padding:8px;gap:6px;justify-items:start}
+ .burger span,.burger::after{display:block;height:1.8px;border-radius:2px;background:#2b221b}
+ .burger span{width:26px}
+ .burger span+span{width:17px}
+ .burger::after{content:"";width:22px}
+ .tools button:hover,.tools a:hover{color:#7f5420}
+ .cart span{top:-8px;right:-10px;width:18px;height:18px;background:#a8742a;color:#fff;font-weight:600}
+
+ /* dropdown menu opens under the hamburger (left side) in the same cream look */
+ .menu{right:auto;left:var(--pad);background:#faf3e4;border-color:rgba(201,165,114,.7);color:#2b221b;box-shadow:0 14px 30px rgba(60,40,10,.2)}
+ .menu a:hover{color:#7f5420}
+
+ /* search drop-down sits right under the taller header */
+ .sx{--sx-top:calc(var(--mbh) + 10px)}
+}
+@media(max-width:640px){
+ .sx{--sx-top:calc(var(--mbh) + 12px)}
+}
