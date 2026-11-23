@@ -355,6 +355,13 @@ html.sx-open *,html.sx-open *::before,html.sx-open *::after{animation-play-state
 .ct-item{flex:none;display:grid;grid-template-columns:84px minmax(0,1fr);gap:16px;padding:14px;border-radius:22px;background:#fffbf2;border:1px solid rgba(168,134,85,.35);box-shadow:0 8px 20px rgba(60,40,10,.08)}
 .ct-th{aspect-ratio:1;display:grid;place-items:center;padding:9px;border-radius:16px;background:#f6ecd9;border:1px solid rgba(168,134,85,.3)}
 .ct-th svg{height:100%;filter:drop-shadow(0 6px 6px rgba(60,40,10,.2))}
+/* CART PRODUCT IMAGE BOX (all screens): the box is a fixed size and never follows the picture or the text beside it.
+   The picture is taken out of the layout flow (absolute) and fitted inside the box, so every product sits in the same box, whatever its size or shape.
+   Quick tuning: --ct-th-w / --ct-th-h = box size (phones override it in the phone block further down), --ct-th-pad = space between the box edge and the picture (0 = picture touches the edges),
+   --ct-th-fit = cover (picture fills the whole box, any overflow is trimmed) or contain (whole picture always visible, may leave gaps). */
+.ct-item{--ct-th-w:84px;--ct-th-h:106px;--ct-th-pad:0px;--ct-th-fit:cover;align-items:start}
+.ct-item .ct-th{position:relative;display:block;box-sizing:border-box;width:var(--ct-th-w);height:var(--ct-th-h);min-height:var(--ct-th-h);aspect-ratio:auto;padding:0;overflow:hidden;align-self:start}
+.ct-item .ct-th img.watch{position:absolute;inset:var(--ct-th-pad);width:calc(100% - (var(--ct-th-pad) * 2));height:calc(100% - (var(--ct-th-pad) * 2));max-width:none;max-height:none;object-fit:var(--ct-th-fit);object-position:center}
 .ct-b{display:block;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ct-mute)}
 .ct-m{display:block;margin-top:2px;font-family:var(--serif);font-weight:600;font-size:20px;line-height:1.15}
 .ct-d{display:block;margin-top:2px;font-size:11.5px;color:var(--ct-mute)}
@@ -389,14 +396,19 @@ html.sx-open *,html.sx-open *::before,html.sx-open *::after{animation-play-state
 .ct-more{display:block;width:100%;margin-top:14px;text-align:center;font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#7f5420;transition:color .2s}
 .ct-more:hover{color:var(--ct-ink)}
 
-html.ct-open{overflow:hidden}
+html.ct-open,html.ct-open body{overflow:hidden}
+/* the cart list scrolls on its own and never passes the scroll on to the website behind it */
+.ct-body{overscroll-behavior:contain}
 
 @media(max-width:640px){
  .ct-panel{top:8px;right:8px;bottom:8px;left:8px;width:auto;border-radius:24px}
  .ct-head{padding:22px 20px 16px}
  .ct-body{padding:14px 16px}
  .ct-foot{padding:18px 20px calc(20px + env(safe-area-inset-bottom,0px))}
- .ct-item{grid-template-columns:72px minmax(0,1fr);gap:14px;padding:12px}
+ .ct-item{grid-template-columns:72px minmax(0,1fr);gap:14px;padding:12px;align-items:start}
+
+ /* cart image box size on phones (the shared rules are in the CART PRODUCT IMAGE BOX section above) */
+ .ct-item{--ct-th-w:72px;--ct-th-h:92px}
 }
 
 /* fly-to-cart: the copy of the watch that travels to the cart icon, and the little pop of the icon when it arrives */

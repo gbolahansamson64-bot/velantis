@@ -7,6 +7,8 @@
  import('https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.mjs').then(m=>{
   const Lenis=m.default;
   const lenis=new Lenis({duration:1.2,easing:t=>Math.min(1,1.001-Math.pow(2,-10*t)),smoothWheel:true});
+  window.lenis=lenis; /* header.js uses this to freeze the page scroll while the cart is open (lenis.stop() / lenis.start()) */
+  if(document.documentElement.classList.contains('ct-open'))lenis.stop();
   const raf=time=>{lenis.raf(time);requestAnimationFrame(raf)};
   requestAnimationFrame(raf);
   /* in-page links (#featured, #legacy, #top...) glide smoothly, keeping the 70px header gap */

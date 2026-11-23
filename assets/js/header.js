@@ -123,7 +123,7 @@
 
 <div class="ct" id="cartPanel" aria-hidden="true">
  <div class="ct-ov" id="ctOv"></div>
- <aside class="ct-panel" role="dialog" aria-modal="true" aria-labelledby="ctTitle">
+ <aside class="ct-panel" role="dialog" aria-modal="true" aria-labelledby="ctTitle" data-lenis-prevent>
   <div class="ct-head">
    <h2 id="ctTitle">Your <em>Cart</em><span class="ct-n" id="ctN">0</span></h2>
    <button type="button" class="ct-x" id="ctClose" aria-label="Close cart"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
@@ -410,6 +410,7 @@
    const sxEl=$('sx');if(sxEl&&sxEl.classList.contains('open'))$('sxClose').click(); /* never two panels at once */
    const acEl=$('ac');if(acEl&&acEl.classList.contains('open'))$('acClose').click();
    root.classList.add('ct-open');hold('cart');stopHands(); /* freeze slider autoplay + live hands while the cart is open */
+   if(window.lenis)window.lenis.stop(); /* freeze the page's smooth scroll: the website behind the cart cannot scroll while it is open (the cart panel itself scrolls normally, see data-lenis-prevent) */
    ct.classList.add('open');ct.setAttribute('aria-hidden','false');
    setTimeout(()=>$('ctClose').focus({preventScroll:true}),350);
   }
@@ -417,6 +418,7 @@
    if(!isOpen())return;
    ct.classList.remove('open');ct.setAttribute('aria-hidden','true');
    root.classList.remove('ct-open');release('cart');
+   if(window.lenis)window.lenis.start(); /* the page scrolls again once the cart is closed */
    resumeHands();
    if(opener&&opener.focus)opener.focus({preventScroll:true});
   }
