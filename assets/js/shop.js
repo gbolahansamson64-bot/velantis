@@ -126,7 +126,7 @@
  <div class="sh-pic">${badge}<button type="button" class="sh-fav" aria-pressed="${f}" aria-label="Save ${p.n}"><svg class="i" viewBox="0 0 24 24"><path d="M12 20s-8-5-8-11a4.5 4.5 0 018-2.5A4.5 4.5 0 0120 9c0 6-8 11-8 11z"/></svg></button>${pic(p)}</div>
  <div class="sh-info"><h3 class="sh-name">${p.n}</h3><p class="sh-desc">${desc}</p><b class="sh-price">${fmt(p.p)}</b><div class="sh-rate">${stars(p.r)}<span>(${p.v})</span></div>
   <button type="button" class="sh-add" aria-label="Add ${p.n} to cart"><svg class="i add-ic" viewBox="0 0 24 24"><path d="M2 3h3l2.6 12.2a1 1 0 001 .8h9.6a1 1 0 001-.8L21 7H6"/><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></svg><svg class="i ok" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button></div>
- </article></li>`;
+ <button type="button" class="sh-open" aria-label="View ${p.n} details" aria-haspopup="dialog"></button></article></li>`;
  };
 
  /* ---------- FILTER + SORT + RENDER ---------- */
@@ -373,6 +373,283 @@
   if('IntersectionObserver' in window)new IntersectionObserver(([e])=>{onScreen=e.isIntersecting;onScreen?start():stop()},{threshold:.2}).observe(B);
   else{onScreen=true;start()}
  })();
+
+ /* =====================================================================
+    PRODUCT POP-UP (quick view): opens when a shopper clicks a watch on the shop page.
+    Extra photos + a video for a watch go in DETAIL below (see the notes there). Everything else is built from the PRODUCTS list.
+    ===================================================================== */
+ const DETAIL={
+  /* Add one line per watch, using the same number as data-id in shop.html. Every key is optional:
+     imgs:   more photos            ['/products/classic-steel.png','/products/classic-steel-2.jpg']
+     video:  a video file           '/assets/video/classic-steel.mp4'      (poster: '/products/classic-steel-video.jpg' is optional)
+     old:    old price (number)     22000   -> shows it crossed out with the % off
+     colors: colour choices         [['silver','/products/a.png'],['black','/products/b.png'],['gold','/products/c.png']]  (picture is optional)
+     sizes:  case sizes             ['40mm','42mm','44mm']
+     desc / features / specs: your own words (specs is a list like [['Movement','Quartz']])
+     A file that is missing is skipped automatically (its small picture disappears). */
+  1:{imgs:[],video:'',poster:'',old:22000}
+ };
+ const SIZES=['40mm','42mm','44mm'],SIZE_DEFAULT='42mm';
+ const FEATURES=['Premium stainless steel build','Scratch-resistant glass','Water resistant design','Elegant and versatile'];
+ const STYLE_COPY={
+  classic:'A refined everyday classic with clean lines and a dial that reads at a glance.',
+  elegant:'Slim, polished and understated: made to sit under a cuff and still be noticed.',
+  sport:'Built for an active day, with a confident look that is just as sharp off the clock.',
+  bold:'A statement piece with real presence on the wrist, finished to the last detail.'
+ };
+ const SHIPPING=['Delivery fee and time are shown at checkout, based on your address.','Every watch is checked and packed in the Velantis gift box.','1 Year Warranty on every watch.','Need help with an order? Our support team is available 24/7.'];
+ const TRUST=[
+  ['1 Year','Warranty','<path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z"/>'],
+  ['Fast','Delivery','<path d="M2.5 6.5h11v9.5h-11zM13.5 9.5h4l3 3.3V16h-7"/><circle cx="7" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/>'],
+  ['24/7','Support','<path d="M4 14v-2a8 8 0 0116 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/>']
+ ];
+ const IC={
+  x:'<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  prev:'<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+  next:'<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>',
+  heart:'<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-8-5-8-11a4.5 4.5 0 018-2.5A4.5 4.5 0 0120 9c0 6-8 11-8 11z"/></svg>',
+  cart:'<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h3l2.6 12.2a1 1 0 001 .8h9.6a1 1 0 001-.8L21 7H6"/><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></svg>',
+  check:'<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  play:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>'
+ };
+ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+ const qv=document.createElement('div');
+ qv.className='qv';qv.id='qv';qv.hidden=true;
+ qv.innerHTML=`<div class="qv-ov" data-close></div>
+ <div class="qv-dialog" role="dialog" aria-modal="true" aria-labelledby="qvTitle" tabindex="-1">
+  <button type="button" class="qv-x" data-close aria-label="Close">${IC.x}</button>
+  <div class="qv-scroll" data-lenis-prevent id="qvBody"></div>
+  <div class="qv-foot" id="qvFoot"></div>
+ </div>`;
+ document.body.appendChild(qv);
+ const qvBody=qv.querySelector('#qvBody'),qvFoot=qv.querySelector('#qvFoot'),qvDialog=qv.querySelector('.qv-dialog');
+
+ let Q=null,qvOpener=null,qvLockY=0,qvInert=[],qvTimer=0;
+
+ const qvItems=p=>{
+  const d=DETAIL[p.id]||{},list=[];
+  const add=s=>{if(s&&!list.some(x=>x.src===s))list.push({t:'img',src:s})};
+  add(p.img);(d.imgs||[]).forEach(add);
+  if(!list.length)list.push({t:'drawn'});
+  if(d.video)list.push({t:'video',src:d.video,poster:d.poster||''});
+  return list;
+ };
+ const thumb=(it,n)=>{
+  let inner;
+  if(it.t==='img')inner=`<img src="${esc(it.src)}" alt="" loading="lazy" decoding="async">`;
+  else if(it.t==='video')inner=(it.poster?`<img src="${esc(it.poster)}" alt="" loading="lazy">`:`<video src="${esc(it.src)}#t=0.1" muted playsinline preload="metadata" tabindex="-1"></video>`)+`<span class="qv-play"><i>${IC.play}</i></span>`;
+  else inner=drawn(Q.p);
+  return `<button type="button" class="qv-th" data-i="${n}" aria-label="${it.t==='video'?'Play video':'Show photo '+(n+1)}" aria-current="${n===Q.i}">${inner}</button>`;
+ };
+ const stageHTML=it=>{
+  if(it.t==='video')return `<video class="qv-video" src="${esc(it.src)}" ${it.poster?`poster="${esc(it.poster)}"`:''} controls playsinline preload="metadata"></video>`;
+  if(it.t==='img')return `<img class="qv-img" data-round src="${esc(it.src)}" alt="${esc(Q.p.n)}" decoding="async">`;
+  return drawn(Q.p);
+ };
+
+ function qvBuild(p){
+  const d=DETAIL[p.id]||{};
+  const colors=(d.colors&&d.colors.length)?d.colors:[[p.c]];
+  const sizes=d.sizes||SIZES;
+  Q={p,i:0,items:qvItems(p),color:p.c,size:sizes.includes(SIZE_DEFAULT)?SIZE_DEFAULT:sizes[0],sizes,colors,d};
+  const off=d.old&&d.old>p.p?Math.round((1-p.p/d.old)*100):0;
+  const badge=p.b?`<span class="sh-badge ${p.b==='New'?'new':'best'}">${p.b}</span>`:'';
+  const multi=Q.items.length>1;
+  const sw=colors.map(c=>{const meta=COLORS.find(x=>x[0]===c[0])||[c[0],c[0],'#999'];return `<button type="button" class="qv-sw" data-c="${c[0]}" style="--c:${meta[2]}" aria-pressed="${c[0]===Q.color}" aria-label="${meta[1]}" title="${meta[1]}"></button>`}).join('');
+  const chips=sizes.map(s=>`<button type="button" class="qv-chip" data-s="${s}" aria-pressed="${s===Q.size}">${s}</button>`).join('');
+  const feats=(d.features||FEATURES).map(f=>`<li>${esc(f)}</li>`).join('');
+  const specRows=[['Style',LABEL[p.s]],['Gender',LABEL[p.g]],['Strap type',LABEL[p.t]],['Colour','<span id="qvSpC">'+LABEL[p.c]+'</span>'],['Case size','<span id="qvSpS">'+Q.size+'</span>'],['Warranty','1 Year']].concat((d.specs||[]).map(r=>[esc(r[0]),esc(r[1])]));
+  const specs=specRows.map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('');
+  qvBody.innerHTML=`<div class="qv-top">
+   <div class="qv-gal${multi?'':' single'}">
+    ${multi?`<div class="qv-thumbs" id="qvThumbs">${Q.items.map(thumb).join('')}</div>`:''}
+    <div class="qv-stage" id="qvStage">${badge}
+     <div class="qv-media" id="qvMedia"></div>
+     ${multi?`<button type="button" class="qv-nav prev" data-nav="-1" aria-label="Previous photo">${IC.prev}</button><button type="button" class="qv-nav next" data-nav="1" aria-label="Next photo">${IC.next}</button><span class="qv-count" id="qvCount"></span>`:''}
+    </div>
+   </div>
+   <div class="qv-info">
+    <h2 class="qv-title" id="qvTitle">${esc(p.n)}</h2>
+    <div class="qv-rate">${stars(p.r)}<span><b>${p.r.toFixed(1)}</b> (${p.v} reviews)</span></div>
+    <div class="qv-price"><b>${fmt(p.p)}</b>${off?`<s>${fmt(d.old)}</s><span class="qv-off">${off}% OFF</span>`:''}</div>
+    <p class="qv-lede">${esc(d.desc||`Timeless elegance meets modern craftsmanship. The ${p.n} is designed for those who value style, precision and durability in every moment.`)}</p>
+    <p class="qv-lbl">Colour: <span id="qvColL">${LABEL[p.c]}</span></p>
+    <div class="qv-sws" id="qvSws">${sw}</div>
+    <p class="qv-lbl">Size: <span id="qvSizeL">${Q.size}</span></p>
+    <div class="qv-chips" id="qvChips">${chips}</div>
+    <div class="qv-buy">${buyBtns()}</div>
+    <div class="qv-trust">${TRUST.map(t=>`<div><i><svg class="i" viewBox="0 0 24 24" aria-hidden="true">${t[2]}</svg></i><b>${t[0]}</b><span>${t[1]}</span></div>`).join('')}</div>
+   </div>
+  </div>
+  <div class="qv-more">
+   <div class="qv-tabs" role="tablist" aria-label="Product details">
+    <button type="button" class="qv-tab" role="tab" id="qt0" aria-controls="qp0" aria-selected="true" data-t="0">Description</button>
+    <button type="button" class="qv-tab" role="tab" id="qt1" aria-controls="qp1" aria-selected="false" data-t="1" tabindex="-1">Specifications</button>
+    <button type="button" class="qv-tab" role="tab" id="qt2" aria-controls="qp2" aria-selected="false" data-t="2" tabindex="-1">Shipping Info</button>
+    <button type="button" class="qv-tab" role="tab" id="qt3" aria-controls="qp3" aria-selected="false" data-t="3" tabindex="-1">Reviews (${p.v})</button>
+   </div>
+   <div class="qv-panel" role="tabpanel" id="qp0" aria-labelledby="qt0"><p>${esc(d.desc?d.desc:`The ${p.n} is a perfect blend of sophistication and performance. ${STYLE_COPY[p.s]}`)}</p><ul class="qv-list">${feats}</ul></div>
+   <div class="qv-panel" role="tabpanel" id="qp1" aria-labelledby="qt1" hidden><dl class="qv-specs">${specs}</dl></div>
+   <div class="qv-panel" role="tabpanel" id="qp2" aria-labelledby="qt2" hidden><ul class="qv-list one">${SHIPPING.map(s=>`<li>${esc(s)}</li>`).join('')}</ul></div>
+   <div class="qv-panel" role="tabpanel" id="qp3" aria-labelledby="qt3" hidden><div class="qv-rv"><b>${p.r.toFixed(1)}</b><div>${stars(p.r)}<p>Based on ${p.v} customer reviews</p></div></div></div>
+  </div>`;
+  qvFoot.innerHTML=`<div class="qv-foot-p"><small>Price</small><b>${fmt(p.p)}</b></div>${buyBtns()}`;
+  qvShow(0,false);qvFav();
+ }
+ const buyBtns=()=>`<button type="button" class="qv-add" data-act="add">${IC.cart}<span>Add to Cart</span></button><button type="button" class="qv-fav" data-act="fav" aria-pressed="false" aria-label="Save to wishlist">${IC.heart}</button>`;
+
+ /* show photo / video number n in the big place */
+ function qvShow(n,play){
+  const media=qv.querySelector('#qvMedia');if(!media||!Q)return;
+  media.querySelectorAll('video').forEach(v=>v.pause());
+  Q.i=(n+Q.items.length)%Q.items.length;
+  const it=Q.items[Q.i];
+  media.innerHTML=stageHTML(it);
+  qv.querySelector('#qvStage').classList.toggle('is-video',it.t==='video');
+  qv.querySelectorAll('.qv-th').forEach((b,k)=>{const on=k===Q.i;b.setAttribute('aria-current',on);if(on&&play!==false)b.scrollIntoView({block:'nearest',inline:'nearest'})});
+  const c=qv.querySelector('#qvCount');if(c)c.textContent=(Q.i+1)+' / '+Q.items.length;
+  const v=media.querySelector('video');
+  if(v){
+   v.addEventListener('error',()=>qvDrop(it),{once:true});
+   if(play!==false){const pr=v.play();if(pr&&pr.catch)pr.catch(()=>{})}
+  }
+  const im=media.querySelector('img.qv-img');
+  if(im)im.addEventListener('error',()=>qvDrop(it),{once:true});
+ }
+ /* a photo or video file that cannot be loaded is removed (its small picture too) instead of showing a broken icon */
+ function qvDrop(it){
+  if(!Q)return;const k=Q.items.indexOf(it);if(k<0)return;
+  if(Q.items.length===1){Q.items=[{t:'drawn'}];Q.i=0;qvRethumbs();qvShow(0,false);return}
+  Q.items.splice(k,1);
+  const n=Q.i>k?Q.i-1:Math.min(Q.i,Q.items.length-1);
+  qvRethumbs();qvShow(n,false);
+ }
+ function qvRethumbs(){
+  const box=qv.querySelector('#qvThumbs'),gal=qv.querySelector('.qv-gal');
+  if(Q.items.length<2){if(box)box.remove();gal.classList.add('single');qv.querySelectorAll('.qv-nav,.qv-count').forEach(e=>e.remove());return}
+  if(box)box.innerHTML=Q.items.map(thumb).join('');
+ }
+
+ function qvFav(){
+  if(!Q)return;const on=favs.has(Q.p.id);
+  qv.querySelectorAll('.qv-fav').forEach(b=>{b.setAttribute('aria-pressed',on);b.setAttribute('aria-label',on?'Remove from wishlist':'Save to wishlist')});
+ }
+
+ /* ---------- open / close ---------- */
+ function qvLock(){
+  qvLockY=window.scrollY||document.documentElement.scrollTop||0;
+  document.documentElement.style.setProperty('--qv-y',qvLockY+'px');
+  document.documentElement.classList.add('qv-lock');
+  qvInert=[...document.body.children].filter(el=>el!==qv&&!/^(SCRIPT|STYLE|LINK)$/.test(el.tagName)&&!el.inert);
+  qvInert.forEach(el=>{el.inert=true});
+  if(window.lenis)window.lenis.stop();
+ }
+ function qvUnlock(){
+  qvInert.forEach(el=>{el.inert=false});qvInert=[];
+  document.documentElement.classList.remove('qv-lock');
+  document.documentElement.style.removeProperty('--qv-y');
+  window.scrollTo({top:qvLockY,left:0,behavior:'instant'});
+  if(window.lenis)window.lenis.start();
+ }
+ const qvIsOpen=()=>qv.classList.contains('on');
+ function qvOpen(id,opener){
+  const p=PRODUCTS.find(x=>x.id===id);if(!p||qvIsOpen())return;
+  clearTimeout(qvTimer);qvOpener=opener||document.activeElement;
+  qvBuild(p);qvBody.scrollTop=0;
+  qv.hidden=false;void qv.offsetWidth;
+  qvLock();qv.classList.add('on');
+  qvDialog.focus({preventScroll:true});
+ }
+ function qvClose(){
+  if(!qvIsOpen())return;
+  qv.querySelectorAll('video').forEach(v=>v.pause());
+  qv.classList.remove('on');qvUnlock();
+  if(qvOpener&&qvOpener.focus)qvOpener.focus({preventScroll:true});
+  qvTimer=setTimeout(()=>{qv.hidden=true;qvBody.innerHTML='';qvFoot.innerHTML='';Q=null},reduce?0:340);
+ }
+
+ /* ---------- add to cart from the pop-up (same cart, same spinner and rate limit as the grid buttons) ---------- */
+ function qvAdd(btn){
+  if(!Q||adding||btn.disabled)return;
+  const p=Q.p;adding=true;
+  const label=btn.innerHTML;
+  qv.querySelectorAll('.qv-add').forEach(b=>{b.disabled=true;b.setAttribute('aria-busy','true')});
+  btn.innerHTML='<i class="spin" aria-hidden="true"></i><span>Adding…</span>';
+  const src=qv.querySelector('#qvMedia img.qv-img')||qv.querySelector('.qv-th img')||null; /* the picture that flies to the cart icon */
+  setTimeout(()=>{
+   if(window.Cart){
+    const proxy=document.createElement('div');
+    proxy.dataset.id='s'+p.id;proxy.dataset.brand='Velantis';proxy.dataset.model=p.n;
+    proxy.dataset.desc=`${LABEL[p.t]} strap | ${LABEL[Q.color]} | ${Q.size}`;proxy.dataset.price=p.p;
+    if(p.img)proxy.innerHTML=`<img class="watch" src="${esc(p.img)}" alt="">`;
+    window.Cart.add(proxy,src);
+   }
+   adding=false;
+   btn.innerHTML=IC.check+'<span>Added</span>';btn.classList.add('done');
+   setTimeout(()=>{qv.querySelectorAll('.qv-add').forEach(b=>{b.disabled=false;b.removeAttribute('aria-busy');b.classList.remove('done');b.innerHTML=label})},ADD_DELAY+500);
+  },ADD_DELAY);
+ }
+
+ /* ---------- events ---------- */
+ grid.addEventListener('click',e=>{
+  const o=e.target.closest('.sh-open');if(!o)return;
+  qvOpen(+o.closest('.sh-card').dataset.id.slice(1),o);
+ });
+ qv.addEventListener('click',e=>{
+  if(e.target.closest('[data-close]'))return qvClose();
+  const th=e.target.closest('.qv-th');if(th)return qvShow(+th.dataset.i);
+  const nav=e.target.closest('.qv-nav');if(nav)return qvShow(Q.i+ +nav.dataset.nav,false);
+  const sw=e.target.closest('.qv-sw');
+  if(sw){
+   Q.color=sw.dataset.c;
+   qv.querySelectorAll('.qv-sw').forEach(b=>b.setAttribute('aria-pressed',b===sw));
+   qv.querySelector('#qvColL').textContent=LABEL[Q.color];const sc=qv.querySelector('#qvSpC');if(sc)sc.textContent=LABEL[Q.color];
+   const pic=(Q.colors.find(c=>c[0]===Q.color)||[])[1]; /* a colour with its own picture swaps the first photo */
+   if(pic){const f=Q.items.findIndex(x=>x.t==='img'||x.t==='drawn');if(f>-1)Q.items[f]={t:'img',src:pic};qvRethumbs();qvShow(f>-1?f:0,false)}
+   return;
+  }
+  const ch=e.target.closest('.qv-chip');
+  if(ch){
+   Q.size=ch.dataset.s;
+   qv.querySelectorAll('.qv-chip').forEach(b=>b.setAttribute('aria-pressed',b===ch));
+   qv.querySelector('#qvSizeL').textContent=Q.size;const ss=qv.querySelector('#qvSpS');if(ss)ss.textContent=Q.size;
+   return;
+  }
+  const tab=e.target.closest('.qv-tab');
+  if(tab){
+   qv.querySelectorAll('.qv-tab').forEach(b=>{const on=b===tab;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});
+   qv.querySelectorAll('.qv-panel').forEach(pn=>{pn.hidden=pn.id!=='qp'+tab.dataset.t});
+   return;
+  }
+  const act=e.target.closest('[data-act]');
+  if(!act)return;
+  if(act.dataset.act==='add')return qvAdd(act);
+  if(act.dataset.act==='fav'){
+   const id=Q.p.id,on=!favs.has(id);on?favs.add(id):favs.delete(id);
+   saveFavs();showFavs();qvFav();
+   const g=grid.querySelector('.sh-card[data-id="s'+id+'"] .sh-fav');if(g)g.setAttribute('aria-pressed',on);
+  }
+ });
+ document.addEventListener('keydown',e=>{
+  if(!qvIsOpen())return;
+  if(e.key==='Escape'){e.preventDefault();qvClose()}
+  else if((e.key==='ArrowLeft'||e.key==='ArrowRight')&&Q&&Q.items.length>1&&!e.target.closest('video,.qv-tabs')){qvShow(Q.i+(e.key==='ArrowRight'?1:-1),false)}
+ });
+ /* a small picture whose file is missing is removed too */
+ qv.addEventListener('error',e=>{
+  const b=e.target.closest&&e.target.closest('.qv-th');if(!b||!Q)return;
+  const it=Q.items[+b.dataset.i];if(it&&it.t!=='drawn')qvDrop(it);
+ },true);
+ /* swipe the big picture left / right on a phone */
+ let tx=0,ty=0,tOn=false;
+ qv.addEventListener('touchstart',e=>{const m=e.target.closest('.qv-media');tOn=!!m&&!e.target.closest('video')&&e.touches.length===1;if(tOn){tx=e.touches[0].clientX;ty=e.touches[0].clientY}},{passive:true});
+ qv.addEventListener('touchend',e=>{
+  if(!tOn||!Q)return;tOn=false;
+  const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.4)qvShow(Q.i+(dx<0?1:-1),false);
+ },{passive:true});
+ /* if the wishlist heart is used on the grid while the pop-up exists, nothing to sync (the pop-up is closed then) */
 
  /* ---------- START ---------- */
  DESKTOP.addEventListener('change',change); /* page size changes when the window crosses the desktop width */
