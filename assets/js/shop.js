@@ -255,12 +255,70 @@
  const mq=matchMedia('(max-width:960px)');
  const isOpen=()=>filters.classList.contains('open');
  const syncInert=()=>{filters.inert=mq.matches&&!isOpen()};
+ /* While the panel is open: freeze the page behind it (iOS-safe), make everything else inert, and swallow scroll gestures outside the panel */
+ let lockY=0,inerted=[];
+ function lockPage(){
+  lockY=window.scrollY||document.documentElement.scrollTop||0;
+  document.documentElement.style.setProperty('--sh-y',lockY+'px');
+  document.documentElement.classList.add('sh-lock');
+  inerted=[];let n=filters;
+  while(n&&n!==document.body){
+   const par=n.parentElement;
+   if(par)[...par.children].forEach(sib=>{
+    if(sib===n||sib===ov||/^(SCRIPT|STYLE|LINK)$/.test(sib.tagName)||sib.inert)return;
+    sib.inert=true;inerted.push(sib);
+   });
+   n=par;
+  }
+ }
+ function unlockPage(){
+  inerted.forEach(el=>{el.inert=false});inerted=[];
+  document.documentElement.classList.remove('sh-lock');
+  document.documentElement.style.removeProperty('--sh-y');
+  window.scrollTo({top:lockY,left:0,behavior:'instant'});
+ }
  function panel(open,focus){
+  if(open===isOpen())return;
   filters.classList.toggle('open',open);ov.classList.toggle('on',open);
-  document.documentElement.classList.toggle('sh-lock',open);
+  if(open)lockPage();else unlockPage();
   fToggle.setAttribute('aria-expanded',open);syncInert();
   if(focus!==false)(open?$('#shFClose'):fToggle).focus({preventScroll:true});
  }
+ const blockOutside=e=>{if(isOpen()&&!filters.contains(e.target)){e.preventDefault();e.stopImmediatePropagation()}};
+ window.addEventListener('wheel',blockOutside,{passive:false,capture:true});
+ window.addEventListener('touchmove',blockOutside,{passive:false,capture:true});
+
+ /* swipe the panel back to the left to close it */
+ let sx=0,sy=0,sdx=0,sT=0,swiping=false,tracking=false;
+ function swStart(e){
+  if(!isOpen()||e.touches.length!==1||e.target.closest('input[type=range]')){tracking=false;return}
+  tracking=true;swiping=false;sx=e.touches[0].clientX;sy=e.touches[0].clientY;sdx=0;sT=Date.now();
+ }
+ function swMove(e){
+  if(!tracking)return;
+  const dx=e.touches[0].clientX-sx,dy=e.touches[0].clientY-sy;
+  if(!swiping){
+   if(Math.abs(dy)>10&&Math.abs(dy)>Math.abs(dx)){tracking=false;return}
+   if(dx<-10&&Math.abs(dx)>Math.abs(dy)){swiping=true;filters.classList.add('drag')}else return;
+  }
+  sdx=Math.min(0,dx);
+  filters.style.transform='translateX('+sdx+'px)';
+  ov.style.opacity=Math.max(0,1-Math.abs(sdx)/filters.offsetWidth);
+ }
+ function swEnd(){
+  if(!tracking)return;tracking=false;
+  if(!swiping)return;swiping=false;
+  const fast=Math.abs(sdx)/Math.max(1,Date.now()-sT)>0.5;
+  const shouldClose=Math.abs(sdx)>filters.offsetWidth*0.3||fast;
+  filters.classList.remove('drag');filters.style.transform='';ov.style.opacity='';
+  if(shouldClose)panel(false,false);
+ }
+ [filters,ov].forEach(el=>{
+  el.addEventListener('touchstart',swStart,{passive:true});
+  el.addEventListener('touchmove',swMove,{passive:true});
+  el.addEventListener('touchend',swEnd,{passive:true});
+  el.addEventListener('touchcancel',swEnd,{passive:true});
+ });
  fToggle.addEventListener('click',()=>panel(!isOpen()));
  $('#shFClose').addEventListener('click',()=>panel(false));
  $('#shApply').addEventListener('click',()=>{panel(false);results.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'})});

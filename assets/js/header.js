@@ -125,7 +125,7 @@
  <div class="ct-ov" id="ctOv"></div>
  <aside class="ct-panel" role="dialog" aria-modal="true" aria-labelledby="ctTitle" data-lenis-prevent>
   <div class="ct-head">
-   <h2 id="ctTitle">Your <em>Cart</em><span class="ct-n" id="ctN">0</span></h2>
+   <h2 id="ctTitle">My bag<span class="ct-n" id="ctN">0</span></h2>
    <button type="button" class="ct-x" id="ctClose" aria-label="Close cart"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   </div>
   <div class="ct-bar"><button type="button" class="ct-clear" id="ctClear" aria-label="Remove every watch from the cart"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg><span>Clear cart</span></button></div>

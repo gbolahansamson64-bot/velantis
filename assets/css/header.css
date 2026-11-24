@@ -341,9 +341,13 @@ html.sx-open *,html.sx-open *::before,html.sx-open *::after{animation-play-state
 .ct.open .ct-panel{transform:none;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
 
 .ct-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:26px 28px 20px;border-bottom:1px solid var(--ct-line)}
-.ct-head h2{display:flex;align-items:center;gap:12px;font-size:clamp(30px,2.4vw,36px);font-weight:600;line-height:1;letter-spacing:.04em;text-transform:uppercase}
+/* CART TITLE ("My bag (3)"): --ct-title-font = title font. Swap it for var(--sans) (Jost) or var(--serif) (Cormorant) to try another look. */
+.ct{--ct-title-font:Georgia,'Times New Roman',Times,serif}
+.ct-head h2{display:flex;align-items:baseline;gap:8px;font-family:var(--ct-title-font);font-size:clamp(24px,2vw,28px);font-weight:700;line-height:1.1;letter-spacing:0;text-transform:none}
 .ct-head em{font-style:italic;color:#9a7340}
-.ct-n{display:grid;place-items:center;min-width:26px;height:26px;padding:0 7px;border-radius:13px;background:#1c100b;color:#e6c98f;font:600 12px/1 var(--sans);letter-spacing:0}
+.ct-n{display:inline;min-width:0;height:auto;padding:0;border-radius:0;background:none;color:var(--ct-mute);font:400 14px/1 var(--sans);letter-spacing:0}
+.ct-n::before{content:"("}
+.ct-n::after{content:")"}
 .ct.empty .ct-n{display:none}
 .ct-x{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:var(--ct-ink);background:linear-gradient(180deg,#fcf6ea,#f1e3cc);
  border:1.5px solid var(--ct-gold);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 6px 14px rgba(30,17,8,.18);transition:background .2s,color .2s}

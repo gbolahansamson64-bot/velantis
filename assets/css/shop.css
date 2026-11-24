@@ -209,7 +209,10 @@ body{background:var(--bg)}
  .sh-fapply{z-index:0;isolation:isolate}
  .sh-ov{display:block;position:fixed;inset:0;z-index:149;background:rgba(20,12,6,.5);opacity:0;pointer-events:none;transition:opacity .3s}
  .sh-ov.on{opacity:1;pointer-events:auto}
- html.sh-lock{overflow:hidden}
+ html.sh-lock{overflow:hidden;overscroll-behavior:none}
+ html.sh-lock body{position:fixed;left:0;right:0;width:100%;top:calc(-1 * var(--sh-y,0px));overflow:hidden}
+ .sh-ov{touch-action:none}
+ .sh-filters.drag{transition:none}
  .sh-nl-box{grid-template-columns:minmax(0,1fr)}
 }
 @media(max-width:960px){
