@@ -389,6 +389,16 @@
      A file that is missing is skipped automatically (its small picture disappears). */
   1:{imgs:[],video:'',poster:'',old:22000}
  };
+ /* TEMPORARY PLACEHOLDERS: gives every watch two other watch pictures so you can see how the gallery looks.
+    DELETE this whole block when the admin dashboard supplies the real pictures. */
+ (()=>{
+  const all=[...new Set(PRODUCTS.map(p=>p.img).filter(Boolean))];
+  PRODUCTS.forEach(p=>{
+   if(DETAIL[p.id]&&DETAIL[p.id].imgs&&DETAIL[p.id].imgs.length)return; /* a watch you filled in by hand keeps its own pictures */
+   const others=all.filter(s=>s!==p.img),i=p.id%others.length;
+   DETAIL[p.id]=Object.assign({},DETAIL[p.id],{imgs:[others[i],others[(i+3)%others.length]]});
+  });
+ })();
  const SIZES=['40mm','42mm','44mm'],SIZE_DEFAULT='42mm';
  const FEATURES=['Premium stainless steel build','Scratch-resistant glass','Water resistant design','Elegant and versatile'];
  const STYLE_COPY={
@@ -650,6 +660,46 @@
   if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.4)qvShow(Q.i+(dx<0?1:-1),false);
  },{passive:true});
  /* if the wishlist heart is used on the grid while the pop-up exists, nothing to sync (the pop-up is closed then) */
+
+ /* ---------- SWIPE DOWN TO CLOSE (phone sheet) ----------
+    Drag the sheet down from its top edge, or from anywhere while its content is scrolled to the top. The sheet follows your finger.
+    Let go past CLOSE_DRAG pixels (or flick it down quickly) and it closes; let go sooner and it springs back. Desktop is not affected. */
+ const SHEET=matchMedia('(max-width:780px)'),CLOSE_DRAG=110,qvOv=qv.querySelector('.qv-ov');
+ let dx0=0,dy0=0,dY=0,dT=0,dTop=false,dOn=false,dTrack=false;
+ qv.addEventListener('touchstart',e=>{
+  dTrack=false;dOn=false;
+  if(!SHEET.matches||!qvIsOpen()||e.touches.length!==1)return;
+  if(e.target.closest('video,input'))return;
+  const t=e.touches[0];
+  dTop=t.clientY-qvDialog.getBoundingClientRect().top<56; /* the handle / close-button strip at the top always pulls the sheet */
+  if(!dTop&&qvBody.scrollTop>0)return; /* content is scrolled down: the finger scrolls it instead */
+  dTrack=true;dx0=t.clientX;dy0=t.clientY;dY=0;dT=Date.now();
+ },{passive:true});
+ qv.addEventListener('touchmove',e=>{
+  if(!dTrack)return;
+  const t=e.touches[0],dx=t.clientX-dx0,dy=t.clientY-dy0;
+  if(!dOn){
+   if(Math.abs(dx)>8&&Math.abs(dx)>Math.abs(dy)){dTrack=false;return} /* sideways: photo swipe or the small pictures row */
+   if(dy<-6){dTrack=false;return} /* upwards: normal scrolling */
+   if(dy<8)return;
+   if(!dTop&&qvBody.scrollTop>0){dTrack=false;return}
+   dOn=true;qvDialog.style.transition='none';
+  }
+  e.preventDefault();
+  dY=Math.max(0,dy);
+  qvDialog.style.transform='translateY('+dY+'px)';
+  qvOv.style.opacity=Math.max(.15,1-dY/(qvDialog.offsetHeight*.9));
+ },{passive:false});
+ const dEnd=()=>{
+  dTrack=false;
+  if(!dOn)return;
+  dOn=false;
+  const fast=dY/Math.max(1,Date.now()-dT)>0.6;
+  qvDialog.style.transition='';qvDialog.style.transform='';qvOv.style.opacity='';
+  if(dY>CLOSE_DRAG||(fast&&dY>40))qvClose(); /* closes from where the finger let go */
+ };
+ qv.addEventListener('touchend',dEnd,{passive:true});
+ qv.addEventListener('touchcancel',dEnd,{passive:true});
 
  /* ---------- START ---------- */
  DESKTOP.addEventListener('change',change); /* page size changes when the window crosses the desktop width */
