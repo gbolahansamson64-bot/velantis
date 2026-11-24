@@ -252,3 +252,12 @@ body{background:var(--bg)}
  .sh-nl-form.bad{animation:none}
 }
 .sh-grid[hidden]{display:none}
+
+/* ADD TO CART loading spinner (shown while the rate limit delay runs, see ADD_DELAY in shop.js) */
+.sh-add .spin{grid-area:1/1;width:16px;height:16px;border-radius:50%;border:2px solid rgba(43,29,10,.25);border-top-color:#2b1d0a;animation:addSpin .7s linear infinite}
+.sh-add:disabled{cursor:default}
+.sh-add.loading,.sh-add.loading:hover,.sh-add.done:hover{transform:none;filter:none}
+
+/* WISHLIST HEART (shop): its own round cream background so it stays visible on any product photo background */
+.sh-fav{z-index:3;background:rgba(255,253,248,.94);border:1px solid rgba(168,134,85,.35);box-shadow:0 3px 10px rgba(60,40,10,.18);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);transition:background .2s,box-shadow .2s,transform .2s}
+.sh-fav:hover{background:#fff;box-shadow:0 5px 14px rgba(60,40,10,.26);transform:scale(1.06)}

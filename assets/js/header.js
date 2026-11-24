@@ -128,9 +128,10 @@
    <h2 id="ctTitle">Your <em>Cart</em><span class="ct-n" id="ctN">0</span></h2>
    <button type="button" class="ct-x" id="ctClose" aria-label="Close cart"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   </div>
+  <div class="ct-bar"><button type="button" class="ct-clear" id="ctClear" aria-label="Remove every watch from the cart"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg><span>Clear cart</span></button></div>
   <div class="ct-body" id="ctBody"></div>
   <div class="ct-foot">
-   <div class="ct-sub"><span>Subtotal</span><b id="ctTotal">$0</b></div>
+   <div class="ct-sub"><span>Subtotal</span><b id="ctTotal">₦0</b></div>
    <p class="ct-note">Delivery and payment are chosen at checkout.</p>
    <button type="button" class="ct-go" id="ctGo"><span>Checkout</span><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
    <button type="button" class="ct-more" data-a="shop">Continue shopping</button>
@@ -340,7 +341,7 @@
     CURRENCY is the only place the money symbol is set. Hook your real checkout at the "checkout" line.
     The product cards call window.Cart.add(card,picture); other pages can call window.Cart.open() / close(). */
  (()=>{
-  const ct=$('cartPanel'),body=$('ctBody'),KEY='velantis_cart',CURRENCY='$',MAX=10;
+  const ct=$('cartPanel'),body=$('ctBody'),KEY='velantis_cart',CURRENCY='₦',MAX=10;
   if(!ct)return;
   let items=[],opener=null;
   try{items=JSON.parse(localStorage.getItem(KEY)||'[]').filter(i=>i&&i.id!=null&&i.b&&i.q>0&&i.p>=0)}catch(e){items=[]}
@@ -438,6 +439,18 @@
    if(a==='dec')it.q-=1;
    if(a==='rm'||it.q<1)items=items.filter(i=>i.id!==id);
    save();render();
+  });
+  /* CLEAR CART: removes every watch at once. The first tap only arms the button ("Tap again to clear"), a second tap within CLEAR_WAIT ms empties the cart,
+     so one accidental tap can never wipe it. Change CLEAR_WAIT (milliseconds) to give more or less time. */
+  const CLEAR_WAIT=3000,clr=$('ctClear'),clrTxt=clr.querySelector('span');let clrT=null;
+  const disarm=()=>{clearTimeout(clrT);clrT=null;clr.classList.remove('confirm');clrTxt.textContent='Clear cart';clr.setAttribute('aria-label','Remove every watch from the cart')};
+  clr.addEventListener('click',()=>{
+   if(!items.length)return;
+   if(!clr.classList.contains('confirm')){
+    clr.classList.add('confirm');clrTxt.textContent='Tap again to clear';clr.setAttribute('aria-label','Confirm: remove every watch from the cart');
+    clrT=setTimeout(disarm,CLEAR_WAIT);return;
+   }
+   disarm();items=[];save();render(); /* if you connect a database, send the "empty the cart" request here */
   });
   ct.querySelector('.ct-more').addEventListener('click',()=>{close();goShop()});
   $('ctGo').addEventListener('click',()=>{

@@ -9,7 +9,7 @@ let adding=false;
 const CHECK='<svg class="i" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 track.addEventListener('click',e=>{
  const f=e.target.closest('.fav');if(f)f.setAttribute('aria-pressed',f.getAttribute('aria-pressed')!=='true');
- const a=e.target.closest('.add');
+ const a=e.target.closest('button.add'); /* the "Shop now" links are <a class="add">: they just open shop.html, so they are skipped here */
  if(a){
   if(adding||a.disabled)return;
   const card=a.closest('.card'),pic=card.querySelector('.watch');

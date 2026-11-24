@@ -215,14 +215,28 @@
  });
 
  /* ---------- HEARTS + ADD TO CART ---------- */
+ /* ADD TO CART LOADING + RATE LIMIT (same as the old home page button): after a click the button shows a spinner for ADD_DELAY ms, then the watch is added.
+    While it is loading, every Add to cart button ignores clicks, so fast repeated clicks can never fire many requests.
+    Change ADD_DELAY (milliseconds) to make the loading shorter or longer. */
+ const ADD_DELAY=900;
+ let adding=false;
  const favBadge=$('#navFavCount');
  function showFavs(){if(!favBadge)return;favBadge.textContent=favs.size;favBadge.hidden=!favs.size}
  grid.addEventListener('click',e=>{
   const add=e.target.closest('.sh-add');
   if(add){
-   const c=add.closest('.sh-card');
-   if(window.Cart)window.Cart.add(c,c.querySelector('.sh-img,.sh-w')); /* same cart as the home page */
-   add.classList.add('done');clearTimeout(add._t);add._t=setTimeout(()=>add.classList.remove('done'),1400);
+   if(adding||add.disabled)return; /* RATE LIMIT: while one add is loading, every Add to cart button ignores clicks */
+   const c=add.closest('.sh-card'),pic=c.querySelector('.sh-img,.sh-w');
+   adding=true;const html=add.innerHTML;
+   clearTimeout(add._t);add.classList.remove('done');
+   add.disabled=true;add.setAttribute('aria-busy','true');add.classList.add('loading');
+   add.innerHTML='<i class="spin" aria-hidden="true"></i>';
+   setTimeout(()=>{
+    if(window.Cart)window.Cart.add(c,pic); /* same cart as the home page. The real add happens here, once, after the loading time. If you connect a database, send the request here. */
+    adding=false;
+    add.classList.remove('loading');add.innerHTML=html;add.classList.add('done');
+    add._t=setTimeout(()=>{add.classList.remove('done');add.disabled=false;add.removeAttribute('aria-busy')},ADD_DELAY+500);
+   },ADD_DELAY);
    return;
   }
   const fav=e.target.closest('.sh-fav');

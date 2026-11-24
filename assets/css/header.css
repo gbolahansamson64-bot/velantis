@@ -329,7 +329,7 @@ html.sx-open *,html.sx-open *::before,html.sx-open *::after{animation-play-state
    Cream + gold, same look as the search bar and account panel. Slides in from the right (a bottom-aligned sheet on phones).
    Quick tuning: --ct-w = panel width, --ct-dim = page darkening, --ct-gold = border colour.
    ===================================================================== */
-.ct{--ct-w:440px;--ct-dim:rgba(20,12,6,.45);--ct-gold:#d4b27c;--ct-ink:#2b221b;--ct-mute:#6f6252;--ct-line:rgba(168,134,85,.32);
+.ct{font-family:var(--sans);--ct-w:440px;--ct-dim:rgba(20,12,6,.45);--ct-gold:#d4b27c;--ct-ink:#2b221b;--ct-mute:#6f6252;--ct-line:rgba(168,134,85,.32);
  position:fixed;inset:0;z-index:250;visibility:hidden;pointer-events:none;transition:visibility 0s linear .5s}
 .ct.open{visibility:visible;pointer-events:auto;transition-delay:0s}
 .ct-ov{position:absolute;inset:0;background:var(--ct-dim);opacity:0;cursor:pointer;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);transition:opacity .4s ease}
@@ -363,7 +363,7 @@ html.sx-open *,html.sx-open *::before,html.sx-open *::after{animation-play-state
 .ct-item .ct-th{position:relative;display:block;box-sizing:border-box;width:var(--ct-th-w);height:var(--ct-th-h);min-height:var(--ct-th-h);aspect-ratio:auto;padding:0;overflow:hidden;align-self:start}
 .ct-item .ct-th img.watch{position:absolute;inset:var(--ct-th-pad);width:calc(100% - (var(--ct-th-pad) * 2));height:calc(100% - (var(--ct-th-pad) * 2));max-width:none;max-height:none;object-fit:var(--ct-th-fit);object-position:center}
 .ct-b{display:block;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ct-mute)}
-.ct-m{display:block;margin-top:2px;font-family:var(--serif);font-weight:600;font-size:20px;line-height:1.15}
+.ct-m{display:block;margin-top:2px;font-family:var(--sans);font-weight:500;font-size:16px;line-height:1.25;letter-spacing:.01em}
 .ct-d{display:block;margin-top:2px;font-size:11.5px;color:var(--ct-mute)}
 .ct-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
 .ct-q{display:inline-flex;align-items:center;gap:2px;height:36px;padding:0 4px;border-radius:999px;background:#f1e3cc}
@@ -371,9 +371,9 @@ html.sx-open *,html.sx-open *::before,html.sx-open *::after{animation-play-state
 .ct-q button:hover{filter:brightness(1.5)}
 .ct-q span{min-width:24px;text-align:center;font-size:13px;font-weight:500}
 .ct-p{font-size:15px;font-weight:500}
-.ct-rm{flex:none;width:34px;height:34px;display:grid;place-items:center;border-radius:50%;border:1.5px solid rgba(179,64,47,.35);background:#fdecea;color:#b3402f;transition:background .2s,color .2s,border-color .2s}
+.ct-rm{flex:none;width:34px;height:34px;display:grid;place-items:center;border-radius:50%;border:1.5px solid rgba(168,134,85,.45);background:#f6ecd9;color:#7f5420;transition:background .2s,color .2s,border-color .2s}
 .ct-rm svg{width:17px;height:17px;stroke-width:1.5}
-.ct-rm:hover{background:#b3402f;border-color:#b3402f;color:#fff}
+.ct-rm:hover{background:#1c100b;border-color:#1c100b;color:#f6ead2}
 
 .ct-empty{display:grid;justify-items:center;gap:10px;padding:72px 8px 24px;text-align:center}
 .ct-empty-ic{display:grid;place-items:center;width:76px;height:76px;margin-bottom:8px;border-radius:50%;border:1.5px solid var(--ct-gold);background:#fcf6ea;color:#9a7340}
@@ -385,7 +385,7 @@ html.sx-open *,html.sx-open *::before,html.sx-open *::after{animation-play-state
 .ct-foot{padding:20px 28px calc(24px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--ct-line);background:rgba(255,252,245,.45)}
 .ct.empty .ct-foot{display:none}
 .ct-sub{display:flex;align-items:baseline;justify-content:space-between;font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:#5d4d3a}
-.ct-sub b{font-family:var(--serif);font-weight:600;font-size:30px;letter-spacing:0;color:var(--ct-ink)}
+.ct-sub b{font-family:var(--sans);font-weight:500;font-size:26px;letter-spacing:0;color:var(--ct-ink)}
 .ct-note{margin:4px 0 18px;font-size:11.5px;color:var(--ct-mute)}
 .ct-go{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;height:56px;border-radius:999px;color:#f6ead2;
  background:linear-gradient(180deg,#3b281a,#120a06);box-shadow:inset 0 0 0 1px rgba(214,176,116,.45),0 8px 18px rgba(30,17,8,.25);
@@ -479,3 +479,12 @@ html.ct-open,html.ct-open body{overflow:hidden}
    the search bar gets every drag so it can be swiped up. Touch screens only. */
 .ct-panel,.ct-ov{touch-action:pan-y}
 .sx{touch-action:none}
+
+/* CLEAR CART button: a slim row under the cart title, right-aligned. Hidden when the cart is empty. Gold/espresso = same colours as the single-item remove button and the rest of the cart. */
+.ct-bar{display:flex;justify-content:flex-end;padding:12px 28px 0}
+.ct.empty .ct-bar{display:none}
+.ct-clear{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:999px;border:1.5px solid rgba(168,134,85,.45);background:#f6ecd9;color:#7f5420;
+ font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.ct-clear svg{width:15px;height:15px;stroke-width:1.6;flex:none}
+.ct-clear:hover,.ct-clear.confirm{background:#1c100b;border-color:#1c100b;color:#f6ead2}
+@media(max-width:640px){.ct-bar{padding:10px 20px 0}}
