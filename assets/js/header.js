@@ -368,10 +368,13 @@
    const btn=document.querySelector('.cart');
    if(!src||!btn||reduce||!src.getBoundingClientRect||!Element.prototype.animate)return false;
    if(src.tagName==='IMG'&&!src.getAttribute('src'))return false; /* empty image slot: nothing to fly */
-   const r=src.getBoundingClientRect(),t=btn.getBoundingClientRect();
+   let r=src.getBoundingClientRect();const t=btn.getBoundingClientRect();
    if(!r.width||!r.height||!t.width)return false;
+   /* A product photo that already has its own background (the shop photos, class sh-img) flies as a ROUND picture: a circle cut from the middle of the photo, so it does not travel as a square. Cut-out watches (no background) fly exactly as before. To make any other picture fly round, give it class sh-img or the attribute data-round. */
+   const round=!!(src.classList&&src.classList.contains('sh-img'))||!!(src.hasAttribute&&src.hasAttribute('data-round'));
+   if(round){const side=Math.min(r.width,r.height);r={left:r.left+(r.width-side)/2,top:r.top+(r.height-side)/2,width:side,height:side}}
    const el=document.createElement('div');
-   el.className='ct-fly';
+   el.className='ct-fly'+(round?' ct-round':'');
    el.style.cssText='left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px';
    el.appendChild(src.cloneNode(true));
    document.body.appendChild(el);
@@ -613,4 +616,15 @@
  };
  const go=()=>(window.requestIdleCallback||(f=>setTimeout(f,1500)))(run);
  document.readyState==='complete'?go():window.addEventListener('load',go,{once:true});
+})();
+
+/* ---------- PHONE STATUS BAR COLOUR ----------
+   On phones and tablets the header is a cream band, so the phone's own top strip (clock, battery, notch area) takes the same cream colour
+   instead of the dark colour the pages set in <meta name="theme-color">. On desktop the original dark colour is kept.
+   Change PHONE_TOP to match the header band if you ever change its colour in header.css. */
+(()=>{
+ const PHONE_TOP='#fcf6ea',m=document.querySelector('meta[name="theme-color"]');if(!m||!matchMedia)return;
+ const mq=matchMedia('(max-width:960px)'),dark=m.getAttribute('content');
+ const sync=()=>m.setAttribute('content',mq.matches?PHONE_TOP:dark);
+ sync();mq.addEventListener?mq.addEventListener('change',sync):mq.addListener(sync);
 })();

@@ -21,8 +21,9 @@
  /* ---------- SETTINGS ---------- */
  const CURRENCY='₦',PRICE_MIN=10000,PRICE_MAX=100000; /* at PRICE_MAX the price filter has no upper limit */
  const DESKTOP=matchMedia('(min-width:961px)');
+ const WIDE=matchMedia('(min-width:1200px)'); /* wide desktop: the grid is 4 columns here */
  const PHONE=matchMedia('(max-width:780px)'); /* phone width: the grid is 2 columns here */
- const pageSize=()=>DESKTOP.matches?9:PHONE.matches?8:12; /* products per page: 9 on desktop, 8 on phone (4 even rows of 2), 12 on tablet (4 even rows of 3) */
+ const pageSize=()=>WIDE.matches?12:DESKTOP.matches?9:PHONE.matches?8:12; /* products per page: 12 on wide desktop (3 even rows of 4), 9 on smaller desktop (3 rows of 3), 8 on phone (4 even rows of 2), 12 on tablet (4 even rows of 3) */
  const fmt=n=>CURRENCY+n.toLocaleString('en-US');
 
  /* ---------- PRODUCT PICTURES ----------
@@ -124,7 +125,7 @@
   return `<li><article class="sh-card" data-id="s${p.id}" data-brand="Velantis" data-model="${p.n}" data-desc="${desc}" data-price="${p.p}">
  <div class="sh-pic">${badge}<button type="button" class="sh-fav" aria-pressed="${f}" aria-label="Save ${p.n}"><svg class="i" viewBox="0 0 24 24"><path d="M12 20s-8-5-8-11a4.5 4.5 0 018-2.5A4.5 4.5 0 0120 9c0 6-8 11-8 11z"/></svg></button>${pic(p)}</div>
  <div class="sh-info"><h3 class="sh-name">${p.n}</h3><p class="sh-desc">${desc}</p><b class="sh-price">${fmt(p.p)}</b><div class="sh-rate">${stars(p.r)}<span>(${p.v})</span></div>
-  <button type="button" class="sh-add" aria-label="Add ${p.n} to cart"><svg class="i cart" viewBox="0 0 24 24"><path d="M2 3h3l2.6 12.2a1 1 0 001 .8h9.6a1 1 0 001-.8L21 7H6"/><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></svg><svg class="i ok" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button></div>
+  <button type="button" class="sh-add" aria-label="Add ${p.n} to cart"><svg class="i add-ic" viewBox="0 0 24 24"><path d="M2 3h3l2.6 12.2a1 1 0 001 .8h9.6a1 1 0 001-.8L21 7H6"/><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></svg><svg class="i ok" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button></div>
  </article></li>`;
  };
 
@@ -303,6 +304,7 @@
 
  /* ---------- START ---------- */
  DESKTOP.addEventListener('change',change); /* page size changes when the window crosses the desktop width */
+ WIDE.addEventListener('change',change); /* ...and when it crosses the wide desktop width (4 columns) */
  PHONE.addEventListener('change',change); /* ...and when it crosses the phone width */
  syncRange();showFavs();syncInert();render();
 })();

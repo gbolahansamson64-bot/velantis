@@ -419,6 +419,9 @@ html.ct-open,html.ct-open body{overflow:hidden}
 @keyframes cartPop{0%{transform:scale(1)}40%{transform:scale(1.3)}100%{transform:scale(1)}}
 .ct-th img.watch{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 6px 6px rgba(60,40,10,.2))}
 .ct-fly img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 12px 16px rgba(40,25,5,.4))}
+/* round flight for photos that have their own background: circle crop + a soft ring and shadow */
+.ct-fly.ct-round{border-radius:50%;overflow:hidden;box-shadow:0 0 0 2px rgba(255,255,255,.85),0 10px 22px rgba(40,25,5,.38)}
+.ct-fly.ct-round img{object-fit:cover}
 .ct-th img.watch:not([src]){visibility:hidden}
 
 /* HEADER FLICKER FIX (when adding to cart): keep the header on its own layer and make the flying watch cheaper to draw */
@@ -433,10 +436,12 @@ html.ct-open,html.ct-open body{overflow:hidden}
    .brand img max-width = how wide the logo may grow, .burger span widths = hamburger line lengths.
    ===================================================================== */
 @media(max-width:960px){
- :root{--mbh:clamp(84px,22vw,108px)}
+ /* PHONE TOP EDGE (notch / Dynamic Island): --sat is the room the phone keeps at the very top for its clock + battery (env(safe-area-inset-top), 0 on phones without a notch).
+    The cream band now reaches all the way up behind that area, so the header is never cut; --mbc is the band's own height (logo + icons), --mbh = --mbc + --sat is the full header height that the pages use to start below it. */
+ :root{--sat:env(safe-area-inset-top,0px);--mbc:clamp(84px,22vw,108px);--mbh:calc(var(--mbc) + var(--sat))}
 
  /* cream + gold band (same as desktop), always visible */
- .bar,.bar.scrolled{height:var(--mbh);min-height:0;padding:0 var(--pad);
+ .bar,.bar.scrolled{height:var(--mbh);min-height:0;padding:var(--sat) var(--pad) 0;
   background:linear-gradient(180deg,rgba(252,246,234,.96),rgba(244,232,212,.94));
   border-bottom:1px solid rgba(201,165,114,.6);
   box-shadow:inset 0 -1px 0 rgba(255,255,255,.65),0 8px 22px rgba(60,40,10,.12);
@@ -444,8 +449,8 @@ html.ct-open,html.ct-open body{overflow:hidden}
  .bar::after{display:none}
 
  /* logo: dead centre, big and crisp */
- .brand{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block;line-height:0;z-index:1}
- .brand img{height:calc(var(--mbh) * .8);width:auto;max-width:56vw;object-fit:contain;filter:contrast(1.08) saturate(1.12)}
+ .brand{position:absolute;left:50%;top:calc(50% + var(--sat) / 2);transform:translate(-50%,-50%);display:block;line-height:0;z-index:1}
+ .brand img{height:calc(var(--mbc) * .8);width:auto;max-width:56vw;object-fit:contain;filter:contrast(1.08) saturate(1.12)}
 
  /* tools row fills the bar: hamburger far left, search + cart far right */
  .tools{flex:1;display:flex;align-items:center;gap:clamp(14px,4.5vw,24px);color:#2b221b;text-shadow:none}
