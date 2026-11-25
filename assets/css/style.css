@@ -731,25 +731,25 @@ section{padding:64px 0 0}
  @view-transition{navigation:none}
 }
 /* =====================================================================
-   FEATURED COLLECTION CARDS: SMALLER ON PHONE (max-width 640px). Tablet and desktop are untouched.
+   FEATURED COLLECTION CARDS: PHONE SIZE (max-width 640px). Tablet and desktop are untouched.
    Quick tuning: card width = flex-basis, picture shape = aspect-ratio, picture padding = inset on img.watch.
    ===================================================================== */
 @media(max-width:640px){
- .card{flex-basis:54%;min-width:150px}
+ .card{flex-basis:64%;min-width:170px}
  .card .img{aspect-ratio:1/1}
- .card .img img.watch{inset:12px;width:calc(100% - 24px);height:calc(100% - 24px)}
+ .card .img img.watch{inset:14px;width:calc(100% - 28px);height:calc(100% - 28px)}
  .card .img svg{height:100%}
  .tag{left:8px;top:8px;font-size:7px;padding:2px 6px}
  .fav{width:30px;height:30px;right:4px;top:4px}
  .fav svg{width:17px;height:17px}
- .card .info{padding:10px 10px 10px}
- .card .info b{font-size:12px}
- .card .info span{font-size:10px}
- .card .info .m{font-size:9px;margin:4px 0 10px;padding-bottom:8px}
+ .card .info{padding:12px 12px 12px}
+ .card .info b{font-size:13px}
+ .card .info span{font-size:11px}
+ .card .info .m{font-size:10px;margin:5px 0 12px;padding-bottom:10px}
  .card .info .buy{gap:8px}
- .card .info .buy>b{font-size:13px}
- .card .info .add{height:32px;padding:0 10px;gap:6px;font-size:9px;letter-spacing:.1em}
- .card .info .add svg.i{width:13px;height:13px}
+ .card .info .buy>b{font-size:15px}
+ .card .info .add{height:36px;padding:0 12px;gap:6px;font-size:10px;letter-spacing:.1em}
+ .card .info .add svg.i{width:14px;height:14px}
 }
 
 /* Featured collection: "Shop now" link styled as the pill button */

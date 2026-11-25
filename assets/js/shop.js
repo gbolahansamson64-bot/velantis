@@ -118,13 +118,44 @@
   const p=PRODUCTS.find(x=>'s'+x.id===im.closest('.sh-card').dataset.id);if(!p)return;
   const t=document.createElement('template');t.innerHTML=drawn(p);im.replaceWith(t.content.firstChild);
  },true);
+ /* CARD PHOTO DOTS + HOVER PHOTO (desktop with a mouse only): a card whose watch has more than one photo shows small dots at the bottom of its picture,
+    and hovering the picture fades to the watch's 2nd photo; moving the mouse off goes back to the 1st. The photos come from the watch's own pictures (main photo + DETAIL imgs).
+    MAX_DOTS = most dots shown. Phones, tablets and touch screens never see the dots or the hover photo. */
+ const MAX_DOTS=5,HOVER=matchMedia('(min-width:961px) and (hover:hover)');
+ const cardPhotos=p=>{
+  const d=DETAIL[p.id]||{},a=[];
+  [p.img,...(d.imgs||[])].forEach(x=>{if(x&&!a.includes(x))a.push(x)});
+  return p.img?a:[];
+ };
+ grid.addEventListener('error',e=>{ /* a missing 2nd photo: drop it and its dots so nothing looks broken */
+  const im=e.target;if(!im.matches||!im.matches('img.sh-alt'))return;
+  const pic=im.closest('.sh-pic'),dots=pic&&pic.querySelector('.sh-pdots');
+  im.remove();if(dots)dots.remove();
+ },true);
+ let peeked=null;
+ const unpeek=()=>{if(peeked)peeked.classList.remove('peek');peeked=null};
+ grid.addEventListener('mousemove',e=>{
+  if(!HOVER.matches)return;
+  const c=e.target.closest('.sh-card');
+  if(peeked&&peeked!==c)unpeek();
+  if(!c)return;
+  const pic=c.querySelector('.sh-pic');if(!pic||!c.querySelector('.sh-alt'))return;
+  const r=pic.getBoundingClientRect(),inside=e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;
+  if(inside){c.classList.add('peek');peeked=c}else if(peeked===c)unpeek();
+ });
+ grid.addEventListener('mouseleave',unpeek);
+ window.addEventListener('blur',unpeek);
+ /* CUSTOMER REVIEWS LINK: the stars + count on every card and in the pop-up open the reviews page (reviews.html). The watch is passed in the link for now;
+    when the backend is ready the reviews page can load the real reviews by the watch id alone. */
+ const rvUrl=p=>'reviews.html?id='+p.id+'&n='+encodeURIComponent(p.n)+'&r='+p.r+'&v='+p.v+'&p='+p.p+'&img='+encodeURIComponent(p.img||'');
  const card=p=>{
+  const ph=cardPhotos(p),extra=ph.length>1?`<img class="sh-alt" src="${ph[1]}" alt="" loading="lazy" decoding="async" aria-hidden="true"><span class="sh-pdots" aria-hidden="true">${'<i></i>'.repeat(Math.min(ph.length,MAX_DOTS))}</span>`:'';
   const desc=`${LABEL[p.t]} strap | ${LABEL[p.c]}`;
   const badge=p.b?`<span class="sh-badge ${p.b==='New'?'new':'best'}">${p.b}</span>`:'';
   const f=favs.has(p.id);
   return `<li><article class="sh-card" data-id="s${p.id}" data-brand="Velantis" data-model="${p.n}" data-desc="${desc}" data-price="${p.p}">
- <div class="sh-pic">${badge}<button type="button" class="sh-fav" aria-pressed="${f}" aria-label="Save ${p.n}"><svg class="i" viewBox="0 0 24 24"><path d="M12 20s-8-5-8-11a4.5 4.5 0 018-2.5A4.5 4.5 0 0120 9c0 6-8 11-8 11z"/></svg></button>${pic(p)}</div>
- <div class="sh-info"><h3 class="sh-name">${p.n}</h3><p class="sh-desc">${desc}</p><b class="sh-price">${fmt(p.p)}</b><div class="sh-rate">${stars(p.r)}<span>(${p.v})</span></div>
+ <div class="sh-pic">${badge}<button type="button" class="sh-fav" aria-pressed="${f}" aria-label="Save ${p.n}"><svg class="i" viewBox="0 0 24 24"><path d="M12 20s-8-5-8-11a4.5 4.5 0 018-2.5A4.5 4.5 0 0120 9c0 6-8 11-8 11z"/></svg></button>${pic(p)}${extra}<span class="sh-expand" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg></span></div>
+ <div class="sh-info"><h3 class="sh-name">${p.n}</h3><p class="sh-desc">${desc}</p><b class="sh-price">${fmt(p.p)}</b><a class="sh-rate" href="${rvUrl(p)}" aria-label="${p.v} reviews for ${p.n}. Open customer reviews">${stars(p.r)}<span>(${p.v})</span></a>
   <button type="button" class="sh-add" aria-label="Add ${p.n} to cart"><svg class="i add-ic" viewBox="0 0 24 24"><path d="M2 3h3l2.6 12.2a1 1 0 001 .8h9.6a1 1 0 001-.8L21 7H6"/><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></svg><svg class="i ok" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button></div>
  <button type="button" class="sh-open" aria-label="View ${p.n} details" aria-haspopup="dialog"></button></article></li>`;
  };
@@ -481,7 +512,7 @@
    </div>
    <div class="qv-info">
     <h2 class="qv-title" id="qvTitle">${esc(p.n)}</h2>
-    <div class="qv-rate">${stars(p.r)}<span><b>${p.r.toFixed(1)}</b> (${p.v} reviews)</span></div>
+    <a class="qv-rate" href="${rvUrl(p)}" aria-label="${p.v} reviews for ${p.n}. Open customer reviews">${stars(p.r)}<span><b>${p.r.toFixed(1)}</b> (${p.v} reviews)</span></a>
     <div class="qv-price"><b>${fmt(p.p)}</b>${off?`<s>${fmt(d.old)}</s><span class="qv-off">${off}% OFF</span>`:''}</div>
     <p class="qv-lede">${esc(d.desc||`Timeless elegance meets modern craftsmanship. The ${p.n} is designed for those who value style, precision and durability in every moment.`)}</p>
     <p class="qv-lbl">Colour: <span id="qvColL">${LABEL[p.c]}</span></p>
@@ -502,7 +533,7 @@
    <div class="qv-panel" role="tabpanel" id="qp0" aria-labelledby="qt0"><p>${esc(d.desc?d.desc:`The ${p.n} is a perfect blend of sophistication and performance. ${STYLE_COPY[p.s]}`)}</p><ul class="qv-list">${feats}</ul></div>
    <div class="qv-panel" role="tabpanel" id="qp1" aria-labelledby="qt1" hidden><dl class="qv-specs">${specs}</dl></div>
    <div class="qv-panel" role="tabpanel" id="qp2" aria-labelledby="qt2" hidden><ul class="qv-list one">${SHIPPING.map(s=>`<li>${esc(s)}</li>`).join('')}</ul></div>
-   <div class="qv-panel" role="tabpanel" id="qp3" aria-labelledby="qt3" hidden><div class="qv-rv"><b>${p.r.toFixed(1)}</b><div>${stars(p.r)}<p>Based on ${p.v} customer reviews</p></div></div></div>
+   <div class="qv-panel" role="tabpanel" id="qp3" aria-labelledby="qt3" hidden><div class="qv-rv"><b>${p.r.toFixed(1)}</b><div>${stars(p.r)}<p>Based on ${p.v} customer reviews</p><a class="qv-rvlink" href="${rvUrl(p)}">See all customer reviews</a></div></div></div>
   </div>`;
   qvFoot.innerHTML=`<div class="qv-foot-p"><small>Price</small><b>${fmt(p.p)}</b></div>${buyBtns()}`;
   qvShow(0,false);qvFav();
