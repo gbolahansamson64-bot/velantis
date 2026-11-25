@@ -10,7 +10,7 @@
    - strap:  metal | leather | silicone
    - colour: black | silver | gold | blue | green   (this is what the colour swatches filter on)
    - badge:  'Bestseller', 'New' or '' for none
-   - picture (optional): path of the real photo, e.g. '/assets/images/products/classic-steel.png'.
+   - picture (optional): path of the real photo, e.g. '/assets/images/products/classic-steel.webp'.
      Until a watch has a picture, a drawn watch in its colours is shown instead.
    ===================================================================== */
 (()=>{
@@ -411,7 +411,7 @@
     ===================================================================== */
  const DETAIL={
   /* Add one line per watch, using the same number as data-id in shop.html. Every key is optional:
-     imgs:   more photos            ['/products/classic-steel.png','/products/classic-steel-2.jpg']
+     imgs:   more photos            ['/products/classic-steel.webp','/products/classic-steel-2.jpg']
      video:  a video file           '/assets/video/classic-steel.mp4'      (poster: '/products/classic-steel-video.jpg' is optional)
      old:    old price (number)     22000   -> shows it crossed out with the % off
      colors: colour choices         [['silver','/products/a.png'],['black','/products/b.png'],['gold','/products/c.png']]  (picture is optional)

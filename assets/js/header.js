@@ -30,7 +30,7 @@
  const HEADER=`
  <header class="bar">
   <a href="index.html" class="brand" aria-label="Velantis home">
-   <img src="/assets/images/velantis.png" alt="Velantis Luxury Watches">
+   <img src="/assets/images/velantis.webp" alt="Velantis Luxury Watches" width="280" height="140" decoding="async">
   </a>
   <nav class="links" aria-label="Main">
    <a href="index.html"${onHome?' aria-current="page"':''}>Home</a><a href="${S}"${page==='shop'?' aria-current="page"':''}>Shop</a><a href="${B}#legacy">About</a><a href="#footer">Contact</a>

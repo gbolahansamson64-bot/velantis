@@ -48,7 +48,7 @@ track.addEventListener('keydown',e=>{
 
 const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,'0');
-const FALLBACK="/assets/images/millie-hero.png"; /* shown if a slide's image file is missing */
+const FALLBACK="/assets/images/millie-hero.webp"; /* shown if a slide's image file is missing */
 const DELAY=7000; /* autoplay interval in ms (6000-8000 recommended) */
 /* EDIT YOUR HERO SLIDES HERE. No prices in the hero by design. */
 /* LIVE HANDS (per slide): the slide image must be the dial/case WITHOUT hands baked in, otherwise you see two sets.
@@ -59,9 +59,9 @@ const DELAY=7000; /* autoplay interval in ms (6000-8000 recommended) */
 const HANDS={cx:50,cy:50,r:28,hh:'#e9e9e9',hl:'#dfe9c8',hs:'#d3b57c'};
 const BEATS=0; /* second hand: 0 = perfectly smooth sweep. 8 = high-beat movement (8 small steps per second). */
 const slides=[
-  {b:"TIMELESS STYLE.",m:"LIMITLESS PRESENCE.",ed:"Limited Edition",d:"Refined design, effortless elegance, made for every moment.",up:"Timeless design for every moment.",img:"/assets/images/millie-hero.png",hands:{cx:50,cy:50,r:28,hs:'#e7c27a'}},
-  {b:"ELEGANCE",m:"IN EVERY SECOND.",ed:"Featured Collection",d:"Understated authority, refined over decades of precision.",up:"A refined look for every occasion.",img:"/assets/images/rolex-datejust.png",hands:{cx:49.8,cy:46.35,r:24,hh:'#dcbc6a',hl:'#f6f0d6',hs:'#c9a24a'}},
-  {b:"YOUR STYLE.",m:"YOUR STATEMENT.",ed:"Signature Piece",d:"An icon of modern watchmaking, finished to the last detail.",up:"Bold character, made to be noticed.",img:"/assets/images/carbon.png",hands:{cx:50,cy:50,r:28,hh:'#d9dde3',hs:'#d3b57c'}}
+  {b:"TIMELESS STYLE.",m:"LIMITLESS PRESENCE.",ed:"Limited Edition",d:"Refined design, effortless elegance, made for every moment.",up:"Timeless design for every moment.",img:"/assets/images/millie-hero.webp",hands:{cx:50,cy:50,r:28,hs:'#e7c27a'}},
+  {b:"ELEGANCE",m:"IN EVERY SECOND.",ed:"Featured Collection",d:"Understated authority, refined over decades of precision.",up:"A refined look for every occasion.",img:"/assets/images/rolex-datejust.webp",hands:{cx:49.8,cy:46.35,r:24,hh:'#dcbc6a',hl:'#f6f0d6',hs:'#c9a24a'}},
+  {b:"YOUR STYLE.",m:"YOUR STATEMENT.",ed:"Signature Piece",d:"An icon of modern watchmaking, finished to the last detail.",up:"Bold character, made to be noticed.",img:"/assets/images/carbon.webp",hands:{cx:50,cy:50,r:28,hh:'#d9dde3',hs:'#d3b57c'}}
 ];
 const hero=$('top'),heroImg=$('heroImg'),peekImg=$('peekImg'),prog=$('prog');
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;

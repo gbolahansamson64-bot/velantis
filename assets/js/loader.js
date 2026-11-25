@@ -17,9 +17,9 @@
  if(window.__velantisLoader)return;window.__velantisLoader=true;
 
  /* ---------- SETTINGS ---------- */
- const LOGO='/assets/images/velantis.png'; /* your logo (transparent PNG or SVG works best) */
- const MIN=3900;  /* shortest time the screen stays, in milliseconds */
- const MAX=8000;  /* safety limit: the screen always leaves by then, even if something is slow to load */
+ const LOGO='/assets/images/velantis.webp'; /* your logo (transparent PNG or SVG works best) */
+ const MIN=900;   /* shortest time the screen stays, in milliseconds */
+ const MAX=3000;  /* safety limit: the screen always leaves by then, even if something is slow to load */
 
  /* ---------- SHOULD IT SHOW? ---------- */
  const root=document.documentElement;

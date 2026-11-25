@@ -17,7 +17,7 @@ h1,h2,h3{font-family:var(--serif);font-weight:500;line-height:1.05}
 svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
 
 /* hero */
-.hero{--pad:clamp(24px,4vw,66px);--padL:4.7vw;position:relative;overflow:hidden;color:#fff;height:clamp(640px,56.25vw,100vh);min-height:640px;background-color:#080302;background-image:url("/assets/images/background-image.png");background-size:cover;background-position:center;background-repeat:no-repeat;--g1:rgba(130,86,50,.55);--g2:rgba(80,50,30,.3);--g3:rgba(110,72,42,.35);transition:--g1 1.4s,--g2 1.4s,--g3 1.4s}
+.hero{--pad:clamp(24px,4vw,66px);--padL:4.7vw;position:relative;overflow:hidden;color:#fff;height:clamp(640px,56.25vw,100vh);min-height:640px;background-color:#080302;background-image:url("/assets/images/background-image.webp");background-size:cover;background-position:center;background-repeat:no-repeat;--g1:rgba(130,86,50,.55);--g2:rgba(80,50,30,.3);--g3:rgba(110,72,42,.35);transition:--g1 1.4s,--g2 1.4s,--g3 1.4s}
 .hero>i{position:absolute;display:block;pointer-events:none}
 /* dims the background glow and arcs (sits under the watch and text). Raise .35 to darken more, lower it to darken less */
 .hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:rgba(0,0,0,.35)}
@@ -391,7 +391,7 @@ section{padding:64px 0 0}
 
 /* ===== MOBILE BACKGROUND IMAGE (phones and small screens; desktop keeps background-image.png) ===== */
 @media(max-width:960px){
- .hero{background-image:url("/assets/images/mobile-image.png");background-size:cover;background-position:center;background-repeat:no-repeat}
+ .hero{background-image:url("/assets/images/mobile-image.webp");background-size:cover;background-position:center;background-repeat:no-repeat}
 }
 
 /* desktop only: solid black inside the small "next watch" box */
@@ -611,7 +611,7 @@ section{padding:64px 0 0}
 .rv-stars svg{width:20px;height:20px;fill:url(#starG) #f2b92f;stroke:#b57a14;stroke-width:.7;stroke-linejoin:round;filter:drop-shadow(0 1.5px 1.5px rgba(150,95,10,.35))}
 
 /* ===== NEWSLETTER BANNER (after the customer reviews) =====
-   Dark espresso band with a gold glow, the gold watch picture on the right (/assets/images/luxury-gold-watch.png),
+   Dark espresso band with a gold glow, the gold watch picture on the right (/assets/images/luxury-gold-watch.webp),
    the text on the left and the cream subscribe pill in the middle. Phone + tablet: text on top, pill below, watch fades in behind the top-right. */
 .nl{margin-top:clamp(36px,5vw,72px)}
 .nl-box{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);align-items:center;gap:clamp(20px,3.4vw,56px);min-height:128px;padding:24px clamp(380px,29%,520px) 24px clamp(24px,3vw,44px);border-radius:14px;color:#f6efe2;border:1px solid rgba(214,170,82,.28);background:radial-gradient(ellipse 34% 120% at 66% -10%,rgba(214,170,82,.3),transparent 70%),linear-gradient(100deg,#0b0806 0%,#17100a 55%,#22170d 100%);box-shadow:0 18px 40px -22px rgba(28,26,23,.55),inset 0 1px 0 rgba(255,236,190,.08)}

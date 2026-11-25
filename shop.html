@@ -3,16 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Shop | Velantis Timeless Luxury Watches</title>
-<!-- Favicon: same files as the home page -->
-<link rel="icon" href="/assets/images/favicon-icon.png" sizes="48x48">
-<link rel="icon" type="image/svg+xml" href="/assets/images/favicon/favicon.svg">
-<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-icon.png">
+<title>Shop Luxury Watches | Velantis</title>
+<meta name="description" content="Browse the full Velantis watch collection. Filter by style, strap and colour. Affordable luxury watches with fast delivery across Nigeria.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://velantis.com/shop.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Velantis">
+<meta property="og:locale" content="en_NG">
+<meta property="og:title" content="Shop Luxury Watches | Velantis">
+<meta property="og:description" content="Browse the full Velantis watch collection. Filter by style, strap and colour. Affordable luxury watches with fast delivery across Nigeria.">
+<meta property="og:url" content="https://velantis.com/shop.html">
+<meta property="og:image" content="https://velantis.com/assets/images/luxury-gold-watch.webp">
+<meta property="og:image:alt" content="Velantis luxury watch">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Shop Luxury Watches | Velantis">
+<meta name="twitter:description" content="Browse the full Velantis watch collection. Filter by style, strap and colour. Affordable luxury watches with fast delivery across Nigeria.">
+<meta name="twitter:image" content="https://velantis.com/assets/images/luxury-gold-watch.webp">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Velantis Watch Collection","url":"https://velantis.com/shop.html","isPartOf":{"@id":"https://velantis.com/#site"}}</script>
+<link rel="preload" as="image" href="/assets/images/shop-banner.webp" imagesrcset="/assets/images/shop-banner-800.webp 800w, /assets/images/shop-banner.webp 1600w" imagesizes="100vw" fetchpriority="high">
+<link rel="icon" type="image/png" sizes="48x48" href="/assets/images/favicon-48.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon-icon.png">
 <meta name="theme-color" content="#1c1a17">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap"></noscript>
 <!-- Same stylesheets as index.html, plus shop.css last so it can build on them -->
 <link rel="stylesheet" href="/assets/css/style.css">
 <link rel="stylesheet" href="/assets/css/header.css">
@@ -47,16 +63,16 @@
 
 <main class="shop" id="top">
 
- <!-- BANNER. Picture: /assets/images/shop-banner.png (change the file name in the src below). The words are real text laid over it. -->
+ <!-- BANNER. Picture: /assets/images/shop-banner.webp (change the file name in the src below). The words are real text laid over it. -->
  <section class="sh-wrap" aria-labelledby="shTitle">
   <div class="sh-banner">
    <!-- PHOTO SLIDER (same idea as the home page lifestyle banner): each <img class="sh-slide"> is one slide and each <button class="sh-dot"> is its dot (same order).
         To add a photo, copy one img line and one dot line. The first slide has class is-active. If a photo file is missing it is skipped automatically (with its dot). -->
    <div class="sh-banner-bg">
-    <img class="sh-slide is-active" src="/assets/images/shop-banner.png" alt="" fetchpriority="high" decoding="async">
-    <img class="sh-slide" src="/assets/images/wristwatch.png" alt="" loading="lazy" decoding="async">
-    <img class="sh-slide" src="/assets/images/luxury-watch.png" alt="" loading="lazy" decoding="async">
-    <img class="sh-slide" src="/assets/images/luxury-gold-watch.png" alt="" loading="lazy" decoding="async">
+    <img class="sh-slide is-active" src="/assets/images/shop-banner.webp" alt="" srcset="/assets/images/shop-banner-800.webp 800w, /assets/images/shop-banner.webp 1600w" sizes="100vw" width="1600" height="600" fetchpriority="high" decoding="async">
+    <img class="sh-slide" src="/assets/images/wristwatch.webp" alt="" srcset="/assets/images/wristwatch-800.webp 800w, /assets/images/wristwatch.webp 1600w" sizes="100vw" width="1600" height="600" loading="lazy" decoding="async">
+    <img class="sh-slide" src="/assets/images/luxury-watch.webp" alt="" srcset="/assets/images/luxury-watch-800.webp 800w, /assets/images/luxury-watch.webp 1600w" sizes="100vw" width="1600" height="600" loading="lazy" decoding="async">
+    <img class="sh-slide" src="/assets/images/luxury-gold-watch.webp" alt="" srcset="/assets/images/luxury-gold-watch-800.webp 800w, /assets/images/luxury-gold-watch.webp 1600w" sizes="100vw" width="1600" height="600" loading="lazy" decoding="async">
    </div>
    <div class="sh-banner-copy">
     <p class="sh-eyebrow">Velantis Shop</p>
@@ -103,9 +119,9 @@
      <button type="button" class="sh-fapply" id="shApply">Show products</button>
     </aside>
 
-    <!-- PROMO CARD (hidden on phones and tablets). Picture: /assets/images/luxury-gold-watch.png -->
+    <!-- PROMO CARD (hidden on phones and tablets). Picture: /assets/images/luxury-gold-watch.webp -->
     <div class="sh-promo">
-     <img src="/assets/images/shop-banner.png" alt="" loading="lazy" decoding="async">
+     <img src="/assets/images/shop-banner-800.webp" alt="" width="800" height="300" loading="lazy" decoding="async">
      <div class="sh-promo-in">
       <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4.5 4L12 5l4.5 6L21 7l-2 12H5z"/><path d="M5 19h14"/></svg>
       <h3>Premium Quality</h3>
@@ -181,40 +197,40 @@
 
 <!-- ===================== PRODUCT PICTURES =====================
      One line per watch. Type the picture path between the quotes of data-img="" on that watch's line, for example:
-        <li data-id="1" data-name="Classic Steel" data-img="/assets/images/products/classic-steel.png"></li>
+        <li data-id="1" data-name="Classic Steel" data-img="/assets/images/products/classic-steel.webp"></li>
      Put the picture files in /assets/images/products/ (transparent PNG works best). Leave data-img="" empty to keep the drawn watch.
      Do not change data-id: it matches the watch in the PRODUCTS list in shop.js. Later the admin dashboard will supply these pictures. -->
 <ul id="shPics" hidden aria-hidden="true">
- <li data-id="1" data-name="Classic Steel" data-img="/products/classic-steel.png"></li>
- <li data-id="2" data-name="Golden Elegance" data-img="/products/product-data2.png"></li>
- <li data-id="3" data-name="Sport Pro" data-img="/products/product-data3.png"></li>
- <li data-id="4" data-name="Azure Classic" data-img="/products/product-data4.jpg"></li>
- <li data-id="5" data-name="Minimalist Edge" data-img="/products/product-data5.jpg"></li>
- <li data-id="6" data-name="Timeless Silver" data-img="/products/product-data6.jpg"></li>
- <li data-id="7" data-name="Noir Chrono" data-img="/products/product-data7.png"></li>
- <li data-id="8" data-name="Emerald Reserve" data-img="/products/product-data8.png"></li>
- <li data-id="9" data-name="Riviera Gold" data-img="/products/product-data9.png"></li>
+ <li data-id="1" data-name="Classic Steel" data-img="/products/classic-steel.webp"></li>
+ <li data-id="2" data-name="Golden Elegance" data-img="/products/product-data2.webp"></li>
+ <li data-id="3" data-name="Sport Pro" data-img="/products/product-data3.webp"></li>
+ <li data-id="4" data-name="Azure Classic" data-img="/products/product-data4.webp"></li>
+ <li data-id="5" data-name="Minimalist Edge" data-img="/products/product-data5.webp"></li>
+ <li data-id="6" data-name="Timeless Silver" data-img="/products/product-data6.webp"></li>
+ <li data-id="7" data-name="Noir Chrono" data-img="/products/product-data7.webp"></li>
+ <li data-id="8" data-name="Emerald Reserve" data-img="/products/product-data8.webp"></li>
+ <li data-id="9" data-name="Riviera Gold" data-img="/products/product-data9.webp"></li>
  <li data-id="10" data-name="Tide Diver" data-img="/products/product-data10.webp"></li>
- <li data-id="11" data-name="Heritage Tan" data-img="/products/product-data11.png"></li>
- <li data-id="12" data-name="Slate Bold" data-img="/products/product-data12.jpg"></li>
- <li data-id="13" data-name="Arctic Minimal" data-img="/products/product-data13.jpg"></li>
- <li data-id="14" data-name="Pacific Sport" data-img="/products/product-data14.jpg"></li>
- <li data-id="15" data-name="Regent Blue" data-img="/products/classic-steel.png"></li>
- <li data-id="16" data-name="Sovereign Gold" data-img="/products/product-data2.png"></li>
- <li data-id="17" data-name="Midnight Slim" data-img="/products/product-data3.png"></li>
- <li data-id="18" data-name="Trail Runner" data-img="/products/product-data4.jpg"></li>
- <li data-id="19" data-name="Verde Classic" data-img="/products/product-data5.jpg"></li>
- <li data-id="20" data-name="Atlas Steel" data-img="/products/product-data6.jpg"></li>
- <li data-id="21" data-name="Champagne Mist" data-img="/products/product-data7.png"></li>
- <li data-id="22" data-name="Cobalt Edge" data-img="/products/product-data8.png"></li>
- <li data-id="23" data-name="Dune Chrono" data-img="/products/product-data9.png"></li>
+ <li data-id="11" data-name="Heritage Tan" data-img="/products/product-data11.webp"></li>
+ <li data-id="12" data-name="Slate Bold" data-img="/products/product-data12.webp"></li>
+ <li data-id="13" data-name="Arctic Minimal" data-img="/products/product-data13.webp"></li>
+ <li data-id="14" data-name="Pacific Sport" data-img="/products/product-data14.webp"></li>
+ <li data-id="15" data-name="Regent Blue" data-img="/products/classic-steel.webp"></li>
+ <li data-id="16" data-name="Sovereign Gold" data-img="/products/product-data2.webp"></li>
+ <li data-id="17" data-name="Midnight Slim" data-img="/products/product-data3.webp"></li>
+ <li data-id="18" data-name="Trail Runner" data-img="/products/product-data4.webp"></li>
+ <li data-id="19" data-name="Verde Classic" data-img="/products/product-data5.webp"></li>
+ <li data-id="20" data-name="Atlas Steel" data-img="/products/product-data6.webp"></li>
+ <li data-id="21" data-name="Champagne Mist" data-img="/products/product-data7.webp"></li>
+ <li data-id="22" data-name="Cobalt Edge" data-img="/products/product-data8.webp"></li>
+ <li data-id="23" data-name="Dune Chrono" data-img="/products/product-data9.webp"></li>
  <li data-id="24" data-name="Pearl Classic" data-img="/products/product-data10.webp"></li>
- <li data-id="25" data-name="Onyx Pro" data-img="/products/product-data11.png"></li>
- <li data-id="26" data-name="Seafoam Sport" data-img="/products/product-data12.jpg"></li>
- <li data-id="27" data-name="Royal Azure" data-img="/products/product-data13.jpg"></li>
- <li data-id="28" data-name="Ivory Minimal" data-img="/products/product-data14.jpg"></li>
- <li data-id="29" data-name="Obsidian Gold" data-img="/products/classic-steel.png"></li>
- <li data-id="30" data-name="Forest Diver" data-img="/products/product-data2.png"></li>
+ <li data-id="25" data-name="Onyx Pro" data-img="/products/product-data11.webp"></li>
+ <li data-id="26" data-name="Seafoam Sport" data-img="/products/product-data12.webp"></li>
+ <li data-id="27" data-name="Royal Azure" data-img="/products/product-data13.webp"></li>
+ <li data-id="28" data-name="Ivory Minimal" data-img="/products/product-data14.webp"></li>
+ <li data-id="29" data-name="Obsidian Gold" data-img="/products/classic-steel.webp"></li>
+ <li data-id="30" data-name="Forest Diver" data-img="/products/product-data2.webp"></li>
 </ul>
 
 <script src="/assets/js/shop.js"></script>
