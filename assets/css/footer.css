@@ -17,8 +17,8 @@ footer.ft{position:relative;margin-top:clamp(48px,6vw,80px);color:#4b463f;font-s
 .ft-soc a{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#8a6a38;border:1px solid rgba(168,134,85,.5);background:rgba(255,255,255,.45);transition:background .25s,color .25s,border-color .25s,transform .25s}
 .ft-soc a:hover{background:linear-gradient(135deg,#e6c98f,#c9a572);color:#1a0f0a;border-color:transparent;transform:translateY(-3px)}
 .ft-soc svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.ft-col h4{position:relative;margin-bottom:24px;padding-bottom:12px;font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#1c1a17}
-.ft-col h4::after{content:"";position:absolute;left:0;bottom:0;width:26px;height:1px;background:#a88655}
+.ft-col h2{position:relative;margin-bottom:24px;padding-bottom:12px;font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#1c1a17}
+.ft-col h2::after{content:"";position:absolute;left:0;bottom:0;width:26px;height:1px;background:#a88655}
 .ft-col ul{list-style:none;display:grid;gap:15px}
 .ft-col li{font-size:13.5px;line-height:1.6}
 .ft-col a{color:#4b463f;transition:color .2s,padding-left .2s}
@@ -35,6 +35,6 @@ footer.ft{position:relative;margin-top:clamp(48px,6vw,80px);color:#4b463f;font-s
 @media(max-width:640px){
  .ft-grid{grid-template-columns:1fr 1fr}
  .ft-contact{grid-column:1/-1}
- .ft-col h4{margin-bottom:20px}
+ .ft-col h2{margin-bottom:20px}
  .ft-col ul{gap:13px}
 }

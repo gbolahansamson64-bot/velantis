@@ -88,7 +88,7 @@
     <button type="button" class="ac-tab" role="tab" data-tab="up" aria-selected="false" tabindex="-1">Sign Up</button>
    </div>
 
-   <form class="ac-pane" id="acIn" role="tabpanel">
+   <form class="ac-pane" id="acIn">
     <div class="ac-field">
      <div class="ac-row"><label class="ac-lbl" for="acInEmail">Email</label></div>
      <div class="ac-in"><input type="email" id="acInEmail" name="email" placeholder="you@email.com" autocomplete="email" required></div>
@@ -101,7 +101,7 @@
     <p class="ac-foot">New to Velantis? <button type="button" class="ac-link" data-go="up">Create an account</button></p>
    </form>
 
-   <form class="ac-pane" id="acUp" role="tabpanel" hidden>
+   <form class="ac-pane" id="acUp" hidden>
     <div class="ac-field">
      <div class="ac-row"><label class="ac-lbl" for="acUpName">Full name</label></div>
      <div class="ac-in"><input type="text" id="acUpName" name="name" placeholder="Your full name" autocomplete="name" required></div>
@@ -123,7 +123,7 @@
 
 <div class="ct" id="cartPanel" aria-hidden="true">
  <div class="ct-ov" id="ctOv"></div>
- <aside class="ct-panel" role="dialog" aria-modal="true" aria-labelledby="ctTitle" data-lenis-prevent>
+ <div class="ct-panel" role="dialog" aria-modal="true" aria-labelledby="ctTitle" data-lenis-prevent>
   <div class="ct-head">
    <h2 id="ctTitle">My bag<span class="ct-n" id="ctN">0</span></h2>
    <button type="button" class="ct-x" id="ctClose" aria-label="Close cart"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
@@ -136,7 +136,7 @@
    <button type="button" class="ct-go" id="ctGo"><span>Checkout</span><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
    <button type="button" class="ct-more" data-a="shop">Continue shopping</button>
   </div>
- </aside>
+ </div>
 </div>`;
 
  /* put the header exactly where this script tag is (or at the top of the page if that is not possible) */

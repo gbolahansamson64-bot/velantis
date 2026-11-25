@@ -1,0 +1,11 @@
+# Velantis
+
+> Velantis sells stylish, affordable luxury-look watches with fast delivery across Nigeria.
+
+## Pages
+- [Home](https://velantis.com/): featured watches and collections
+- [Shop](https://velantis.com/shop.html): the full watch collection with filters
+- [Customer reviews](https://velantis.com/reviews.html): what customers say about Velantis
+
+## Contact
+- Email: hello@velantis.com

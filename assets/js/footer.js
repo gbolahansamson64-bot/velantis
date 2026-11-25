@@ -33,7 +33,7 @@
   </div>
 
   <nav class="ft-col" aria-label="Shop">
-   <h4>Shop</h4>
+   <h2>Shop</h2>
    <ul>
     <li><a href="shop.html">All Watches</a></li>
     <li><a href="#">Men’s Watches</a></li>
@@ -44,7 +44,7 @@
   </nav>
 
   <nav class="ft-col" aria-label="Help">
-   <h4>Help</h4>
+   <h2>Help</h2>
    <ul>
     <li><a href="${B}#legacy">About Us</a></li>
     <li><a href="#">FAQs</a></li>
@@ -57,7 +57,7 @@
 
   <!-- EDIT YOUR REAL CONTACT DETAILS HERE -->
   <div class="ft-col ft-contact">
-   <h4>Contact</h4>
+   <h2>Contact</h2>
    <ul>
     <li><span>Email:</span> <a href="mailto:hello@velantis.com">hello@velantis.com</a></li>
     <li><span>Phone:</span> <a href="tel:+2348000000000">+234 800 000 0000</a></li>

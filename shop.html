@@ -25,10 +25,14 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon-icon.png">
 <meta name="theme-color" content="#1c1a17">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap"></noscript>
+<style>
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:300 700;font-display:swap;src:url(/assets/fonts/cormorant-garamond-latin.woff2) format('woff2')}
+@font-face{font-family:'Jost';font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/jost-latin.woff2) format('woff2')}
+@font-face{font-family:'Cormorant Fallback';src:local('Times New Roman'),local('Liberation Serif'),local('Times');size-adjust:97.8%;ascent-override:94.5%;descent-override:29.3%;line-gap-override:0%}
+@font-face{font-family:'Jost Fallback';src:local('Arial'),local('Liberation Sans'),local('Helvetica');size-adjust:95.5%;ascent-override:112%;descent-override:39.3%;line-gap-override:0%}
+</style>
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/cormorant-garamond-latin.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/jost-latin.woff2" crossorigin>
 <!-- Same stylesheets as index.html, plus shop.css last so it can build on them -->
 <link rel="stylesheet" href="/assets/css/style.css">
 <link rel="stylesheet" href="/assets/css/header.css">

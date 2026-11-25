@@ -33,10 +33,14 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon-icon.png">
 <meta name="theme-color" content="#1c1a17">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap"></noscript>
+<style>
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:300 700;font-display:swap;src:url(/assets/fonts/cormorant-garamond-latin.woff2) format('woff2')}
+@font-face{font-family:'Jost';font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/jost-latin.woff2) format('woff2')}
+@font-face{font-family:'Cormorant Fallback';src:local('Times New Roman'),local('Liberation Serif'),local('Times');size-adjust:97.8%;ascent-override:94.5%;descent-override:29.3%;line-gap-override:0%}
+@font-face{font-family:'Jost Fallback';src:local('Arial'),local('Liberation Sans'),local('Helvetica');size-adjust:95.5%;ascent-override:112%;descent-override:39.3%;line-gap-override:0%}
+</style>
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/cormorant-garamond-latin.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/jost-latin.woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/style.css">
 <link rel="stylesheet" href="/assets/css/header.css">
 <link rel="stylesheet" href="/assets/css/footer.css">
@@ -66,7 +70,7 @@
  </symbol>
 </svg>
 
-<div class="hero in" id="top" aria-roledescription="carousel" aria-label="Featured watches">
+<div class="hero in" id="top" role="group" aria-roledescription="carousel" aria-label="Featured watches">
  <!-- OPTIONAL LOOPING VIDEO (future): drop a short muted clip in /assets/video/ and uncomment.
  <div class="bgvideo" aria-hidden="true"><video autoplay muted loop playsinline preload="none" poster="/assets/images/hero-poster.jpg"><source src="/assets/video/hero.webm" type="video/webm"><source src="/assets/video/hero.mp4" type="video/mp4"></video></div> -->
  <p class="sr" id="live" aria-live="polite"></p>
@@ -239,7 +243,7 @@
  <div class="rv-copy"><p class="rv-eyebrow">What our customers say</p><h2>Real Reviews.<br>Real People.</h2><p class="rv-lede">Trusted by watch lovers across Nigeria.</p></div>
  <div class="rv-slider">
   <button type="button" class="rv-arrow l" id="rvPrev" aria-label="Previous reviews"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
-  <div class="rv-track" id="rvTrack" tabindex="0" aria-label="Customer reviews">
+  <div class="rv-track" id="rvTrack" tabindex="0" role="region" aria-label="Customer reviews">
        <article class="rv-card"><div class="rv-top"><div class="rv-av"><svg class="rv-ph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="4"/><path d="M4 21c0-4 4-6.5 8-6.5s8 2.5 8 6.5z"/></svg><img src="/assets/images/cs-profile5.webp" alt="Amaka E., customer photo" loading="lazy" decoding="async"></div><span class="rv-stars" role="img" aria-label="5 out of 5 stars"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#star"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#star"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#star"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#star"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#star"/></svg></span></div><q>Wore it to a wedding and got compliments all night. Worth every naira.</q><b> Tunmise ❤, Abuja</b></article>
        <!-- REVIEW 1: edit the name, city and quote below. PROFILE PICTURE: type your image path between the quotes of src="" on the <img> line, e.g. src="/assets/images/reviews/david.jpg" (square photo works best). -->
  <article class="rv-card"><div class="rv-top"><div class="rv-av"><svg class="rv-ph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="4"/><path d="M4 21c0-4 4-6.5 8-6.5s8 2.5 8 6.5z"/></svg><img src="/assets/images/cs-profile.webp" alt="Fortune A., customer photo" loading="lazy" decoding="async"></div><span class="rv-stars" role="img" aria-label="5 out of 5 stars"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#star"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#star"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#star"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#star"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#star"/></svg></span></div><q>Velantis is fire! The quality is top-notch for the price. Definitely copping again.</q><b> Fortune Adetola, Lagos</b></article>

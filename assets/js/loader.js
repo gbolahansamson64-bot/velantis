@@ -18,8 +18,8 @@
 
  /* ---------- SETTINGS ---------- */
  const LOGO='/assets/images/velantis.webp'; /* your logo (transparent PNG or SVG works best) */
- const MIN=900;   /* shortest time the screen stays, in milliseconds */
- const MAX=3000;  /* safety limit: the screen always leaves by then, even if something is slow to load */
+ const MIN=300;   /* shortest time the screen stays, in milliseconds */
+ const MAX=1800;  /* safety limit: the screen always leaves by then, even if something is slow to load */
 
  /* ---------- SHOULD IT SHOW? ---------- */
  const root=document.documentElement;
@@ -51,6 +51,8 @@
  };
  document.addEventListener('DOMContentLoaded',()=>{if(!gone)hook('hold')},{once:true});
  const ready=()=>setTimeout(finish,Math.max(0,MIN-(performance.now()-t0)));
- document.readyState==='complete'?ready():window.addEventListener('load',ready,{once:true});
+ /* leave once the hero picture is ready (not after every last image on the page) */
+ const heroReady=()=>{const i=document.getElementById('heroImg');if(!i||i.complete)return ready();i.addEventListener('load',ready,{once:true});i.addEventListener('error',ready,{once:true})};
+ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',heroReady,{once:true}):heroReady();
  setTimeout(finish,MAX);
 })();

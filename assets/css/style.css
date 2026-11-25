@@ -2,7 +2,7 @@
 @property --g1{syntax:'<color>';inherits:true;initial-value:rgba(130,86,50,.55)}
 @property --g2{syntax:'<color>';inherits:true;initial-value:rgba(80,50,30,.3)}
 @property --g3{syntax:'<color>';inherits:true;initial-value:rgba(110,72,42,.35)}
-:root{--bg:#faf8f3;--sand:#f1ebdf;--sand2:#e8dfcf;--ink:#1c1a17;--mute:#7b756b;--gold:#a88655;--line:#e6dfd2;--serif:'Cormorant Garamond',Georgia,serif;--sans:'Jost',system-ui,sans-serif;--max:1560px;--tan:#b99877}
+:root{scrollbar-gutter:stable;--bg:#faf8f3;--sand:#f1ebdf;--sand2:#e8dfcf;--ink:#1c1a17;--mute:#7b756b;--gold:#a88655;--line:#e6dfd2;--serif:'Cormorant Garamond','Cormorant Fallback',Georgia,serif;--sans:'Jost','Jost Fallback',system-ui,sans-serif;--max:1560px;--tan:#b99877}
 *{box-sizing:border-box;margin:0;padding:0}
 /* removes the blue/grey tap flash on phones (tap highlight) */
 html,body,*{-webkit-tap-highlight-color:transparent;-webkit-tap-highlight-color:rgba(0,0,0,0)}
@@ -281,6 +281,7 @@ section{padding:64px 0 0}
 @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes watchIn{from{opacity:0;transform:translateX(50%) scale(.23)}to{opacity:1;transform:none}}
+@keyframes watchInM{from{opacity:.01;transform:scale(.92)}to{opacity:1;transform:none}}
 @keyframes watchInRev{from{opacity:0;transform:translateX(-50%) scale(.9)}to{opacity:1;transform:none}}
 @keyframes reveal{from{opacity:0;transform:translateY(6%) scale(.93)}to{opacity:1;transform:none}}
 @keyframes float{50%{translate:0 -1.6%}}
@@ -289,6 +290,14 @@ section{padding:64px 0 0}
 @keyframes fill{to{transform:scaleX(1)}}
 
 @media(max-width:960px){
+ /* faster first paint on phones: no long entrance delays, nothing starts fully transparent */
+ .hero.in .pc,.hero.back.in .pc{animation:watchInM .55s cubic-bezier(.2,.8,.2,1) both}
+ .hero.in .eyebrow{animation:rise .5s ease both}
+ .hero.in .solid{animation:rise .55s cubic-bezier(.2,.7,.2,1) .04s both}
+ .hero.in .outline{animation:rise .55s cubic-bezier(.2,.7,.2,1) .08s both}
+ .hero.in .lede{animation:rise .5s ease .12s both}
+ .hero.in .cta{animation:rise .5s ease .16s both}
+ .hero.in .side-t,.hero.in .count{animation:fade .5s ease .2s both}
  .hero{height:auto;min-height:0;padding:100px 0 56px}
  .lens{display:none}
  .copy-l{position:relative;left:auto;top:auto;padding:0 24px}

@@ -8,6 +8,7 @@
    Quick tuning: background = the radial-gradient colours, logo size = .ld-logo width, bar colours = .ld-bar u.
    The site's own animations are held until the screen is gone, so the page's intro plays when it opens.
    ===================================================================== */
+html{scrollbar-gutter:stable}
 html.loading{overflow:hidden}
 .loader{position:fixed;inset:0;z-index:300;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 45%,#fffaf0,#f1e6d3 70%,#e8dcc6)}
 .loader.done{display:none}
