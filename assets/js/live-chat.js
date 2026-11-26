@@ -486,12 +486,16 @@ textarea{font-size:16px}\
   /* mobile keyboard: keep panel exactly as tall as the visible viewport */
   function syncViewport() {
     var vv = window.visualViewport;
+    // Measure BEFORE the panel is resized: was the person already looking at the newest message? (Only then may we keep them pinned to the bottom.)
+    var wasAtEnd = !opened || nearEnd();
     // The site shows phones at 95% (html{zoom:.95} in style.css) and that zoom also shrinks this fixed panel, which is what left a strip of the page
     // showing under the chat. Divide by the page zoom so the panel always fills the real screen, whatever the zoom is set to.
     var z = parseFloat(getComputedStyle(document.documentElement).zoom); if (!(z > 0)) z = 1;
     panel.style.setProperty('--vh', ((vv ? vv.height : window.innerHeight) / z) + 'px');
     panel.style.setProperty('--vt', ((vv ? vv.offsetTop : 0) / z) + 'px');
-    if (opened && root.activeElement === ta) jumpEnd();
+    // Only re-pin to the newest message when the person was already there (e.g. the keyboard just opened). If they scrolled up to read older messages, leave them where they are,
+    // otherwise every viewport event (keyboard, address bar, visualViewport scroll) snapped the list back to the bottom and older messages could not be reached.
+    if (opened && root.activeElement === ta && wasAtEnd) jumpEnd();
   }
   if (window.visualViewport) { visualViewport.addEventListener('resize', syncViewport); visualViewport.addEventListener('scroll', function () { if (opened) syncViewport(); }); }
   window.addEventListener('orientationchange', function () { setTimeout(syncViewport, 250); });
