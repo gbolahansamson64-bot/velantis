@@ -99,3 +99,67 @@ body{background:var(--bg)}
  .au-card,.au-pane:not([hidden]){animation:none}
  .au-bar,.au-go,.au-go svg,.au-google{transition:none}
 }
+
+/* =====================================================================
+   ACCOUNT PAGE (shown instead of the sign in card once someone is signed in)
+   Welcome header, 3 numbers, premium banner and the account menu. Phones + tablets get it without the card frame.
+   ===================================================================== */
+.au-card[hidden]{display:none}
+.ac-head{display:flex;align-items:center;gap:18px}
+.ac-av{position:relative;flex:none;display:grid;place-items:center;width:92px;height:92px;border-radius:50%;font-family:var(--serif);font-size:42px;font-weight:500;color:var(--au-gold-soft);
+ background:radial-gradient(circle at 30% 25%,#3b281a,#120a06);box-shadow:0 0 0 3px var(--au-card),0 0 0 4px rgba(214,176,116,.75),0 14px 26px -14px rgba(31,18,9,.7)}
+.ac-dot{position:absolute;right:3px;bottom:5px;width:18px;height:18px;border-radius:50%;background:#2fa866;border:3px solid var(--au-card)}
+.ac-who{min-width:0}
+.ac-hello{font-family:var(--serif);font-size:clamp(20px,5vw,24px);line-height:1.1;color:var(--au-ink)}
+.ac-name{margin-top:2px;font-family:var(--serif);font-weight:600;font-size:clamp(32px,8vw,42px);line-height:1.05;color:var(--au-ink);overflow-wrap:anywhere}
+.ac-ok{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;line-height:1.3;color:var(--au-mute)}
+.ac-ok svg{flex:none;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+
+.ac-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:26px;padding:16px 0;border-top:1px solid var(--au-line);border-bottom:1px solid var(--au-line)}
+.ac-stat{display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 4px;text-align:center;text-decoration:none;color:var(--au-ink);transition:opacity .2s}
+a.ac-stat:hover{opacity:.75}
+.ac-stat+.ac-stat{border-left:1px solid var(--au-line)}
+.ac-stat svg{width:22px;height:22px;fill:none;stroke:var(--au-gold);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.ac-stat b{font-size:20px;font-weight:600;line-height:1.1}
+.ac-stat span{font-size:12px;color:var(--au-mute)}
+
+.ac-prem{display:flex;align-items:center;gap:14px;margin-top:18px;padding:16px 18px;border-radius:14px;color:#f6ead2;
+ background:linear-gradient(120deg,#1f1209,#3b281a 55%,#5a3d1c);border:1px solid rgba(214,176,116,.35)}
+.ac-prem svg{flex:none;width:32px;height:32px;fill:none;stroke:var(--au-gold-soft);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.ac-prem b{display:block;font-size:15px;font-weight:600;letter-spacing:.01em}
+.ac-prem p{margin-top:3px;font-size:12px;line-height:1.4;color:rgba(246,234,210,.75)}
+
+.ac-list{margin-top:18px;border:1px solid var(--au-line);border-radius:14px;background:rgba(255,255,255,.5);overflow:hidden}
+.ac-row{box-sizing:border-box;display:flex;align-items:center;gap:16px;width:100%;min-height:56px;padding:0 16px;border:0;background:none;font:400 15px/1.2 var(--sans);text-align:left;text-decoration:none;color:var(--au-ink);cursor:pointer;transition:background .2s}
+.ac-row+.ac-row{border-top:1px solid var(--au-line)}
+.ac-row:hover{background:#fff}
+.ac-row:focus-visible{outline:2px solid var(--au-gold);outline-offset:-3px}
+.ac-row span{flex:1}
+.ac-ic,.ac-go{flex:none;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
+.ac-ic{width:22px;height:22px;stroke-width:1.5}
+.ac-go{width:18px;height:18px;stroke-width:1.6;color:#4b3f31;transition:transform .2s}
+.ac-row:hover .ac-go{transform:translateX(3px)}
+.ac-out{color:#b8453a;background:rgba(170,52,40,.06)}
+.ac-out .ac-go{color:#b8453a}
+.ac-out:hover{background:rgba(170,52,40,.12)}
+
+/* the account page is short, so it must not be stretched to fill the screen (that is what left a big gap above the footer) */
+.auth.is-account{min-height:0;padding-bottom:clamp(28px,4vw,48px)}
+.ac .au-prev{margin-bottom:16px}
+/* account page: the back button carries the word "Back" so it is easy to spot */
+.au-prev-txt{display:inline-flex;align-items:center;gap:4px;width:auto;height:44px;padding:0 20px 0 12px;border-radius:999px;font-size:14px;font-weight:500;letter-spacing:.02em}
+.au-prev-txt span{line-height:1}
+@media(max-width:960px){
+ .au-card.ac{max-width:none;padding:0;background:none;border:0;box-shadow:none;border-radius:0}
+ .ac .au-prev{margin:0 0 18px}
+ .au-prev-txt{width:42px;height:42px;padding:0;gap:0;justify-content:center;border-radius:50%}
+ .au-prev-txt span{display:none}
+ .auth.is-account{padding-bottom:28px}
+}
+@media(max-width:380px){
+ .ac-av{width:78px;height:78px;font-size:36px}
+ .ac-head{gap:14px}
+}
+@media(prefers-reduced-motion:reduce){
+ .ac-row,.ac-go,.ac-stat{transition:none}
+}

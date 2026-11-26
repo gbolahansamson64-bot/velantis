@@ -41,12 +41,13 @@
     <button id="accountBtn" aria-label="Account" aria-haspopup="true"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span class="acc-txt"><small id="accHi">Welcome</small><b id="accNm">Sign in / Register</b></span></button>
     <div class="acc-dd" role="menu">
      <div class="acc-user"><span class="acc-av" id="accAv" aria-hidden="true"></span><p class="acc-hello">Welcome back,<b id="accWho"></b></p></div>
-     <button type="button" class="acc-out" id="accOut" role="menuitem"><span class="acc-out-ic" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M10 4H5a1 1 0 00-1 1v14a1 1 0 001 1h5M15 8l4 4-4 4M19 12H9"/></svg></span><span class="acc-out-txt">Sign out</span></button>
      <a class="acc-signin" href="login.html" role="menuitem">Sign in</a>
      <a class="acc-reg" href="login.html#signup" role="menuitem">Register</a>
      <span class="acc-line"></span>
-     <a class="acc-link" data-auth href="orders.html" role="menuitem"><svg class="i" viewBox="0 0 24 24"><path d="M7 3h10a1 1 0 011 1v16a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1zM9 8h6M9 12h6M9 16h4"/></svg>My Orders</a>
-     <a class="acc-link" data-auth href="wishlist.html" role="menuitem"><svg class="i" viewBox="0 0 24 24"><path d="M12 20s-8-5-8-11a4.5 4.5 0 018-2.5A4.5 4.5 0 0120 9c0 6-8 11-8 11z"/></svg>Wishlist</a>
+     <a class="acc-link" data-auth href="orders.html" role="menuitem"><svg class="i" viewBox="0 0 24 24"><path d="M7 3h10a1 1 0 011 1v16a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1zM9 8h6M9 12h6M9 16h4"/></svg>My Orders<svg class="acc-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></a>
+     <a class="acc-link" data-auth href="wishlist.html" role="menuitem"><svg class="i" viewBox="0 0 24 24"><path d="M12 20s-8-5-8-11a4.5 4.5 0 018-2.5A4.5 4.5 0 0120 9c0 6-8 11-8 11z"/></svg>Wishlist<svg class="acc-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></a>
+     <a class="acc-link" href="#footer" role="menuitem"><svg class="i" viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0116 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/><path d="M19 20c0 1-2 2-5 2"/></svg>Help &amp; Support<svg class="acc-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></a>
+     <button type="button" class="acc-out" id="accOut" role="menuitem"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5a1 1 0 00-1 1v14a1 1 0 001 1h5M15 8l4 4-4 4M19 12H9"/></svg><span class="acc-out-txt">Log Out</span><svg class="acc-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></button>
     </div>
    </div>
    <a class="cart" href="#" aria-label="Cart"><svg class="i" viewBox="0 0 24 24"><path d="M5 8h14l-1 13H6z"/><path d="M9 8V6a3 3 0 016 0v2"/></svg><span id="cartCount">0</span></a>
@@ -244,7 +245,7 @@
 
  /* ---------- SIGNED-IN STATE (header button + dropdown) ----------
     auth.js saves {name,email} under "velantis_user" after a successful sign in / sign up. This block reads that same key:
-      - signed in : the header button shows "Hi, <name>" over "Account", and the dropdown shows a welcome line, My Orders, Wishlist and Sign out
+      - signed in : the header button shows "Hi, <name>" over "Account", and the dropdown shows a welcome line, My Orders, Wishlist, Help & Support and Log Out
       - signed out: everything goes back to "Welcome / Sign in / Register" with the Sign in + Register buttons
     It re-checks on page load, when the Back button restores a page, and when another tab signs in or out.
     To run your own sign-out request, set window.VelantisAuth.signOut = async()=>{...} (optional, same object as in auth.js). */

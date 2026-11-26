@@ -13,8 +13,14 @@
          signIn:  async ({email,password})      => ({name,email}),   // throw new Error('message') to show an error
          signUp:  async ({name,email,password}) => ({name,email}),
          google:  async ()                      => ({name,email}),
-         forgot:  async (email)                 => {}
+         forgot:  async (email)                 => {},
+         signOut: async ()                      => {}                // optional, runs before "Log Out" clears the browser
        };
+
+   ACCOUNT PAGE: once someone is signed in, this same page shows their account (welcome name, Total Orders, Wishlist, Rewards Points,
+   My Orders, My Wishlist, Help & Support, Log Out) instead of the sign in form. On phones + tablets a successful sign in / sign up
+   switches to it right away (unless a ?redirect= page was asked for, then they go there). Your backend can return extra numbers:
+   {name,email,orders:3,points:120}. The Wishlist number is counted from the saved watches ("velantis_shop_favs").
    ===================================================================== */
 (()=>{
  const $=id=>document.getElementById(id);
@@ -28,27 +34,32 @@
  /* ---------- storage + redirect ---------- */
  const save=u=>{try{localStorage.setItem(KEY,JSON.stringify(u))}catch(e){}};
  const goBack=()=>{ /* only same-site relative paths, never another website */
-  let to='index.html';
+  let to='';
   try{
    const r=new URLSearchParams(location.search).get('redirect');
    if(r&&/^\/(?!\/)/.test(r)&&!/[\\\r\n]/.test(r))to=r;
   }catch(e){}
-  location.href=to;
+  if(to){location.href=to;return}
+  /* phones + tablets: this page turns into the account page. Desktop: back to the home page, the header shows the name */
+  if(window.matchMedia&&matchMedia('(max-width:960px)').matches){render();window.scrollTo(0,0);return}
+  location.href='index.html';
  };
 
  /* ---------- previous button ----------
     Goes back to the page the visitor came from: the ?redirect= page if there is one (the live chat adds it),
     otherwise the page they were on before (same site only), otherwise the home page. */
- const prev=$('auPrev');
- if(prev){
+ const prevs=[$('auPrev'),$('acPrev')].filter(Boolean);
+ if(prevs.length){
   let ref='';
   try{const u=new URL(document.referrer);if(document.referrer&&u.origin===location.origin&&!/\/login(\.html)?$/.test(u.pathname))ref=u.pathname+u.search+u.hash}catch(e){}
   let red='';
   try{const r=new URLSearchParams(location.search).get('redirect');if(r&&/^\/(?!\/)/.test(r)&&!/[\\\r\n]/.test(r))red=r}catch(e){}
-  prev.setAttribute('href',red||ref||'index.html');
-  prev.addEventListener('click',e=>{
-   if(red||!ref||history.length<2)return; /* normal link to redirect / home */
-   e.preventDefault();history.back(); /* same page they left, scroll position kept */
+  prevs.forEach(prev=>{
+   prev.setAttribute('href',red||ref||'index.html');
+   prev.addEventListener('click',e=>{
+    if(red||!ref||history.length<2)return; /* normal link to redirect / home */
+    e.preventDefault();history.back(); /* same page they left, scroll position kept */
+   });
   });
  }
 
@@ -137,6 +148,30 @@
   try{await API().forgot(v);say('If that email has an account, a reset link is on its way.')}catch(err){say((err&&err.message)||'Could not send the reset link.',true)}
  });
 
+ /* ---------- ACCOUNT PAGE (signed in) ---------- */
+ const readUser=()=>{try{const u=JSON.parse(localStorage.getItem(KEY)||'null');return u&&typeof u==='object'&&(u.name||u.email)?u:null}catch(e){return null}};
+ const favCount=()=>{try{const f=JSON.parse(localStorage.getItem('velantis_shop_favs')||'[]');return Array.isArray(f)?f.length:0}catch(e){return 0}};
+ const whole=v=>{v=Number(v);return isFinite(v)&&v>0?Math.floor(v):0};
+ function render(){
+  const card=$('auCard'),view=$('acView');if(!card||!view)return;
+  const u=readUser();
+  card.hidden=!!u;view.hidden=!u;
+  const main=card.closest('main');if(main)main.classList.toggle('is-account',!!u);
+  if(!u)return;
+  const n=String(u.name||'').trim()||nameFrom(String(u.email||''));
+  $('acName').textContent=n;$('acInit').textContent=n.charAt(0).toUpperCase();
+  $('acOrders').textContent=whole(u.orders);$('acFavs').textContent=favCount();$('acPts').textContent=whole(u.points);
+  document.title='My Account | Velantis';
+ }
+ $('acOut').addEventListener('click',async()=>{
+  try{if(API().signOut)await API().signOut()}catch(e){}
+  try{localStorage.removeItem(KEY)}catch(e){}
+  location.replace(location.pathname+location.search); /* reload: back to the sign in form, header updated too */
+ });
+ window.addEventListener('storage',e=>{if(!e.key||e.key===KEY||e.key==='velantis_shop_favs')render()});
+ window.addEventListener('pageshow',render);
+
  /* login.html#signup opens the Create Account tab */
  setTab(location.hash==='#signup'?'up':'in',false);
+ render();
 })();

@@ -33,7 +33,7 @@
 <script src="/assets/js/header.js"></script>
 
 <main class="auth" id="top">
- <section class="au-card" aria-labelledby="auTitle">
+ <section class="au-card" id="auCard" aria-labelledby="auTitle">
 
   <!-- Back button: takes people back to the page they came from (wired in auth.js) -->
   <a class="au-prev" id="auPrev" href="index.html" aria-label="Go back to the page you came from"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6l-6 6 6 6"/></svg></a>
@@ -92,6 +92,41 @@
    <button type="submit" class="au-go"><span>Create Account</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
    <p class="au-foot">Already a member? <button type="button" class="au-link" data-go="in">Sign in</button></p>
   </form>
+
+ </section>
+
+ <!-- ACCOUNT PAGE: shown instead of the sign in card once someone is signed in (filled + switched by auth.js) -->
+ <section class="au-card ac" id="acView" aria-label="Your account" hidden>
+
+  <!-- Back button: same as the sign in card, takes people back to the page they came from before opening the account page (wired in auth.js) -->
+  <a class="au-prev au-prev-txt" id="acPrev" href="index.html" aria-label="Go back to the page you came from"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6l-6 6 6 6"/></svg><span>Back</span></a>
+
+  <div class="ac-head">
+   <div class="ac-av" aria-hidden="true"><span id="acInit"></span><i class="ac-dot"></i></div>
+   <div class="ac-who">
+    <p class="ac-hello">Welcome back,</p>
+    <h1 class="ac-name" id="acName"></h1>
+    <p class="ac-ok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Your account is in good standing</p>
+   </div>
+  </div>
+
+  <div class="ac-stats">
+   <a class="ac-stat" href="orders.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7z"/><path d="M9 8V6a3 3 0 016 0v2"/></svg><b id="acOrders">0</b><span>Total Orders</span></a>
+   <a class="ac-stat" href="wishlist.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-8-5-8-11a4.5 4.5 0 018-2.5A4.5 4.5 0 0120 9c0 6-8 11-8 11z"/></svg><b id="acFavs">0</b><span>Wishlist</span></a>
+   <div class="ac-stat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8-4.3-4.1 5.9-.8z"/></svg><b id="acPts">0</b><span>Rewards Points</span></div>
+  </div>
+
+  <div class="ac-prem">
+   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>
+   <div><b>Velantis Premium Member</b><p>Enjoy exclusive perks and early access.</p></div>
+  </div>
+
+  <nav class="ac-list" aria-label="Account menu">
+   <a class="ac-row" href="orders.html"><svg class="ac-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/></svg><span>My Orders</span><svg class="ac-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></a>
+   <a class="ac-row" href="wishlist.html"><svg class="ac-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-8-5-8-11a4.5 4.5 0 018-2.5A4.5 4.5 0 0120 9c0 6-8 11-8 11z"/></svg><span>My Wishlist</span><svg class="ac-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></a>
+   <a class="ac-row" href="#footer"><svg class="ac-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14v-2a8 8 0 0116 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/><path d="M19 20c0 1-2 2-5 2"/></svg><span>Help &amp; Support</span><svg class="ac-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></a>
+   <button type="button" class="ac-row ac-out" id="acOut"><svg class="ac-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5a1 1 0 00-1 1v14a1 1 0 001 1h5M15 8l4 4-4 4M19 12H9"/></svg><span>Log Out</span><svg class="ac-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></button>
+  </nav>
 
  </section>
 </main>
