@@ -147,6 +147,18 @@ transition:transform .2s,box-shadow .25s,opacity .2s}\
 .badge{position:absolute;top:-6px;right:-6px;min-width:24px;height:24px;padding:0 6px;border-radius:999px;background:linear-gradient(145deg,#f04848,#c81e1e);color:#fff;font-size:13px;font-weight:700;display:none;align-items:center;justify-content:center;border:2px solid #fbe9cf;box-shadow:0 3px 8px rgba(160,20,20,.4)}\
 .badge.on{display:flex}\
 .fab.open .badge{display:none}\
+/* first-time hint */\
+.hint{position:fixed;z-index:2147483000;display:flex;align-items:center;gap:9px;max-width:calc(100vw - 16px);padding:10px 15px 10px 11px;border-radius:14px;white-space:nowrap;\
+background:linear-gradient(135deg,#2b221b,#14100c);border:1px solid rgba(214,176,116,.55);color:#f1eadf;font-size:13px;line-height:1.25;letter-spacing:.01em;box-shadow:0 10px 28px rgba(20,10,0,.4);\
+opacity:0;visibility:hidden;transform:translateY(6px);transition:opacity .35s,transform .35s,visibility .35s;pointer-events:none}\
+.hint.on{opacity:1;visibility:visible;transform:none}\
+.hint svg{width:20px;height:20px;flex:none;color:var(--gold2)}\
+.hint:after{content:"";position:absolute;bottom:-6px;left:31px;width:11px;height:11px;background:#14100c;border-right:1px solid rgba(214,176,116,.55);border-bottom:1px solid rgba(214,176,116,.55);transform:rotate(45deg)}\
+.hint.r:after{left:auto;right:31px}\
+.hint.dn:after{bottom:auto;top:-6px;transform:rotate(225deg)}\
+.fab.nudge{animation:nudge 1.2s ease-in-out .3s 2}\
+@keyframes nudge{0%,100%{transform:none}30%{transform:translateX(var(--nx,-10px))}60%{transform:translateX(calc(var(--nx,-10px)*.4))}}\
+@media (prefers-reduced-motion:reduce){.fab.nudge{animation:none}}\
 /* panel */\
 .panel{position:fixed;right:max(20px,env(safe-area-inset-right));bottom:calc(max(20px,env(safe-area-inset-bottom)) + 88px);z-index:2147483001;width:390px;height:min(620px,calc(100dvh - 132px));\
 display:flex;flex-direction:column;background:var(--cream);border-radius:22px;overflow:hidden;border:1px solid var(--line);\
@@ -417,7 +429,7 @@ textarea{font-size:16px}\
   }
 
   function openPanel() {
-    opened = true; session = resolveSession();
+    opened = true; hideHint(); session = resolveSession();
     scrim.classList.add('on'); lockPage();
     panel.classList.add('open'); fab.classList.add('open'); fab.setAttribute('aria-expanded', 'true'); fab.setAttribute('aria-label', 'Close live chat');
     syncViewport();
@@ -517,6 +529,31 @@ textarea{font-size:16px}\
   var pos = json(LS.get(POS_KEY));
   if (!pos || (pos.s !== 'l' && pos.s !== 'r') || !isFinite(pos.b)) pos = null;
   var press = null, suppressClick = false, moveMode = false, lastPtr = '';
+
+  /* ---------- first-time hint: tells phone/tablet users the button can be moved ---------- */
+  // Shows ONCE per device, a few seconds after the page loads, only while the button is floating (where it can really be moved).
+  // A small espresso bubble above the button says "Hold & drag to move me" and the button gives a little sideways nudge.
+  // It never blocks touches, vanishes on its own after ~7s, and is gone for good once seen or once the person has moved the button.
+  var HINT_KEY = 'vlc_hint_done', hintT1 = 0, hintT2 = 0;
+  var hint = el('div', 'hint'); hint.setAttribute('role', 'status'); hint.setAttribute('aria-live', 'polite');
+  hint.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></svg><span>Hold &amp; drag to move me</span>';
+  wF.appendChild(hint);
+  function hideHint() { clearTimeout(hintT1); clearTimeout(hintT2); hint.classList.remove('on'); fab.classList.remove('nudge'); }
+  function showHint() {
+    if (LS.get(HINT_KEY) || pos || opened || press || document.hidden || fab.classList.contains('inline') || !touchLike()) return;
+    var r = fab.getBoundingClientRect(), z = pageZoom(), right = r.left + r.width / 2 > window.innerWidth / 2, h = hint.offsetHeight || 40;
+    var above = r.top - h - 14 >= 8;
+    hint.style.top = ((above ? r.top - h - 14 : r.bottom + 14) / z) + 'px';
+    if (right) { hint.style.right = Math.max(8, (window.innerWidth - r.right) / z) + 'px'; hint.style.left = 'auto'; }
+    else { hint.style.left = Math.max(8, r.left / z) + 'px'; hint.style.right = 'auto'; }
+    hint.classList.toggle('r', right); hint.classList.toggle('dn', !above);
+    fab.style.setProperty('--nx', (right ? -10 : 10) + 'px');
+    hint.classList.add('on'); fab.classList.add('nudge');
+    LS.set(HINT_KEY, '1'); // shown once; never again on this device
+    hintT1 = setTimeout(hideHint, 7000);
+  }
+  fab.addEventListener('pointerdown', hideHint);
+  window.addEventListener('orientationchange', hideHint);
   var probe = el('div'); probe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding-bottom:env(safe-area-inset-bottom,0px)'; wF.appendChild(probe);
   function pageZoom() { var z = parseFloat(getComputedStyle(document.documentElement).zoom); return z > 0 ? z : 1; }
   function safeBottom() { return parseFloat(getComputedStyle(probe).paddingBottom) || 0; }
@@ -530,7 +567,7 @@ textarea{font-size:16px}\
   function startDrag() {
     if (!press) return;
     var r = fab.getBoundingClientRect(), z = pageZoom();
-    press.active = true; suppressClick = true;
+    press.active = true; suppressClick = true; hideHint();
     press.ox = press.x0 - r.left; press.oy = press.y0 - r.top; press.w = r.width; press.h = r.height;
     fab.classList.add('drag');
     fab.style.right = 'auto'; fab.style.bottom = 'auto'; fab.style.left = (r.left / z) + 'px'; fab.style.top = (r.top / z) + 'px';
@@ -539,7 +576,7 @@ textarea{font-size:16px}\
   function dropFab() {
     var z = pageZoom(), r = fab.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
     pos = { s: cx < window.innerWidth / 2 ? 'l' : 'r', b: clampB((window.innerHeight - cy) / z - (fab.offsetHeight || 66) / 2 - safeBottom()) };
-    LS.set(POS_KEY, JSON.stringify(pos));
+    LS.set(POS_KEY, JSON.stringify(pos)); LS.set(HINT_KEY, '1');
     fab.classList.remove('drag'); fab.style.left = ''; fab.style.top = ''; fab.style.right = '';
     applyPos();
     // slide from where it was dropped to its final spot
@@ -649,7 +686,7 @@ textarea{font-size:16px}\
     var slot = document.getElementById('velantis-chat-slot') || document.querySelector('[data-livechat-slot]');
     if (mq.matches && slot) {            // mobile + slot found: button sits in the page and scrolls with it
       if (hostF.parentNode !== slot) slot.appendChild(hostF);
-      fab.classList.add('inline'); fab.classList.remove('lift');
+      fab.classList.add('inline'); fab.classList.remove('lift'); hideHint();
     } else {                             // desktop (floating), or mobile fallback lifted above the bottom nav
       if (hostF.parentNode !== document.body) document.body.appendChild(hostF);
       fab.classList.remove('inline'); fab.classList.toggle('lift', mq.matches);
@@ -664,6 +701,7 @@ textarea{font-size:16px}\
     document.body.appendChild(host);
     place();
     fab.classList.add('pulse');
+    hintT2 = setTimeout(showHint, 5000);
     // Background listener so the unread badge works before the chat is opened
     if (session) { stop = T.listen(session, addMsg); updateBadge(); }
   }
