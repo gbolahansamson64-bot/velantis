@@ -17,7 +17,7 @@
  if(window.__velantisLoader)return;window.__velantisLoader=true;
 
  /* ---------- SETTINGS ---------- */
- const LOGO='/assets/images/velantis.webp'; /* your logo (transparent PNG or SVG works best) */
+ const LOGO='/assets/images/velantis.svg'; /* your logo (transparent PNG or SVG works best) */
  const MIN=300;   /* shortest time the screen stays, in milliseconds */
  const MAX=1800;  /* safety limit: the screen always leaves by then, even if something is slow to load */
 

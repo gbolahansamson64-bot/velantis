@@ -22,7 +22,7 @@
  <div class="ft-grid">
 
   <div class="ft-brand">
-   <a href="index.html" class="ft-logo" aria-label="Velantis home"><img src="/assets/images/velantis.webp" alt="Velantis Timeless Luxury" width="280" height="140" loading="lazy" decoding="async"></a>
+   <a href="index.html" class="ft-logo" aria-label="Velantis home"><img src="/assets/images/velantis.svg" alt="Velantis Timeless Luxury" width="280" height="140" loading="lazy" decoding="async"></a>
    <p class="ft-about">Timeless watches with a premium look at student-friendly prices. Made for the ambitious, the focused and the dreamers.</p>
    <div class="ft-soc">
     <a href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M3 21l1.6-4.7A8.5 8.5 0 1 1 8 19.4z"/><path d="M9 8.8c0 3.3 2.9 6.2 6.2 6.2l1.1-1.3-2-1-.8.7a3.6 3.6 0 0 1-1.6-1.6l.7-.8-1-2z"/></svg></a>
