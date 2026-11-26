@@ -269,6 +269,8 @@ textarea{font-size:16px}\
   // panel
   var panel = el('section', 'panel');
   panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', CFG.title);
+  // The site's smooth-scroll library (Lenis) is frozen while the chat is open and cancels every swipe that is not inside an element marked data-lenis-prevent. That is what stopped the message list from scrolling by touch. Marking the chat tells Lenis to leave its swipes alone.
+  panel.setAttribute('data-lenis-prevent', '');
   var head = el('div', 'head');
   var bBack = el('button', 'hb hb-back', I.back); bBack.type = 'button'; bBack.setAttribute('aria-label', 'Back to the website'); head.appendChild(bBack); // phone only
   head.appendChild(avatar());
@@ -292,7 +294,7 @@ textarea{font-size:16px}\
 
   // chat view
   var chat = el('div', 'chat');
-  var msgsEl = el('div', 'msgs'); msgsEl.setAttribute('aria-live', 'polite');
+  var msgsEl = el('div', 'msgs'); msgsEl.setAttribute('aria-live', 'polite'); msgsEl.setAttribute('data-lenis-prevent', '');
   var typing = el('div', 'typing'); typing.appendChild(avatar(true)); typing.appendChild(el('div', 'tb', '<i></i><i></i><i></i>'));
   var comp = el('div', 'comp');
   var emo = el('div', 'emo');
