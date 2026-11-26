@@ -135,6 +135,10 @@ transition:transform .2s,box-shadow .25s,opacity .2s}\
 .ic-x{opacity:0;transform:rotate(-90deg) scale(.5)}\
 .fab.open .ic-chat{opacity:0;transform:rotate(90deg) scale(.5)}\
 .fab.open .ic-x{opacity:1;transform:none}\
+.fab{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}\
+.fab:not(.inline){touch-action:none}\
+.fab.l{left:max(20px,env(safe-area-inset-left));right:auto}\
+.fab.drag,.fab.drag:hover,.fab.drag:active{transform:scale(1.1);transition:transform .15s,box-shadow .2s;cursor:grabbing;box-shadow:0 0 0 3px rgba(214,176,116,.4),0 0 30px 8px rgba(214,176,116,.6),0 16px 34px rgba(20,10,0,.55),inset 0 0 0 2px rgba(20,10,0,.55)}\
 .fab:before,.fab:after{content:"";position:absolute;inset:-2.5px;border-radius:50%;border:1.5px solid rgba(201,162,101,.6);opacity:0;pointer-events:none}\
 .fab.pulse:before{animation:ring 2.2s ease-out 3}\
 .fab.pulse:after{animation:ring 2.2s ease-out .7s 3}\
@@ -148,6 +152,7 @@ transition:transform .2s,box-shadow .25s,opacity .2s}\
 display:flex;flex-direction:column;background:var(--cream);border-radius:22px;overflow:hidden;border:1px solid var(--line);\
 box-shadow:0 24px 70px rgba(20,10,0,.4);transform-origin:bottom right;transform:translateY(16px) scale(.96);opacity:0;visibility:hidden;transition:transform .25s cubic-bezier(.2,.8,.2,1),opacity .2s,visibility .25s}\
 .panel.open{transform:none;opacity:1;visibility:visible}\
+@media (min-width:521px){.panel.left{right:auto;left:max(20px,env(safe-area-inset-left));transform-origin:bottom left}}\
 .scrim{display:none}.hb-back{display:none}\
 .head{display:flex;align-items:center;gap:12px;padding:14px 16px;background:linear-gradient(135deg,#2b221b,#14100c);color:#f1eadf;border-bottom:1px solid rgba(214,176,116,.35);flex:none}\
 .av{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#2e2014,#14100c);border:1.5px solid rgba(214,176,116,.7);display:flex;align-items:center;justify-content:center;flex:none;overflow:hidden;color:var(--gold2);font-family:var(--serif);font-size:22px;font-weight:700}\
@@ -213,6 +218,7 @@ textarea::placeholder{color:#a8977f}\
 .scrim.on{opacity:1;visibility:visible}\
 .hb-back{display:flex;margin-left:-8px}.hb-min{display:none}\
 .fab{right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));width:66px;height:66px}\
+.fab.l{left:max(14px,env(safe-area-inset-left));right:auto}\
 .fab.lift{bottom:calc(96px + env(safe-area-inset-bottom))}\
 .fab.inline{position:relative;right:auto;bottom:auto;z-index:1;width:62px;height:62px;box-shadow:0 6px 16px rgba(20,10,0,.35),inset 0 0 0 2px rgba(20,10,0,.55)}\
 .fab .ic svg{width:31px;height:31px}\
@@ -503,8 +509,104 @@ textarea{font-size:16px}\
   window.addEventListener('orientationchange', function () { setTimeout(syncViewport, 250); });
   window.addEventListener('resize', function () { if (opened) syncViewport(); });
 
+  /* ---------- movable chat button ---------- */
+  // Desktop (mouse): PRESS AND HOLD THE LEFT MOUSE BUTTON on the button and drag, or DOUBLE-CLICK it to pick it up (it follows the pointer; click anywhere, or press Esc, to put it down).
+  // Touch screens: press and hold the button, then drag it anywhere. When let go it slides to the nearest side (left or right, never the middle); the height stays where it was dropped.
+  // The spot is remembered on this device. The normal spot (bottom-right) is used until someone moves it. On desktop the chat window opens on the same side as the button.
+  var POS_KEY = 'vlc_fab_pos';
+  var pos = json(LS.get(POS_KEY));
+  if (!pos || (pos.s !== 'l' && pos.s !== 'r') || !isFinite(pos.b)) pos = null;
+  var press = null, suppressClick = false, moveMode = false, lastPtr = '';
+  var probe = el('div'); probe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding-bottom:env(safe-area-inset-bottom,0px)'; wF.appendChild(probe);
+  function pageZoom() { var z = parseFloat(getComputedStyle(document.documentElement).zoom); return z > 0 ? z : 1; }
+  function safeBottom() { return parseFloat(getComputedStyle(probe).paddingBottom) || 0; }
+  function floorB() { return mq.matches ? (fab.classList.contains('lift') ? 96 : 14) : 20; } // never lower than the normal spot (keeps it above the phone's bottom bar)
+  function clampB(b) { var min = floorB(), max = window.innerHeight / pageZoom() - (fab.offsetHeight || 66) - 80 - safeBottom(); return Math.max(min, Math.min(b, Math.max(min, max))); } // and never up under the site header
+  function applyPos() {
+    if (!pos || fab.classList.contains('inline')) { fab.classList.remove('l'); fab.style.bottom = ''; panel.classList.remove('left'); return; }
+    fab.classList.toggle('l', pos.s === 'l'); panel.classList.toggle('left', pos.s === 'l');
+    fab.style.bottom = 'calc(' + clampB(pos.b) + 'px + env(safe-area-inset-bottom, 0px))';
+  }
+  function startDrag() {
+    if (!press) return;
+    var r = fab.getBoundingClientRect(), z = pageZoom();
+    press.active = true; suppressClick = true;
+    press.ox = press.x0 - r.left; press.oy = press.y0 - r.top; press.w = r.width; press.h = r.height;
+    fab.classList.add('drag');
+    fab.style.right = 'auto'; fab.style.bottom = 'auto'; fab.style.left = (r.left / z) + 'px'; fab.style.top = (r.top / z) + 'px';
+    try { if (navigator.vibrate) navigator.vibrate(15); } catch (e) {}
+  }
+  function dropFab() {
+    var z = pageZoom(), r = fab.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    pos = { s: cx < window.innerWidth / 2 ? 'l' : 'r', b: clampB((window.innerHeight - cy) / z - (fab.offsetHeight || 66) / 2 - safeBottom()) };
+    LS.set(POS_KEY, JSON.stringify(pos));
+    fab.classList.remove('drag'); fab.style.left = ''; fab.style.top = ''; fab.style.right = '';
+    applyPos();
+    // slide from where it was dropped to its final spot
+    var r2 = fab.getBoundingClientRect();
+    fab.style.transition = 'none';
+    fab.style.transform = 'translate(' + ((cx - (r2.left + r2.width / 2)) / z) + 'px,' + ((cy - (r2.top + r2.height / 2)) / z) + 'px)';
+    void fab.offsetWidth;
+    fab.style.transition = 'transform .28s cubic-bezier(.2,.8,.2,1)'; fab.style.transform = '';
+    setTimeout(function () { fab.style.transition = ''; suppressClick = false; }, 400);
+  }
+  function endPress(e) {
+    if (!press || (e && e.pointerId !== undefined && e.pointerId !== press.id)) return;
+    var p = press; press = null; clearTimeout(p.timer);
+    try { fab.releasePointerCapture(p.id); } catch (err) {}
+    if (p.active) dropFab();
+  }
+  fab.addEventListener('pointerdown', function (e) {
+    lastPtr = e.pointerType;
+    var mouse = e.pointerType === 'mouse';
+    if ((mouse && e.button !== 0) || opened || fab.classList.contains('inline') || press) return; // mouse: left button only (a quick click still opens the chat)
+    press = { id: e.pointerId, x0: e.clientX, y0: e.clientY, active: false, mouse: mouse, timer: setTimeout(startDrag, 450) };
+    try { fab.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  fab.addEventListener('pointermove', function (e) {
+    if (!press || e.pointerId !== press.id) return;
+    if (!press.active) { // moved before the hold finished
+      var th = press.mouse ? 6 : 10;
+      if (Math.abs(e.clientX - press.x0) > th || Math.abs(e.clientY - press.y0) > th) {
+        if (press.mouse) { clearTimeout(press.timer); startDrag(); return; } // mouse held down + moved = start dragging straight away
+        var p = press; press = null; clearTimeout(p.timer); try { fab.releasePointerCapture(p.id); } catch (err) {} }
+      return;
+    }
+    moveFab(e);
+  });
+  function moveFab(e) {
+    var z = pageZoom(), x = Math.max(0, Math.min(e.clientX - press.ox, window.innerWidth - press.w)), y = Math.max(0, Math.min(e.clientY - press.oy, window.innerHeight - press.h));
+    fab.style.left = (x / z) + 'px'; fab.style.top = (y / z) + 'px';
+  }
+  // Double-click (desktop): the button sticks to the pointer until you click anywhere (or press Esc).
+  function onFollow(e) { if (press && press.active) moveFab(e); }
+  function onDropClick(e) { e.preventDefault(); e.stopPropagation(); endMove(); }
+  function onDropKey(e) { if (e.key === 'Escape') endMove(); }
+  function endMove() {
+    if (!moveMode) return;
+    moveMode = false; press = null;
+    window.removeEventListener('pointermove', onFollow, true);
+    window.removeEventListener('click', onDropClick, true);
+    window.removeEventListener('keydown', onDropKey, true);
+    dropFab();
+  }
+  fab.addEventListener('dblclick', function (e) {
+    if (lastPtr === 'touch' || lastPtr === 'pen' || fab.classList.contains('inline') || moveMode) return;
+    if (opened) closePanel(); // the two clicks of the double-click opened it; put it away again
+    press = { id: null, x0: e.clientX, y0: e.clientY, active: false, mouse: true };
+    startDrag(); moveMode = true;
+    window.addEventListener('pointermove', onFollow, true);
+    window.addEventListener('click', onDropClick, true);
+    window.addEventListener('keydown', onDropKey, true);
+  });
+  fab.addEventListener('pointerup', endPress);
+  fab.addEventListener('pointercancel', endPress);
+  fab.addEventListener('lostpointercapture', endPress);
+  fab.addEventListener('contextmenu', function (e) { if (press) e.preventDefault(); }); // phones show a menu on long-press; not while holding the button
+  window.addEventListener('resize', function () { if (!(press && press.active)) applyPos(); });
+
   /* ---------- events ---------- */
-  fab.addEventListener('click', function () { if (opened) closePanel(); else openPanel(); });
+  fab.addEventListener('click', function (e) { if (e.detail > 1) return; /* 2nd click of a double-click */ if (suppressClick) { suppressClick = false; return; } if (opened) closePanel(); else openPanel(); });
   bClose.addEventListener('click', closePanel);
   bMin.addEventListener('click', closePanel);
   gate.addEventListener('click', function (e) {
@@ -553,6 +655,7 @@ textarea{font-size:16px}\
       fab.classList.remove('inline'); fab.classList.toggle('lift', mq.matches);
     }
     lockBox();
+    applyPos();
   }
   if (mq.addEventListener) mq.addEventListener('change', place); else if (mq.addListener) mq.addListener(place);
   function onWidth() { if (!mq.matches) { unlockPage(); scrim.classList.remove('on'); } else if (opened) { scrim.classList.add('on'); lockPage(); syncViewport(); } }
