@@ -148,6 +148,7 @@ transition:transform .2s,box-shadow .25s,opacity .2s}\
 display:flex;flex-direction:column;background:var(--cream);border-radius:22px;overflow:hidden;border:1px solid var(--line);\
 box-shadow:0 24px 70px rgba(20,10,0,.4);transform-origin:bottom right;transform:translateY(16px) scale(.96);opacity:0;visibility:hidden;transition:transform .25s cubic-bezier(.2,.8,.2,1),opacity .2s,visibility .25s}\
 .panel.open{transform:none;opacity:1;visibility:visible}\
+.scrim{display:none}.hb-back{display:none}\
 .head{display:flex;align-items:center;gap:12px;padding:14px 16px;background:linear-gradient(135deg,#2b221b,#14100c);color:#f1eadf;border-bottom:1px solid rgba(214,176,116,.35);flex:none}\
 .av{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#2e2014,#14100c);border:1.5px solid rgba(214,176,116,.7);display:flex;align-items:center;justify-content:center;flex:none;overflow:hidden;color:var(--gold2);font-family:var(--serif);font-size:22px;font-weight:700}\
 .av img{width:100%;height:100%;object-fit:cover}\
@@ -206,13 +207,16 @@ textarea::placeholder{color:#a8977f}\
 .demo{background:#fff7e6;color:#8a5a12;font-size:11.5px;text-align:center;padding:6px 10px;border-bottom:1px solid var(--line)}\
 /* mobile: full-screen sheet */\
 @media (max-width:520px){\
-.panel{inset:0;width:100%;height:var(--vh,100dvh);border-radius:0;border:0;transform:translateY(30px);transform-origin:bottom center}\
+/* phone = a real full-page inbox: pinned to the visible screen (top + height follow the keyboard, see syncViewport) with a solid backdrop so the page can never show through */\
+.panel{left:0;right:0;top:var(--vt,0px);bottom:auto;width:100%;height:var(--vh,100vh);height:var(--vh,100dvh);border-radius:0;border:0;transform:translateY(30px);transform-origin:bottom center}\
+.scrim{display:block;position:fixed;inset:0;z-index:2147483000;background:#faf8f3;opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}\
+.scrim.on{opacity:1;visibility:visible}\
+.hb-back{display:flex;margin-left:-8px}.hb-min{display:none}\
 .fab{right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));width:66px;height:66px}\
 .fab.lift{bottom:calc(96px + env(safe-area-inset-bottom))}\
 .fab.inline{position:relative;right:auto;bottom:auto;z-index:1;width:62px;height:62px;box-shadow:0 6px 16px rgba(20,10,0,.35),inset 0 0 0 2px rgba(20,10,0,.55)}\
 .fab .ic svg{width:31px;height:31px}\
 .fab.open{opacity:0;pointer-events:none}\
-.panel{bottom:0}\
 .head{padding-top:max(14px,env(safe-area-inset-top))}\
 .bub{max-width:84%}.msgs{padding:16px 12px 8px}\
 textarea{font-size:16px}\
@@ -225,6 +229,7 @@ textarea{font-size:16px}\
     bub: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8C6.6 2.8 2.6 6.4 2.6 11c0 2.3 1 4.4 2.7 5.9L4.4 21.4l4.5-2.3c1 .3 2 .4 3.1.4 5.4 0 9.4-3.6 9.4-8.2S17.4 2.8 12 2.8z"/><circle class="dt" cx="7.9" cy="11.2" r="1.4"/><circle class="dt" cx="12" cy="11.2" r="1.4"/><circle class="dt" cx="16.1" cy="11.2" r="1.4"/></svg>',
     xl: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
     chat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-8.9 8.4 8.6 8.6 0 0 1-3.4-.8L3 21l1.9-5A8.4 8.4 0 1 1 21 11.5z"/><circle cx="8.5" cy="11.5" r=".6" fill="currentColor"/><circle cx="12" cy="11.5" r=".6" fill="currentColor"/><circle cx="15.5" cy="11.5" r=".6" fill="currentColor"/></svg>',
+    back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
     min: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg>',
     x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
     user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>',
@@ -240,6 +245,7 @@ textarea{font-size:16px}\
   var root = host.attachShadow({ mode: 'open' });
   var style = el('style'); style.textContent = CSS; root.appendChild(style);
   var w = el('div', 'w'); root.appendChild(w);
+  var scrim = el('div', 'scrim'); w.appendChild(scrim); // phone only: solid backdrop behind the full-screen chat
   // The launcher button lives in its own shadow host so it can be placed inside the page on mobile
   var hostF = el('div'); hostF.id = 'velantis-livechat-btn';
   var rootF = hostF.attachShadow({ mode: 'open' });
@@ -264,11 +270,12 @@ textarea{font-size:16px}\
   var panel = el('section', 'panel');
   panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', CFG.title);
   var head = el('div', 'head');
+  var bBack = el('button', 'hb hb-back', I.back); bBack.type = 'button'; bBack.setAttribute('aria-label', 'Back to the website'); head.appendChild(bBack); // phone only
   head.appendChild(avatar());
   var ht = el('div', 'ht', '<b></b><span><i class="dot"></i>Online</span>');
   ht.querySelector('b').textContent = CFG.title;
   head.appendChild(ht);
-  var bMin = el('button', 'hb', I.min); bMin.type = 'button'; bMin.setAttribute('aria-label', 'Minimise chat');
+  var bMin = el('button', 'hb hb-min', I.min); bMin.type = 'button'; bMin.setAttribute('aria-label', 'Minimise chat');
   var bClose = el('button', 'hb', I.x); bClose.type = 'button'; bClose.setAttribute('aria-label', 'Close chat');
   head.appendChild(bMin); head.appendChild(bClose);
   panel.appendChild(head);
@@ -350,15 +357,22 @@ textarea{font-size:16px}\
       : { from: 'agent', ts: openedAt, text: 'Hello! \uD83D\uDC4B\nThanks for contacting VELANTIS. How can we help you today?' };
   }
 
+  var forceEnd = false;
   function render() {
     var list = Object.keys(msgs).map(function (k) { return msgs[k]; }).sort(function (a, b) { return a.ts - b.ts; });
-    var nearBottom = msgsEl.scrollHeight - msgsEl.scrollTop - msgsEl.clientHeight < 120;
+    var prevTop = msgsEl.scrollTop, nearBottom = nearEnd();
     msgsEl.textContent = '';
     var g = greeting(); if (list.length) g.ts = Math.min(g.ts, list[0].ts - 1);
     msgsEl.appendChild(row(g));
     list.forEach(function (m) { msgsEl.appendChild(row(m)); });
-    if (nearBottom || list.length < 3) msgsEl.scrollTop = msgsEl.scrollHeight;
+    // Rebuilding the list throws the scroll position away, so restore it at once (no sliding): stay at the newest message if the person was there, otherwise stay exactly where they were reading.
+    if (nearBottom || forceEnd || list.length < 3) jumpEnd(); else setTop(prevTop);
+    forceEnd = false;
   }
+  // Scroll helpers. The message list has "scroll-behavior:smooth", so these switch it off for a moment to move INSTANTLY, like WhatsApp does when a chat opens.
+  function setTop(y) { msgsEl.style.scrollBehavior = 'auto'; msgsEl.scrollTop = y; msgsEl.style.scrollBehavior = ''; }
+  function jumpEnd() { setTop(msgsEl.scrollHeight); }
+  function nearEnd() { return msgsEl.scrollHeight - msgsEl.scrollTop - msgsEl.clientHeight < 120; }
 
   /* ---------- session flow ---------- */
   function showChat() {
@@ -366,7 +380,8 @@ textarea{font-size:16px}\
     if (!stop) { stop = T.listen(session, addMsg); }
     render();
     LS.set(seenKey(), String(Date.now())); badge.classList.remove('on');
-    setTimeout(function () { if (!matchMedia('(max-width:520px)').matches || true) ta.focus({ preventScroll: true }); }, 280);
+    // Only mouse/desktop users get the cursor placed for them. On phones and tablets the keyboard opens when the person TAPS the message box.
+    setTimeout(function () { if (!touchLike()) ta.focus({ preventScroll: true }); }, 280);
   }
   function startGuest() {
     session = { id: 'g_' + rid(), type: 'guest', name: 'Guest ' + Math.floor(1000 + Math.random() * 9000), email: '' };
@@ -374,14 +389,42 @@ textarea{font-size:16px}\
     showChat();
   }
 
+  function touchLike() { return mq.matches || matchMedia('(pointer:coarse)').matches; }
+
+  // While the full-screen chat is open on a phone the website behind it is frozen (no scrolling, nothing peeking through)
+  var lockY = 0, locked = false;
+  function lockPage() {
+    if (locked || !mq.matches) return; locked = true;
+    var d = document.documentElement, b = document.body;
+    lockY = window.pageYOffset || d.scrollTop || 0;
+    b.style.position = 'fixed'; b.style.top = (-lockY) + 'px'; b.style.left = '0'; b.style.right = '0'; b.style.width = '100%'; d.style.overflow = 'hidden';
+    if (window.lenis && window.lenis.stop) window.lenis.stop();
+  }
+  function unlockPage() {
+    if (!locked) return; locked = false;
+    var d = document.documentElement, b = document.body;
+    b.style.position = ''; b.style.top = ''; b.style.left = ''; b.style.right = ''; b.style.width = ''; d.style.overflow = '';
+    d.style.scrollBehavior = 'auto'; window.scrollTo(0, lockY); d.style.scrollBehavior = '';
+    if (window.lenis) { if (window.lenis.scrollTo) window.lenis.scrollTo(lockY, { immediate: true }); if (window.lenis.start) window.lenis.start(); }
+  }
+
   function openPanel() {
     opened = true; session = resolveSession();
+    scrim.classList.add('on'); lockPage();
     panel.classList.add('open'); fab.classList.add('open'); fab.setAttribute('aria-expanded', 'true'); fab.setAttribute('aria-label', 'Close live chat');
     syncViewport();
-    if (session) showChat(); else { gate.classList.remove('off'); chat.classList.remove('on'); }
+    if (session) { showChat(); landOnNewest(); } else { gate.classList.remove('off'); chat.classList.remove('on'); }
+  }
+  // Like WhatsApp: every time the chat opens it is already showing the newest message, no scrolling to watch.
+  // (Done now, again next frame, and once more if a photo finishes loading and changes the height.)
+  function landOnNewest() {
+    jumpEnd(); requestAnimationFrame(jumpEnd);
+    var until = Date.now() + 1500;
+    Array.prototype.forEach.call(msgsEl.querySelectorAll('img'), function (im) { if (!im.complete) im.addEventListener('load', function () { if (Date.now() < until) jumpEnd(); }, { once: true }); });
   }
   function closePanel() {
     opened = false; panel.classList.remove('open'); fab.classList.remove('open'); fab.setAttribute('aria-expanded', 'false'); fab.setAttribute('aria-label', 'Open live chat'); emo.classList.remove('on');
+    scrim.classList.remove('on'); unlockPage();
     if (session) LS.set(seenKey(), String(Date.now()));
     fab.focus({ preventScroll: true });
   }
@@ -390,6 +433,7 @@ textarea{font-size:16px}\
   function send(text, img) {
     text = (text || '').trim(); if (!text && !img) return;
     if (!session) return;
+    forceEnd = true; // the person just sent something: show it (jump to the newest message)
     var m = { cid: rid(), from: 'user', text: text, ts: Date.now(), name: session.name };
     if (img) m.img = img;
     m.pending = true; addMsg(m);
@@ -413,8 +457,13 @@ textarea{font-size:16px}\
     else if (/auth|genuine|original|warrant/.test(t)) a = 'Every VELANTIS timepiece is 100% authentic and comes with a warranty.';
     else if (/hi|hello|hey/.test(t)) a = 'Hello! \uD83D\uDC4B How can we help you today?';
     else a = hasImg ? 'Thanks for the image! We will take a look.' : 'Thanks for your message! A member of our team will reply shortly.';
-    setTimeout(function () { typing.classList.add('on'); msgsEl.scrollTop = msgsEl.scrollHeight; }, 500);
-    setTimeout(function () { addMsg({ cid: rid(), from: 'agent', ts: Date.now(), text: a }); if (T.mode === 'local') Local.send(session, { cid: 'a' + rid(), from: 'agent', ts: Date.now(), text: a }); }, 1900);
+    setTimeout(function () { var at = nearEnd(); typing.classList.add('on'); if (at) jumpEnd(); }, 500);
+    setTimeout(function () {
+      // ONE reply object with ONE id. It used to be added twice with two different ids (once to the screen, once through the storage channel that talks back to the page), which showed every reply twice.
+      var reply = { cid: 'a' + rid(), from: 'agent', ts: Date.now(), text: a };
+      addMsg(reply);
+      if (T.mode === 'local') Local.send(session, reply); // saved for page reloads / other tabs; the page ignores it when it comes back because the id is the same
+    }, 1900);
   }
 
   /* image attach: downscale to keep messages small */
@@ -437,10 +486,16 @@ textarea{font-size:16px}\
   /* mobile keyboard: keep panel exactly as tall as the visible viewport */
   function syncViewport() {
     var vv = window.visualViewport;
-    panel.style.setProperty('--vh', (vv ? vv.height : window.innerHeight) + 'px');
-    if (opened) msgsEl.scrollTop = msgsEl.scrollHeight;
+    // The site shows phones at 95% (html{zoom:.95} in style.css) and that zoom also shrinks this fixed panel, which is what left a strip of the page
+    // showing under the chat. Divide by the page zoom so the panel always fills the real screen, whatever the zoom is set to.
+    var z = parseFloat(getComputedStyle(document.documentElement).zoom); if (!(z > 0)) z = 1;
+    panel.style.setProperty('--vh', ((vv ? vv.height : window.innerHeight) / z) + 'px');
+    panel.style.setProperty('--vt', ((vv ? vv.offsetTop : 0) / z) + 'px');
+    if (opened && root.activeElement === ta) jumpEnd();
   }
-  if (window.visualViewport) { visualViewport.addEventListener('resize', syncViewport); visualViewport.addEventListener('scroll', function () { window.scrollTo(0, 0); }); }
+  if (window.visualViewport) { visualViewport.addEventListener('resize', syncViewport); visualViewport.addEventListener('scroll', function () { if (opened) syncViewport(); }); }
+  window.addEventListener('orientationchange', function () { setTimeout(syncViewport, 250); });
+  window.addEventListener('resize', function () { if (opened) syncViewport(); });
 
   /* ---------- events ---------- */
   fab.addEventListener('click', function () { if (opened) closePanel(); else openPanel(); });
@@ -452,10 +507,14 @@ textarea{font-size:16px}\
     else { var sep = CFG.loginUrl.indexOf('?') > -1 ? '&' : '?'; location.href = CFG.loginUrl + sep + 'redirect=' + encodeURIComponent(location.pathname + location.search); }
   });
   bSend.addEventListener('click', submit);
+  bBack.addEventListener('click', closePanel);
+  // the keyboard opens/closes a moment after focus changes, so re-measure the visible screen a few times
+  function settle() { [0, 120, 300, 600].forEach(function (ms) { setTimeout(syncViewport, ms); }); }
+  ta.addEventListener('focus', settle); ta.addEventListener('blur', settle);
   ta.addEventListener('input', autosize);
   ta.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(); } });
   bEmo.addEventListener('click', function () { emo.classList.toggle('on'); });
-  emo.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; ta.value += b.textContent; ta.focus(); autosize(); });
+  emo.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; ta.value += b.textContent; if (!touchLike()) ta.focus(); autosize(); });
   bClip.addEventListener('click', function () { file.click(); });
   file.addEventListener('change', function () { attach(file.files[0]); file.value = ''; });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && opened) closePanel(); });
@@ -474,6 +533,8 @@ textarea{font-size:16px}\
     }
   }
   if (mq.addEventListener) mq.addEventListener('change', place); else if (mq.addListener) mq.addListener(place);
+  function onWidth() { if (!mq.matches) { unlockPage(); scrim.classList.remove('on'); } else if (opened) { scrim.classList.add('on'); lockPage(); syncViewport(); } }
+  if (mq.addEventListener) mq.addEventListener('change', onWidth); else if (mq.addListener) mq.addListener(onWidth);
   function mount() {
     document.body.appendChild(host);
     place();
