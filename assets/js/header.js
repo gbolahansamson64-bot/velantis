@@ -6,8 +6,8 @@
        <script src="/assets/js/header.js"></script>
 
    and load /assets/css/header.css in the <head> (after style.css).
-   It builds: the top bar (logo, links, search, account, cart, hamburger menu) plus the three panels those
-   buttons open (search bar, account panel, cart panel). Styling lives in header.css.
+   It builds: the top bar (logo, links, search, account, cart, hamburger menu) plus the panels those
+   buttons open (search bar, cart panel; the account icon opens login.html). Styling lives in header.css.
 
    Links to sections of the home page ("#legacy") become "index.html#..." automatically
    when the header is used on any other page, so they still work there.
@@ -36,9 +36,17 @@
    <a href="index.html"${onHome?' aria-current="page"':''}>Home</a><a href="${S}"${page==='shop'?' aria-current="page"':''}>Shop</a><a href="${B}#legacy">About</a><a href="#footer">Contact</a>
   </nav>
   <div class="tools">
-   <a class="nav-cta" href="${S}">Shop Now <span class="nav-cta-ic"><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
    <button id="searchBtn" aria-label="Search" aria-expanded="false" aria-controls="sx"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
-   <button id="accountBtn" aria-label="Account" aria-expanded="false" aria-controls="ac"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></button>
+   <div class="acc">
+    <button id="accountBtn" aria-label="Account" aria-haspopup="true"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span class="acc-txt"><small>Welcome</small><b>Sign in / Register</b></span></button>
+    <div class="acc-dd" role="menu">
+     <a class="acc-signin" href="login.html" role="menuitem">Sign in</a>
+     <a class="acc-reg" href="login.html#signup" role="menuitem">Register</a>
+     <span class="acc-line"></span>
+     <a class="acc-link" data-auth href="orders.html" role="menuitem"><svg class="i" viewBox="0 0 24 24"><path d="M7 3h10a1 1 0 011 1v16a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1zM9 8h6M9 12h6M9 16h4"/></svg>My Orders</a>
+     <a class="acc-link" data-auth href="wishlist.html" role="menuitem"><svg class="i" viewBox="0 0 24 24"><path d="M12 20s-8-5-8-11a4.5 4.5 0 018-2.5A4.5 4.5 0 0120 9c0 6-8 11-8 11z"/></svg>Wishlist</a>
+    </div>
+   </div>
    <a class="cart" href="#" aria-label="Cart"><svg class="i" viewBox="0 0 24 24"><path d="M5 8h14l-1 13H6z"/><path d="M9 8V6a3 3 0 016 0v2"/></svg><span id="cartCount">0</span></a>
    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu"><span></span><span></span></button>
   </div>
@@ -69,54 +77,6 @@
     <button type="button" class="sx-chip" tabindex="-1">Sports Watches</button>
     <button type="button" class="sx-chip" tabindex="-1">Classic Watches</button>
    </div>
-  </div>
- </div>
-</div>
-
-<div class="ac" id="ac" aria-hidden="true">
- <div class="ac-ov" id="acOv"></div>
- <div class="ac-wrap">
-  <div class="ac-card" role="dialog" aria-label="Account">
-   <button type="button" class="ac-x" id="acClose" aria-label="Close account panel"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-   <div class="ac-head">
-    <h2 class="ac-title"><span id="acT1">Welcome</span><span id="acT2">Back</span></h2>
-    <p class="ac-sub" id="acSub">Sign in to your Velantis account.</p>
-   </div>
-   <div class="ac-tabs" id="acTabs" data-tab="in" role="tablist" aria-label="Sign in or sign up">
-    <i class="ac-slider" aria-hidden="true"></i>
-    <button type="button" class="ac-tab" role="tab" data-tab="in" aria-selected="true">Sign In</button>
-    <button type="button" class="ac-tab" role="tab" data-tab="up" aria-selected="false" tabindex="-1">Sign Up</button>
-   </div>
-
-   <form class="ac-pane" id="acIn">
-    <div class="ac-field">
-     <div class="ac-row"><label class="ac-lbl" for="acInEmail">Email</label></div>
-     <div class="ac-in"><input type="email" id="acInEmail" name="email" placeholder="you@email.com" autocomplete="email" required></div>
-    </div>
-    <div class="ac-field">
-     <div class="ac-row"><label class="ac-lbl" for="acInPass">Password</label><a class="ac-forgot" href="#">Forgot?</a></div>
-     <div class="ac-in"><input type="password" id="acInPass" name="password" placeholder="Your password" autocomplete="current-password" required><button type="button" class="ac-eye" aria-label="Show password" aria-pressed="false"><svg class="i" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path class="slash" d="M4 20L20 4"/></svg></button></div>
-    </div>
-    <button type="submit" class="ac-go"><span>Sign In</span><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
-    <p class="ac-foot">New to Velantis? <button type="button" class="ac-link" data-go="up">Create an account</button></p>
-   </form>
-
-   <form class="ac-pane" id="acUp" hidden>
-    <div class="ac-field">
-     <div class="ac-row"><label class="ac-lbl" for="acUpName">Full name</label></div>
-     <div class="ac-in"><input type="text" id="acUpName" name="name" placeholder="Your full name" autocomplete="name" required></div>
-    </div>
-    <div class="ac-field">
-     <div class="ac-row"><label class="ac-lbl" for="acUpEmail">Email</label></div>
-     <div class="ac-in"><input type="email" id="acUpEmail" name="email" placeholder="you@email.com" autocomplete="email" required></div>
-    </div>
-    <div class="ac-field">
-     <div class="ac-row"><label class="ac-lbl" for="acUpPass">Password</label></div>
-     <div class="ac-in"><input type="password" id="acUpPass" name="password" placeholder="At least 8 characters" autocomplete="new-password" minlength="8" required><button type="button" class="ac-eye" aria-label="Show password" aria-pressed="false"><svg class="i" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path class="slash" d="M4 20L20 4"/></svg></button></div>
-    </div>
-    <button type="submit" class="ac-go"><span>Create Account</span><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
-    <p class="ac-foot">Already a member? <button type="button" class="ac-link" data-go="in">Sign in</button></p>
-   </form>
   </div>
  </div>
 </div>
@@ -257,81 +217,45 @@
   }));
  })();
 
- /* ---------- ACCOUNT PANEL (desktop only, 961px and wider) ----------
-    The header account icon opens it (same drop-down style as the search bar). Closes on the X, a click outside, or Esc.
-    Sign In / Sign Up tabs switch the form, heading and text. While open: slider autoplay, live hands, CSS animations and
-    page scrolling are paused and carry on from where they stopped when it closes.
-    The forms do nothing yet: add your real sign in / sign up at the "submit" line. */
+ /* ---------- ACCOUNT ICON ----------
+    The sign in / sign up form no longer lives in this file. It is its own page now: login.html
+    (styled by /assets/css/auth.css, logic in /assets/js/auth.js). The header icon just opens that page. */
  (()=>{
-  const ac=$('ac'),btn=$('accountBtn'),ov=$('acOv'),x=$('acClose'),tabs=$('acTabs');
-  if(!ac||!btn)return;
-  const desktop=matchMedia('(min-width:961px)'),wrap=ac.querySelector('.ac-wrap');
-  const tabBtns=[...ac.querySelectorAll('.ac-tab')],panes={in:$('acIn'),up:$('acUp')};
-  const COPY={in:['Welcome','Back','Sign in to your Velantis account.'],up:['Join','Velantis','Create your account to save favourites and track your orders.']};
-  let focusT=0;
-  const isOpen=()=>ac.classList.contains('open');
-  const firstInput=()=>panes[tabs.dataset.tab].querySelector('input');
-  function setTab(k,focus){
-   tabs.dataset.tab=k;
-   tabBtns.forEach(b=>{const on=b.dataset.tab===k;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});
-   Object.keys(panes).forEach(p=>panes[p].hidden=p!==k);
-   $('acT1').textContent=COPY[k][0];$('acT2').textContent=COPY[k][1];$('acSub').textContent=COPY[k][2];
-   if(focus)firstInput().focus({preventScroll:true});
-  }
-  function place(){ /* the little notch points at the account icon */
-   const b=btn.getBoundingClientRect(),w=wrap.offsetWidth;
-   ac.style.setProperty('--ac-n',Math.max(34,Math.min(w-34,Math.round(b.left+b.width/2-wrap.offsetLeft)))+'px');
-  }
-  function open(){
-   if(isOpen()||!desktop.matches)return;
-   const sxEl=$('sx');if(sxEl&&sxEl.classList.contains('open'))$('sxClose').click(); /* never both at once */
-   place();
-   root.classList.add('ac-open');hold('account');stopHands(); /* freeze slider autoplay + live hands + CSS animations */
-   ac.classList.add('open');ac.setAttribute('aria-hidden','false');btn.setAttribute('aria-expanded','true');
-   focusT=setTimeout(()=>firstInput().focus({preventScroll:true}),450); /* focus after the card has dropped in */
-  }
-  function close(back){
-   if(!isOpen())return;
-   clearTimeout(focusT);
-   ac.classList.remove('open');ac.setAttribute('aria-hidden','true');btn.setAttribute('aria-expanded','false');
-   root.classList.remove('ac-open');release('account'); /* slider autoplay continues */
-   resumeHands();
-   if(ac.contains(document.activeElement))document.activeElement.blur();
-   if(back!==false)btn.focus({preventScroll:true});
-  }
-  btn.addEventListener('click',e=>{if(!desktop.matches)return;e.stopPropagation();isOpen()?close():open()});
-  x.addEventListener('click',()=>close());
-  ov.addEventListener('click',()=>close(false));
-  desktop.addEventListener('change',()=>{desktop.matches?place():close(false)});
-  window.addEventListener('resize',()=>{if(isOpen())place()});
-  document.addEventListener('keydown',e=>{
-   if(!isOpen())return;
-   if(e.key==='Escape')close();
-   else if([' ','PageUp','PageDown','Home','End','ArrowUp','ArrowDown'].includes(e.key)&&(e.target===document.body||e.target===root))e.preventDefault(); /* no scrolling behind the panel */
-  });
-  const noScroll=e=>{if(isOpen()&&!e.target.closest('.ac-card'))e.preventDefault()};
-  window.addEventListener('wheel',noScroll,{passive:false});
-  window.addEventListener('touchmove',noScroll,{passive:false});
+  const btn=$('accountBtn');if(!btn)return;
+  /* the header button only opens the dropdown (hover / keyboard focus, see header.css). The Sign in and Register buttons inside the dropdown are what open the form page. */
+  btn.addEventListener('click',e=>e.preventDefault());
+ })();
 
-  /* tabs + "Create an account" / "Sign in" links */
-  tabBtns.forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab,true)));
-  ac.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.go,true)));
-  tabs.addEventListener('keydown',e=>{
-   if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft')return;
-   e.preventDefault();const k=tabs.dataset.tab==='in'?'up':'in';setTab(k,false);tabBtns.find(b=>b.dataset.tab===k).focus();
-  });
-  /* show / hide password */
-  ac.querySelectorAll('.ac-eye').forEach(b=>b.addEventListener('click',()=>{
-   const i=b.parentElement.querySelector('input'),show=i.type==='password';
-   i.type=show?'text':'password';b.classList.toggle('on',show);b.setAttribute('aria-pressed',show);b.setAttribute('aria-label',show?'Hide password':'Show password');
-   i.focus({preventScroll:true});
-  }));
-  ac.querySelectorAll('a[href="#"]').forEach(a=>a.addEventListener('click',e=>e.preventDefault())); /* "Forgot?" has no page yet */
-  Object.values(panes).forEach(f=>f.addEventListener('submit',e=>{
+
+ /* ---------- ACCOUNT DROPDOWN: My Orders + Wishlist need a signed-in customer ----------
+    isSignedIn() is the ONE place that decides if someone is logged in. It currently looks for a saved "velantis_user" in the browser:
+    change the key (or the check) to whatever auth.js saves when a customer logs in. Not signed in = sent to login.html first,
+    and brought back to the page they wanted after they sign in (login.html can read ?next=). */
+ (()=>{
+  const isSignedIn=()=>{try{return !!localStorage.getItem('velantis_user')}catch(e){return false}};
+  document.querySelectorAll('.acc-dd [data-auth]').forEach(a=>a.addEventListener('click',e=>{
+   if(isSignedIn())return;
    e.preventDefault();
-   /* submit: add your real sign in / sign up here. Read the values with new FormData(f) */
+   location.href='login.html?redirect='+encodeURIComponent('/'+a.getAttribute('href'));
   }));
-  setTab('in',false);
+ })();
+
+ /* ---------- WISHLIST ICON (desktop header; phones use the Wishlist button in the bottom nav) ----------
+    Shows how many watches are saved. It copies the number of the bottom-nav wishlist badge (#navFavCount), which shop.js and
+    script.js already keep up to date when a heart is pressed, so nothing else had to change. Pages without that badge read the saved list
+    ("velantis_shop_favs") instead. There is no wishlist page yet, so for now the icon does not navigate: when you build one, set href on #wishBtn. */
+ (()=>{
+  const a=document.getElementById('wishBtn'),n=document.getElementById('wishCount');if(!a||!n)return;
+  a.addEventListener('click',e=>e.preventDefault());
+  const show=v=>{v=+v||0;n.textContent=v>99?'99+':v;n.hidden=!v};
+  const saved=()=>{try{return JSON.parse(localStorage.getItem('velantis_shop_favs')||'[]').length}catch(e){return 0}};
+  const hook=()=>{
+   const src=document.getElementById('navFavCount');
+   const sync=()=>show(src?(src.hidden?0:src.textContent):saved());
+   sync();
+   if(src)new MutationObserver(sync).observe(src,{attributes:true,childList:true,characterData:true,subtree:true});
+  };
+  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',hook):hook();
  })();
 
  /* ---------- CART PANEL ----------
@@ -414,7 +338,6 @@
    opener=document.activeElement;
    toggleMenu(false);
    const sxEl=$('sx');if(sxEl&&sxEl.classList.contains('open'))$('sxClose').click(); /* never two panels at once */
-   const acEl=$('ac');if(acEl&&acEl.classList.contains('open'))$('acClose').click();
    root.classList.add('ct-open');hold('cart');stopHands(); /* freeze slider autoplay + live hands while the cart is open */
    if(window.lenis)window.lenis.stop(); /* freeze the page's smooth scroll: the website behind the cart cannot scroll while it is open (the cart panel itself scrolls normally, see data-lenis-prevent) */
    ct.classList.add('open');ct.setAttribute('aria-hidden','false');

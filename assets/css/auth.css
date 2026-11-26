@@ -1,0 +1,101 @@
+/* =====================================================================
+   SIGN IN / CREATE ACCOUNT PAGE (auth.css) - used only by login.html
+   Load it LAST, after style.css, header.css and footer.css.
+   Every class starts with "au-" so nothing clashes with the other pages.
+   Quick tuning: --au-w = card width, --au-gold = accent colour, --au-ink = dark button / title colour.
+   ===================================================================== */
+:root{--au-w:480px;--au-gold:#b07a35;--au-gold-soft:#d6a24f;--au-ink:#1f1209;--au-line:#e3d6c1;--au-mute:#6f6252;--au-card:#fbf5ea;
+ --au-top:clamp(112px,9.5vw,150px)}
+body{background:var(--bg)}
+
+.auth{min-height:calc(100vh - 220px);display:flex;justify-content:center;align-items:flex-start;padding:var(--au-top) clamp(16px,4vw,40px) clamp(40px,6vw,80px)}
+.au-card{width:100%;max-width:var(--au-w);padding:clamp(28px,4vw,44px) clamp(22px,4vw,40px) clamp(26px,3.6vw,36px);border-radius:26px;
+ background:linear-gradient(180deg,#fdf8ee,var(--au-card));border:1px solid rgba(168,134,85,.28);box-shadow:0 24px 60px -28px rgba(60,36,12,.35),inset 0 1px 0 rgba(255,255,255,.9);
+ color:var(--au-ink);animation:auIn .6s cubic-bezier(.2,.8,.2,1) both}
+@keyframes auIn{from{opacity:0;transform:translateY(14px)}}
+
+/* back button: round, thin arrow */
+.au-prev{display:grid;place-items:center;width:42px;height:42px;margin:-8px 0 12px -8px;border-radius:50%;color:var(--au-ink);text-decoration:none;
+ background:rgba(255,255,255,.55);border:1px solid var(--au-line);box-shadow:0 6px 16px -10px rgba(60,36,12,.45);transition:background .2s,border-color .2s,transform .2s}
+.au-prev svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.au-prev:hover{background:#fff;border-color:#d3bf9f;transform:translateX(-2px)}
+.au-prev:focus-visible{outline:2px solid var(--au-gold);outline-offset:3px}
+
+/* heading */
+.au-title{font-family:var(--serif);font-weight:500;font-size:clamp(44px,6vw,64px);line-height:1.02;letter-spacing:.005em;text-align:center;color:var(--au-ink)}
+.au-sub{margin-top:10px;text-align:center;font-size:clamp(15px,1.3vw,17px);color:#2d2117}
+
+/* Sign In / Create Account tabs: thin line with a gold bar that slides under the active tab */
+.au-tabs{position:relative;display:grid;grid-template-columns:1fr 1fr;margin-top:clamp(22px,3vw,30px);border-bottom:1px solid var(--au-line)}
+.au-tab{height:46px;font-size:14px;font-weight:400;letter-spacing:.02em;color:#6b5d4c;transition:color .25s}
+.au-tab:hover{color:var(--au-ink)}
+.au-tab[aria-selected="true"]{color:var(--au-ink);font-weight:500}
+.au-bar{position:absolute;left:0;bottom:-1px;width:50%;height:2px;background:var(--au-gold);transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.au-tabs[data-tab="up"] .au-bar{transform:translateX(100%)}
+.au-tab:focus-visible,.au-google:focus-visible,.au-go:focus-visible,.au-eye:focus-visible,.au-link:focus-visible,.au-forgot:focus-visible{outline:2px solid var(--au-gold);outline-offset:3px;border-radius:8px}
+
+/* Google button */
+.au-google{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;height:56px;margin-top:clamp(20px,2.6vw,26px);border-radius:12px;
+ background:rgba(255,255,255,.55);border:1px solid var(--au-line);font-size:15px;font-weight:500;color:var(--au-ink);transition:background .2s,border-color .2s,box-shadow .2s,transform .2s}
+.au-google:hover{background:#fff;border-color:#d3bf9f;box-shadow:0 8px 20px -12px rgba(60,36,12,.4);transform:translateY(-1px)}
+
+/* OR divider */
+.au-or{display:flex;align-items:center;gap:16px;margin:22px 0 20px;font-size:12px;letter-spacing:.14em;color:#4b3f31}
+.au-or::before,.au-or::after{content:"";flex:1;border-top:1px solid var(--au-line)}
+
+/* message line (errors / info) */
+.au-msg{margin:-4px 0 14px;padding:11px 14px;border-radius:10px;font-size:13px;line-height:1.45;background:rgba(176,122,53,.12);border:1px solid rgba(176,122,53,.35);color:#5c3b12}
+.au-msg[hidden]{display:none}
+.au-msg.is-error{background:rgba(170,52,40,.08);border-color:rgba(170,52,40,.35);color:#7d2519}
+
+/* forms */
+.au-pane[hidden]{display:none}
+.au-pane:not([hidden]){animation:auPane .4s cubic-bezier(.2,.8,.2,1)}
+@keyframes auPane{from{opacity:0;transform:translateY(8px)}}
+.au-in{position:relative;display:flex;align-items:center;height:56px;border-radius:12px;background:rgba(255,255,255,.5);border:1px solid var(--au-line);cursor:text;
+ transition:border-color .2s,box-shadow .2s,background .2s}
+.au-in+.au-in{margin-top:14px}
+.au-in:focus-within{border-color:var(--au-gold);background:#fffdf8;box-shadow:0 0 0 4px rgba(201,165,114,.22)}
+.au-in.is-bad{border-color:#b8453a;box-shadow:0 0 0 4px rgba(184,69,58,.12)}
+.au-ic{flex:none;width:20px;height:20px;margin-left:18px;fill:none;stroke:#2d2117;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.au-in input{flex:1;min-width:0;height:100%;padding:0 16px;border:0;outline:0;background:none;font:400 15px/1 var(--sans);color:var(--au-ink)}
+.au-in input::placeholder{color:#7d7060;opacity:1}
+.au-in input:-webkit-autofill{-webkit-box-shadow:0 0 0 40px #fffdf8 inset;-webkit-text-fill-color:var(--au-ink)}
+.au-eye{flex:none;width:52px;height:100%;display:grid;place-items:center;color:#2d2117;transition:color .2s}
+.au-eye:hover{color:var(--au-gold)}
+.au-eye svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.au-eye .slash{opacity:1;transition:opacity .2s}      /* slashed eye = password hidden */
+.au-eye.on .slash{opacity:0}                          /* plain eye = password visible */
+
+.au-forgot-row{margin:12px 0 0;text-align:right}
+.au-forgot{font-size:12.5px;color:var(--au-gold);text-decoration:underline;text-underline-offset:3px;transition:color .2s}
+.au-forgot:hover{color:var(--au-ink)}
+
+/* main button */
+.au-go{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:58px;margin-top:22px;border-radius:10px;background:var(--au-ink);color:var(--au-gold-soft);
+ font-size:14px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;transition:transform .2s,box-shadow .25s,background .2s}
+.au-pane:not(#paneIn) .au-go{margin-top:22px}
+.au-go svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s}
+.au-go:hover{background:#2c1a0d;transform:translateY(-1px);box-shadow:0 14px 26px -14px rgba(31,18,9,.7)}
+.au-go:hover svg{transform:translateX(4px)}
+.au-go:disabled{opacity:.7;cursor:progress;transform:none}
+
+.au-foot{margin-top:22px;text-align:center;font-size:14px;color:#2d2117}
+.au-link{font:inherit;color:var(--au-gold);text-decoration:underline;text-underline-offset:3px;transition:color .2s}
+.au-link:hover{color:var(--au-ink)}
+
+/* phones + tablets: the header is the cream band, the bottom nav takes the bottom edge */
+@media(max-width:960px){
+ :root{--au-top:calc(var(--mbh,96px) + 22px)}
+ .auth{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
+}
+@media(max-width:380px){
+ .au-title{font-size:40px}
+ .au-in,.au-google{height:52px}
+ .au-go{height:54px}
+}
+@media(prefers-reduced-motion:reduce){
+ .au-prev{transition:none}
+ .au-card,.au-pane:not([hidden]){animation:none}
+ .au-bar,.au-go,.au-go svg,.au-google{transition:none}
+}

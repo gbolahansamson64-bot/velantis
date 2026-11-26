@@ -22,6 +22,10 @@
 .tools svg.i{width:clamp(17px,1.5vw,24px);height:clamp(17px,1.5vw,24px);stroke-width:1.3}
 .cart{position:relative;display:block;line-height:0}
 .cart span{position:absolute;top:-7px;right:-9px;background:#c9a572;color:#1a0f0a;font-size:10px;font-weight:500;width:17px;height:17px;border-radius:50%;display:grid;place-items:center;line-height:1}
+/* wishlist icon: desktop only (phones and tablets use the Wishlist button in the bottom nav) */
+.wish{display:none;position:relative;line-height:0}
+.wish span{position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;padding:0 4px;box-sizing:border-box;background:#c9a572;color:#1a0f0a;border:2px solid #120a06;border-radius:999px;font-size:10px;font-weight:600;line-height:1;display:grid;place-items:center}
+.wish span[hidden]{display:none}
 .burger{display:none;gap:6px;justify-items:end;padding:8px}
 .burger span{display:block;height:1.5px;width:26px;background:#fff}
 .burger span+span{width:16px}
@@ -52,7 +56,7 @@
    Phone and tablet headers (hamburger + bottom nav) are untouched.
    Quick tuning: --nh = height of every pill/button, --glass = pill fill, --glass-line = pill border.
    ===================================================================== */
-.nav-cta{display:none}
+.nav-cta,.acc-txt{display:none}
 @media(min-width:961px){
  .bar{--nh:clamp(46px,3.5vw,56px);--glass:rgba(18,10,6,.6);--glass-line:rgba(214,176,116,.3);
   background:none;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;pointer-events:none}
@@ -62,7 +66,7 @@
  .links,.tools{text-shadow:none}
 
  /* shared frosted glass look */
- .brand,.links,.tools button:not(.burger),.cart{background:var(--glass);border:1px solid var(--glass-line);
+ .brand,.links,.tools button:not(.burger),.cart,.wish{background:var(--glass);border:1px solid var(--glass-line);
   -webkit-backdrop-filter:blur(16px) saturate(130%);backdrop-filter:blur(16px) saturate(130%);box-shadow:0 10px 30px rgba(0,0,0,.28);
   transition:background .3s,border-color .3s,color .25s}
 
@@ -85,9 +89,16 @@
 
  /* right side: round buttons + cart badge */
  .tools{gap:10px}
- .tools button:not(.burger),.cart{width:var(--nh);height:var(--nh);display:grid;place-items:center;border-radius:50%;color:#f1eadf}
- .tools button:not(.burger):hover,.cart:hover{background:rgba(214,176,116,.22);border-color:rgba(214,176,116,.7);color:#fff}
+ .tools button:not(.burger),.cart,.wish{width:var(--nh);height:var(--nh);display:grid;place-items:center;border-radius:50%;color:#f1eadf}
+ .tools button:not(.burger):hover,.cart:hover,.wish:hover{background:rgba(214,176,116,.22);border-color:rgba(214,176,116,.7);color:#fff}
  .cart span{top:-3px;right:-3px;width:20px;height:20px;border:2px solid #120a06;font-weight:600}
+
+ /* account: person icon + two lines of text ("Welcome" small, "Sign in / Register" bold) */
+ .tools #accountBtn{width:auto;display:flex;align-items:center;gap:10px;padding:0 clamp(14px,1.3vw,20px) 0 clamp(12px,1.1vw,16px);border-radius:999px;text-align:left;white-space:nowrap}
+ .tools #accountBtn svg.i{flex:none;width:clamp(22px,1.8vw,26px);height:clamp(22px,1.8vw,26px)}
+ .tools #accountBtn .acc-txt{display:flex;flex-direction:column;justify-content:center;gap:1px;line-height:1.15}
+ .tools #accountBtn .acc-txt small{font-size:clamp(11px,.8vw,13px);font-weight:400;letter-spacing:.02em;color:rgba(241,234,223,.8)}
+ .tools #accountBtn .acc-txt b{font-size:clamp(12px,.9vw,14px);font-weight:700;letter-spacing:.01em;color:#fff}
 
  /* "Shop Now" button with round icon (wide desktops only) */
  .nav-cta{align-items:center;gap:14px;height:var(--nh);padding:0 6px 0 clamp(18px,1.7vw,26px);border-radius:999px;
@@ -224,100 +235,6 @@ html.sx-open *,html.sx-open *::before,html.sx-open *::after{animation-play-state
  .sx-chip{flex:1 1 calc(50% - 5px);padding:0 10px;font-size:14px}
 }
 
-/* =====================================================================
-   ACCOUNT PANEL (desktop only, 961px and wider)
-   Drops down under the header account icon, same cream + gold look as the search bar, with Sign In / Sign Up tabs.
-   Closing plays the opening in reverse (content fades, card lifts, overlay fades).
-   Quick tuning: --ac-w = panel width, --ac-dim = page darkening, --ac-gold = border colour.
-   ===================================================================== */
-.ac{display:none}
-@media(min-width:961px){
- .ac{--ac-dim:rgba(20,12,6,.38);--ac-w:440px;--ac-gold:#d4b27c;--ac-c1:#f9efdf;--ac-c2:#efe0c8;--ac-ink:#2b221b;--ac-mute:#6f6252;--ac-n:86%;
-  --ac-top:calc(max(68px,5.6vw) + 10px);--ac-right:clamp(24px,4vw,66px);
-  display:block;position:fixed;inset:0;z-index:200;visibility:hidden;pointer-events:none;transition:visibility 0s linear .85s}
- .ac.open{visibility:visible;pointer-events:auto;transition-delay:0s}
- .ac-ov{position:absolute;inset:0;background:transparent;cursor:pointer;transition:background .5s ease .3s}
- .ac.open .ac-ov{background:var(--ac-dim);transition:background .45s ease}
-
- /* the whole card drops down from the icon (and lifts back up when closing) */
- .ac-wrap{position:absolute;top:var(--ac-top);right:var(--ac-right);width:min(var(--ac-w),calc(100vw - 2*var(--ac-right)));
-  opacity:0;transform:translateY(-22px) scale(.96);transform-origin:var(--ac-n) 0;filter:drop-shadow(0 18px 34px rgba(30,17,8,.3));
-  transition:opacity .35s ease .3s,transform .4s ease .3s}
- .ac.open .ac-wrap{opacity:1;transform:none;transition:opacity .35s ease,transform .55s cubic-bezier(.2,.9,.25,1.12)}
- /* little notch pointing at the account icon (position is set by script.js) */
- .ac-wrap::before{content:"";position:absolute;z-index:2;top:-8.5px;left:var(--ac-n);width:14px;height:14px;background:var(--ac-c1);
-  border-left:1.5px solid var(--ac-gold);border-top:1.5px solid var(--ac-gold);border-top-left-radius:3px;transform:translateX(-50%) rotate(45deg)}
-
- .ac-card{position:relative;z-index:1;max-height:calc(100vh - var(--ac-top) - 18px);overflow:auto;scrollbar-width:none;padding:30px 30px 28px;border-radius:28px;
-  background:linear-gradient(180deg,var(--ac-c1),var(--ac-c2));border:1.5px solid var(--ac-gold);box-shadow:inset 0 1px 0 rgba(255,255,255,.8);color:var(--ac-ink)}
- .ac-card::-webkit-scrollbar{display:none}
-
- /* content fades up one block after another (fast fade out when closing) */
- .ac-card>*{opacity:0;transform:translateY(8px);transition:opacity .2s ease,transform .2s ease,background .2s,color .2s}
- .ac.open .ac-card>*{opacity:1;transform:none;transition:opacity .4s ease var(--d,.3s),transform .5s cubic-bezier(.2,.8,.2,1) var(--d,.3s),background .2s,color .2s}
- .ac-head{--d:.3s;padding-right:56px}
- .ac-tabs{--d:.38s}
- .ac-pane{--d:.46s}
- .ac-x{--d:.5s}
-
- /* heading */
- .ac-title{font-family:var(--serif);font-weight:600;font-size:clamp(34px,2.7vw,42px);line-height:1;letter-spacing:.04em;text-transform:uppercase}
- .ac-title span{display:block}
- .ac-title span+span{margin-top:4px;font-style:italic;color:#9a7340}
- .ac-sub{margin-top:12px;font-size:13px;line-height:1.5;color:var(--ac-mute)}
-
- /* round X */
- .ac-x{position:absolute;top:22px;right:22px;z-index:3;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:var(--ac-ink);
-  background:linear-gradient(180deg,#fcf6ea,#f1e3cc);border:1.5px solid var(--ac-gold);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 6px 14px rgba(30,17,8,.18)}
- .ac-x svg{width:18px;height:18px;stroke-width:1.8;transition:transform .25s}
- .ac-x:hover{background:#1c100b;color:#f6ead2}
- .ac-x:hover svg{transform:rotate(90deg)}
-
- /* Sign In / Sign Up switch with a sliding dark pill */
- .ac-tabs{position:relative;display:grid;grid-template-columns:1fr 1fr;margin-top:24px;padding:5px;border-radius:999px;background:rgba(43,34,27,.07);border:1px solid rgba(168,134,85,.45)}
- .ac-slider{position:absolute;top:5px;bottom:5px;left:5px;width:calc(50% - 5px);border-radius:999px;background:linear-gradient(180deg,#3b281a,#120a06);
-  box-shadow:inset 0 0 0 1px rgba(214,176,116,.45),0 4px 10px rgba(0,0,0,.22);transition:transform .45s cubic-bezier(.2,.8,.2,1)}
- .ac-tabs[data-tab="up"] .ac-slider{transform:translateX(100%)}
- .ac-tab{position:relative;z-index:1;height:44px;font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#5d4d3a;transition:color .3s}
- .ac-tab[aria-selected="true"]{color:#f6ead2}
-
- /* forms */
- .ac-pane{margin-top:22px}
- .ac-pane[hidden]{display:none}
- .ac-pane:not([hidden]){animation:acPane .45s cubic-bezier(.2,.8,.2,1)}
- @keyframes acPane{from{opacity:0;transform:translateY(10px)}}
- .ac-field+.ac-field{margin-top:18px}
- .ac-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
- .ac-lbl{font-size:10.5px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:#5d4d3a}
- .ac-forgot{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#7f5420;border-bottom:1px solid currentColor;padding-bottom:1px;transition:color .2s}
- .ac-forgot:hover{color:var(--ac-ink)}
- .ac-in{position:relative;display:flex;align-items:center;height:54px;border-radius:16px;background:rgba(255,252,245,.8);border:1.5px solid rgba(168,134,85,.5);
-  transition:border-color .25s,box-shadow .25s,background .25s}
- .ac-in:focus-within{border-color:#b98f52;background:#fffdf8;box-shadow:0 0 0 4px rgba(201,165,114,.22)}
- .ac-in input{flex:1;min-width:0;height:100%;padding:0 18px;border:0;outline:0;background:none;font:400 15px/1 var(--sans);color:var(--ac-ink)}
- .ac-in input::placeholder{color:#8d7f6c;opacity:1}
- .ac-eye{flex:none;width:48px;height:100%;display:grid;place-items:center;color:var(--ac-mute);transition:color .2s}
- .ac-eye:hover{color:var(--ac-ink)}
- .ac-eye svg{width:20px;height:20px;stroke-width:1.5}
- .ac-eye .slash{opacity:0;transition:opacity .2s}
- .ac-eye.on .slash{opacity:1}
-
- /* slanted dark button with a gold offset shadow */
- .ac-go{display:flex;align-items:center;justify-content:center;gap:14px;width:calc(100% - 8px);height:56px;margin:28px 0 8px;border-radius:14px;color:#f6ead2;
-  background:linear-gradient(180deg,#3b281a,#120a06);box-shadow:inset 0 0 0 1px rgba(214,176,116,.4),7px 7px 0 #c9a572;transform:skewX(-10deg);
-  font-size:12px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;transition:transform .25s,box-shadow .25s}
- .ac-go>*{transform:skewX(10deg);transition:transform .25s}
- .ac-go svg{width:20px;height:20px;stroke-width:1.8}
- .ac-go:hover{transform:skewX(-10deg) translate(2px,2px);box-shadow:inset 0 0 0 1px rgba(214,176,116,.4),5px 5px 0 #c9a572}
- .ac-go:hover svg{transform:skewX(10deg) translateX(4px)}
-
- .ac-foot{margin-top:20px;text-align:center;font-size:12px;color:var(--ac-mute)}
- .ac-link{font-weight:500;color:var(--ac-ink);border-bottom:1px solid currentColor;transition:color .2s}
- .ac-link:hover{color:#7f5420}
-
- /* while the panel is open the page's animations stand still (the panel's own keep running) */
- html.ac-open body>:not(.ac),html.ac-open body>:not(.ac) *,html.ac-open body>:not(.ac) *::before,html.ac-open body>:not(.ac) *::after{animation-play-state:paused!important}
-}
 /* desktop nav: keep the pill at its original width with 4 links */
 @media(min-width:961px){
  .links{width:clamp(480px,37vw,640px)}
@@ -492,3 +409,30 @@ html.ct-open,html.ct-open body{overflow:hidden}
 .ct-clear svg{width:15px;height:15px;stroke-width:1.6;flex:none}
 .ct-clear:hover,.ct-clear.confirm{background:#1c100b;border-color:#1c100b;color:#f6ead2}
 @media(max-width:640px){.ct-bar{padding:10px 20px 0}}
+
+/* ACCOUNT DROPDOWN (desktop only, 961px and wider): hover or keyboard-focus the "Welcome / Sign in / Register" button.
+   Same cream + gold look as the search bar and cart. Phones and tablets never see it. */
+.acc{position:relative}
+.acc-dd{display:none}
+@media(min-width:961px){
+ .acc-dd{display:flex;flex-direction:column;position:absolute;top:100%;right:0;width:280px;margin-top:14px;padding:22px 22px 14px;border-radius:26px;
+  background:linear-gradient(180deg,#f9efdf,#efe0c8);border:1.5px solid #d4b27c;color:#2b221b;text-shadow:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 18px 34px rgba(30,17,8,.3);
+  opacity:0;visibility:hidden;transform:translateY(-8px);pointer-events:none;
+  transition:opacity .25s ease,transform .3s ease,visibility 0s linear .3s}
+ /* invisible bridge so the dropdown does not close while the cursor travels from the button down to it */
+ .acc-dd::before{content:"";position:absolute;left:0;right:0;top:-16px;height:16px}
+ .acc:hover .acc-dd,.acc:focus-within .acc-dd{opacity:1;visibility:visible;transform:none;pointer-events:auto;transition-delay:0s}
+
+ .acc-signin{display:flex;align-items:center;justify-content:center;height:52px;border-radius:999px;color:#f6ead2;
+  background:linear-gradient(180deg,#3b281a,#120a06);box-shadow:inset 0 0 0 1px rgba(214,176,116,.45),0 6px 14px rgba(30,17,8,.25);
+  font-size:15px;font-weight:600;letter-spacing:.04em;transition:filter .25s}
+ .acc-signin:hover{filter:brightness(1.25)}
+ .acc-reg{display:block;padding:12px 0 6px;text-align:center;font-size:14px;color:#6f6252;transition:color .2s}
+ .acc-reg:hover{color:#7f5420}
+ .acc-line{display:block;margin:10px 0 6px;border-top:1px solid rgba(168,134,85,.32)}
+ .acc-link{display:flex;align-items:center;gap:14px;padding:13px 4px;font-size:15px;color:#2b221b;transition:color .2s}
+ .acc-link svg.i{flex:none;width:20px;height:20px;stroke-width:1.5}
+ .acc-link:hover{color:#7f5420}
+}
+@media(max-width:960px){.acc{display:none}}
