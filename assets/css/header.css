@@ -99,6 +99,9 @@
  .tools #accountBtn .acc-txt{display:flex;flex-direction:column;justify-content:center;gap:1px;line-height:1.15}
  .tools #accountBtn .acc-txt small{font-size:clamp(11px,.8vw,13px);font-weight:400;letter-spacing:.02em;color:rgba(241,234,223,.8)}
  .tools #accountBtn .acc-txt b{font-size:clamp(12px,.9vw,14px);font-weight:700;letter-spacing:.01em;color:#fff}
+ /* signed in: "Hi, Name" can be long, so it is cut with "..." instead of stretching the pill */
+ .tools #accountBtn .acc-txt{min-width:0}
+ .tools #accountBtn .acc-txt small{max-width:clamp(96px,9vw,150px);overflow:hidden;text-overflow:ellipsis}
 
  /* "Shop Now" button with round icon (wide desktops only) */
  .nav-cta{align-items:center;gap:14px;height:var(--nh);padding:0 6px 0 clamp(18px,1.7vw,26px);border-radius:999px;
@@ -434,5 +437,31 @@ html.ct-open,html.ct-open body{overflow:hidden}
  .acc-link{display:flex;align-items:center;gap:14px;padding:13px 4px;font-size:15px;color:#2b221b;transition:color .2s}
  .acc-link svg.i{flex:none;width:20px;height:20px;stroke-width:1.5}
  .acc-link:hover{color:#7f5420}
+
+ /* SIGNED-IN VERSION (class .is-in is added to .acc by header.js): welcome line, Sign out, then My Orders + Wishlist. No Sign in / Register buttons.
+    The Sign out rules start with ".tools .acc" on purpose: the round glass style every header button gets is more specific than a plain class,
+    and would turn this button into a small dark circle (and show it to signed-out visitors). */
+ .acc-user,.tools .acc .acc-out{display:none}
+ .acc.is-in .acc-signin,.acc.is-in .acc-reg{display:none}
+ .acc.is-in .acc-user{display:flex;align-items:center;gap:14px;padding:2px 2px 16px}
+ .acc-av{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;font-size:19px;font-weight:600;color:#f6ead2;
+  background:linear-gradient(180deg,#3b281a,#120a06);box-shadow:inset 0 0 0 1px rgba(214,176,116,.45)}
+ .acc-hello{min-width:0;margin:0;font-size:13.5px;line-height:1.35;color:#6f6252}
+ .acc-hello b{display:block;margin-top:1px;font-size:15.5px;font-weight:700;color:#2b221b;overflow-wrap:anywhere}
+
+ /* SIGN OUT: a full-width pill with a round espresso icon on the left; fills espresso + gold on hover */
+ .tools .acc.is-in .acc-out{display:flex;align-items:center;gap:12px;width:100%;height:50px;margin:0 0 4px;padding:0 18px 0 6px;border-radius:999px;
+  background:rgba(255,255,255,.5);border:1px solid rgba(168,134,85,.45);box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;
+  color:#2b221b;font-family:inherit;font-size:14.5px;font-weight:600;line-height:1;letter-spacing:.04em;text-align:left;cursor:pointer;
+  transition:background .25s,border-color .25s,color .25s,box-shadow .25s,transform .2s}
+ .tools .acc .acc-out-ic{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;color:#e6c98f;
+  background:linear-gradient(180deg,#3b281a,#120a06);box-shadow:inset 0 0 0 1px rgba(214,176,116,.45);transition:background .25s,color .25s}
+ .tools .acc .acc-out-ic svg.i{width:18px;height:18px;stroke-width:1.7;transition:transform .25s}
+ .tools .acc .acc-out-txt{flex:1}
+ .tools .acc.is-in .acc-out:hover{background:linear-gradient(180deg,#3b281a,#120a06);border-color:rgba(214,176,116,.7);color:#f6ead2;box-shadow:0 8px 18px rgba(30,17,8,.28)}
+ .tools .acc .acc-out:hover .acc-out-ic{background:linear-gradient(135deg,#e6c98f,#c9a572);color:#1a0f0a;box-shadow:none}
+ .tools .acc .acc-out:hover .acc-out-ic svg.i{transform:translateX(2px)}
+ .tools .acc.is-in .acc-out:active{transform:scale(.98)}
+ .tools .acc .acc-out:focus-visible{outline:2px solid #b07a35;outline-offset:3px}
 }
 @media(max-width:960px){.acc{display:none}}

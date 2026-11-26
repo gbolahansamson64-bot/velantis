@@ -38,8 +38,10 @@
   <div class="tools">
    <button id="searchBtn" aria-label="Search" aria-expanded="false" aria-controls="sx"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
    <div class="acc">
-    <button id="accountBtn" aria-label="Account" aria-haspopup="true"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span class="acc-txt"><small>Welcome</small><b>Sign in / Register</b></span></button>
+    <button id="accountBtn" aria-label="Account" aria-haspopup="true"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span class="acc-txt"><small id="accHi">Welcome</small><b id="accNm">Sign in / Register</b></span></button>
     <div class="acc-dd" role="menu">
+     <div class="acc-user"><span class="acc-av" id="accAv" aria-hidden="true"></span><p class="acc-hello">Welcome back,<b id="accWho"></b></p></div>
+     <button type="button" class="acc-out" id="accOut" role="menuitem"><span class="acc-out-ic" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M10 4H5a1 1 0 00-1 1v14a1 1 0 001 1h5M15 8l4 4-4 4M19 12H9"/></svg></span><span class="acc-out-txt">Sign out</span></button>
      <a class="acc-signin" href="login.html" role="menuitem">Sign in</a>
      <a class="acc-reg" href="login.html#signup" role="menuitem">Register</a>
      <span class="acc-line"></span>
@@ -238,6 +240,41 @@
    e.preventDefault();
    location.href='login.html?redirect='+encodeURIComponent('/'+a.getAttribute('href'));
   }));
+ })();
+
+ /* ---------- SIGNED-IN STATE (header button + dropdown) ----------
+    auth.js saves {name,email} under "velantis_user" after a successful sign in / sign up. This block reads that same key:
+      - signed in : the header button shows "Hi, <name>" over "Account", and the dropdown shows a welcome line, My Orders, Wishlist and Sign out
+      - signed out: everything goes back to "Welcome / Sign in / Register" with the Sign in + Register buttons
+    It re-checks on page load, when the Back button restores a page, and when another tab signs in or out.
+    To run your own sign-out request, set window.VelantisAuth.signOut = async()=>{...} (optional, same object as in auth.js). */
+ (()=>{
+  const acc=document.querySelector('.acc'),btn=$('accountBtn'),hi=$('accHi'),nm=$('accNm'),KEY='velantis_user';
+  if(!acc||!btn||!hi||!nm)return;
+  const read=()=>{try{const u=JSON.parse(localStorage.getItem(KEY)||'null');return u&&typeof u==='object'&&(u.name||u.email)?u:null}catch(e){return null}};
+  const nameOf=u=>String(u.name||'').trim()||String(u.email||'').split('@')[0]||'Member';
+  function sync(){
+   const u=read();
+   acc.classList.toggle('is-in',!!u);
+   if(u){
+    const n=nameOf(u);
+    hi.textContent='Hi, '+n;nm.textContent='Account';
+    $('accWho').textContent=n;$('accAv').textContent=n.charAt(0).toUpperCase();
+    btn.setAttribute('aria-label','Account, signed in as '+n);
+   }else{
+    hi.textContent='Welcome';nm.textContent='Sign in / Register';
+    btn.setAttribute('aria-label','Account');
+   }
+  }
+  $('accOut').addEventListener('click',async()=>{
+   try{if(window.VelantisAuth&&window.VelantisAuth.signOut)await window.VelantisAuth.signOut()}catch(e){}
+   try{localStorage.removeItem(KEY)}catch(e){}
+   sync();
+   if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+  });
+  window.addEventListener('storage',e=>{if(!e.key||e.key===KEY)sync()});
+  window.addEventListener('pageshow',sync);
+  sync();
  })();
 
  /* ---------- WISHLIST ICON (desktop header; phones use the Wishlist button in the bottom nav) ----------
