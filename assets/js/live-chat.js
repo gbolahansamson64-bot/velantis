@@ -173,7 +173,7 @@ box-shadow:0 24px 70px rgba(20,10,0,.4);transform-origin:bottom right;transform:
 /* messages */\
 .chat{flex:1;display:none;flex-direction:column;min-height:0}.chat.on{display:flex}\
 .gate.off{display:none}\
-.msgs{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:18px 16px 8px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}\
+.msgs{flex:1;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;padding:18px 16px 8px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}\
 .msgs::-webkit-scrollbar{width:6px}.msgs::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px}\
 .row{display:flex;gap:9px;align-items:flex-end;max-width:100%}\
 .row.me{justify-content:flex-end}\
@@ -443,7 +443,7 @@ textarea{font-size:16px}\
   }
   function submit() {
     var v = ta.value; if (!v.trim()) return;
-    ta.value = ''; autosize(); emo.classList.remove('on'); send(v); ta.focus();
+    ta.value = ''; autosize(); emo.classList.remove('on'); send(v); if (!ta.readOnly) ta.focus();
   }
   function autosize() { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 110) + 'px'; }
 
@@ -516,6 +516,21 @@ textarea{font-size:16px}\
   function settle() { [0, 120, 300, 600].forEach(function (ms) { setTimeout(syncViewport, ms); }); }
   ta.addEventListener('focus', settle); ta.addEventListener('blur', settle);
   ta.addEventListener('input', autosize);
+  // Touch screens: when the person drags the message list to read, put the keyboard away (like Messenger/Telegram). Otherwise the message box stays focused behind the scrolling and the keyboard fights the scroll / pops back up.
+  // It only listens (passive), never blocks scrolling, and only acts while the message box is focused. Tapping the message box or sending a message brings the keyboard back as before.
+  var dragY = null;
+  msgsEl.addEventListener('touchstart', function (e) { dragY = e.touches.length === 1 ? e.touches[0].clientY : null; }, { passive: true });
+  msgsEl.addEventListener('touchmove', function (e) {
+    if (dragY == null || root.activeElement !== ta) return;
+    if (Math.abs(e.touches[0].clientY - dragY) > 10) { dragY = null; ta.blur(); }
+  }, { passive: true });
+  msgsEl.addEventListener('touchend', function () { dragY = null; }, { passive: true });
+  msgsEl.addEventListener('touchcancel', function () { dragY = null; }, { passive: true });
+  // Keyboard only on purpose: on touch screens the message box stays read-only (nothing can pop the keyboard up while you scroll). A real tap on the box unlocks it and the keyboard opens as normal; it locks again when it loses focus.
+  function lockBox() { ta.readOnly = touchLike() && root.activeElement !== ta; }
+  ta.addEventListener('mousedown', function () { ta.readOnly = false; });
+  ta.addEventListener('blur', function () { if (touchLike()) ta.readOnly = true; });
+  bSend.addEventListener('mousedown', function (e) { e.preventDefault(); }); // tapping Send must not pull focus off the message box, so the keyboard stays exactly as it was
   ta.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(); } });
   bEmo.addEventListener('click', function () { emo.classList.toggle('on'); });
   emo.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; ta.value += b.textContent; if (!touchLike()) ta.focus(); autosize(); });
@@ -535,6 +550,7 @@ textarea{font-size:16px}\
       if (hostF.parentNode !== document.body) document.body.appendChild(hostF);
       fab.classList.remove('inline'); fab.classList.toggle('lift', mq.matches);
     }
+    lockBox();
   }
   if (mq.addEventListener) mq.addEventListener('change', place); else if (mq.addListener) mq.addListener(place);
   function onWidth() { if (!mq.matches) { unlockPage(); scrim.classList.remove('on'); } else if (opened) { scrim.classList.add('on'); lockPage(); syncViewport(); } }
