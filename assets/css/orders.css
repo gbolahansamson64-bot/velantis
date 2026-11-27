@@ -118,7 +118,7 @@
 
 /* tablet + phone */
 @media(max-width:960px){
- .or{padding-top:calc(var(--mbh,72px) + 18px)}
+ .or{padding-top:calc((var(--mbh,72px) + 18px)/var(--pz,1))}
  .or-grid{grid-template-columns:minmax(0,1fr)}
  .or-side{display:none}
  .or-back{display:grid}

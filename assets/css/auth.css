@@ -86,7 +86,7 @@ body{background:var(--bg)}
 
 /* phones + tablets: the header is the cream band, the bottom nav takes the bottom edge */
 @media(max-width:960px){
- :root{--au-top:calc(var(--mbh,96px) + 22px)}
+ :root{--au-top:calc((var(--mbh,96px) + 22px)/var(--pz,1))}
  .auth{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
 }
 @media(max-width:380px){

@@ -138,7 +138,7 @@
 
 /* tablet + phone */
 @media(max-width:960px){
- .ck{padding-top:calc(var(--mbh,72px) + 18px)}
+ .ck{padding-top:calc((var(--mbh,72px) + 18px)/var(--pz,1))}
  .ck-grid{grid-template-columns:1fr}
  .ck-side{position:static}
 }

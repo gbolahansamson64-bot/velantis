@@ -700,6 +700,15 @@ section{padding:64px 0 0}
  html{zoom:.95}
 }
 
+/* ===== EXTRA PAGE ZOOM for the account (login.html), checkout and orders pages, mobile view only (up to 960px wide).
+   Their forms, buttons and cards were drawn bigger than the home page, so only their page content (the <main>) is shrunk a little more.
+   The header, footer, bottom nav and live chat keep the normal size. --pz is the one number to tune: 1 = no extra shrink, .9 = slightly smaller, .85 = smaller.
+   Those three pages divide their top spacing by --pz so the content still starts right under the header. Desktop is not affected. ===== */
+@media(max-width:960px){
+ :root{--pz:.88}
+ main.auth,main.ck,main.or{zoom:var(--pz)}
+}
+
 /* =====================================================================
    FEATURED COLLECTION CARDS: identical structure whatever the content is
    - every card stretches to the same height, picture box has a fixed ratio
