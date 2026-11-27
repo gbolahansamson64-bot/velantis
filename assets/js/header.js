@@ -442,6 +442,7 @@
  document.addEventListener('click',e=>{
   const a=e.target.closest('.mnav a[href]');
   if(!a||e.defaultPrevented||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||a.target==='_blank')return;
+  if(a.dataset.k==='about'||a.dataset.k==='contact')return; /* About + Contact: no loading ring */
   const h=a.getAttribute('href');if(!h||h.charAt(0)==='#')return;
   let u;try{u=new URL(a.href,location.href)}catch(x){return}
   if(u.origin===location.origin&&norm(u.pathname)===norm(location.pathname))return;

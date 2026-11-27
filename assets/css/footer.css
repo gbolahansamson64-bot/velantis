@@ -28,6 +28,7 @@ footer.ft{position:relative;margin-top:clamp(48px,6vw,80px);color:#4b463f;font-s
 .ft-bottom{margin-top:clamp(36px,4vw,56px);padding:22px 0 26px;border-top:1px solid rgba(168,134,85,.3);text-align:center;font-size:12px;letter-spacing:.03em;color:#7b756b}
 .ft-bottom span{display:block;margin-top:6px;font-size:9.5px;letter-spacing:.28em;text-transform:uppercase;color:#a88655}
 @media(max-width:960px){
+ footer.ft{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px))} /* the footer colour runs down behind the bottom nav, no empty strip */
  .ft-grid{grid-template-columns:repeat(3,1fr);gap:36px 24px}
  .ft-brand{grid-column:1/-1}
  .ft-about{max-width:46ch}

@@ -230,11 +230,12 @@ if(/[?&]calibrate/.test(location.search)){
 const mnav=document.getElementById('mnav');
 if(mnav){
  const cartTop=$('cartCount'),cartNav=$('navCartCount'),favNav=$('navFavCount');
- const syncCart=()=>{cartNav.textContent=cartTop.textContent};
+ const syncCart=()=>{if(cartNav&&cartTop)cartNav.textContent=cartTop.textContent};
  new MutationObserver(syncCart).observe(cartTop,{childList:true,characterData:true,subtree:true});
  syncCart();
  track.addEventListener('click',e=>{
   if(!e.target.closest('.fav'))return;
+  if(!favNav)return;
   const n=track.querySelectorAll('.fav[aria-pressed="true"]').length;
   favNav.textContent=n;favNav.hidden=!n;
  });

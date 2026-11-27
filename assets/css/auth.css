@@ -111,7 +111,7 @@ body{background:var(--bg)}
 .ac-dot{position:absolute;right:3px;bottom:5px;width:18px;height:18px;border-radius:50%;background:#2fa866;border:3px solid var(--au-card)}
 .ac-who{min-width:0}
 .ac-hello{font-family:var(--serif);font-size:clamp(20px,5vw,24px);line-height:1.1;color:var(--au-ink)}
-.ac-name{margin-top:2px;font-family:var(--serif);font-weight:600;font-size:clamp(32px,8vw,42px);line-height:1.05;color:var(--au-ink);overflow-wrap:anywhere}
+.ac-name{margin-top:4px;font-family:var(--sans);font-weight:500;font-size:clamp(25px,6.6vw,34px);line-height:1.15;letter-spacing:.01em;font-variant-numeric:lining-nums;color:var(--au-ink);overflow-wrap:anywhere}
 .ac-ok{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;line-height:1.3;color:var(--au-mute)}
 .ac-ok svg{flex:none;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 

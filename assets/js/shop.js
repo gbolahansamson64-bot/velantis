@@ -582,7 +582,7 @@
   qvLockY=window.scrollY||document.documentElement.scrollTop||0;
   document.documentElement.style.setProperty('--qv-y',qvLockY+'px');
   document.documentElement.classList.add('qv-lock');
-  qvInert=[...document.body.children].filter(el=>el!==qv&&!/^(SCRIPT|STYLE|LINK)$/.test(el.tagName)&&!el.inert);
+  qvInert=[...document.body.children].filter(el=>el!==qv&&!/^(SCRIPT|STYLE|LINK)$/.test(el.tagName)&&!/^velantis-livechat/.test(el.id)&&!el.inert); /* the live chat button + panel stay clickable */
   qvInert.forEach(el=>{el.inert=true});
   if(window.lenis)window.lenis.stop();
  }
