@@ -86,10 +86,9 @@
 
  /* ---------- STATE ---------- */
  const S={min:PRICE_MIN,max:PRICE_MAX,style:new Set(),gender:new Set(),strap:new Set(),color:new Set(),sort:'popular',view:'grid',page:1};
- const FKEY='velantis_shop_favs';
- let favs=new Set();
- try{favs=new Set(JSON.parse(localStorage.getItem(FKEY)||'[]'))}catch(e){}
- const saveFavs=()=>{try{localStorage.setItem(FKEY,JSON.stringify([...favs]))}catch(e){}};
+ /* the saved list belongs to whoever is signed in (see VelantisFavs in header.js) */
+ let favs=new Set(window.VelantisFavs.read());
+ const saveFavs=()=>window.VelantisFavs.write([...favs]);
 
  /* ---------- ELEMENTS ---------- */
  const grid=$('#shGridEl'),count=$('#shCount'),pages=$('#shPages'),empty=$('#shEmpty'),results=$('#products');

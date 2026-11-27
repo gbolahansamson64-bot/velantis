@@ -18,9 +18,9 @@
        };
 
    ACCOUNT PAGE: once someone is signed in, this same page shows their account (welcome name, Total Orders, Wishlist, Rewards Points,
-   My Orders, My Wishlist, Help & Support, Log Out) instead of the sign in form. On phones + tablets a successful sign in / sign up
-   switches to it right away (unless a ?redirect= page was asked for, then they go there). Your backend can return extra numbers:
-   {name,email,orders:3,points:120}. The Wishlist number is counted from the saved watches ("velantis_shop_favs").
+   My Orders, My Wishlist, Help & Support, Log Out) instead of the sign in form. After a successful sign in / sign up everyone is sent to the home page
+   (unless a ?redirect= page was asked for, then they go there) and a short welcome message shows: "Welcome back" for sign in, "Welcome to Velantis" for a new account. Your backend can return extra numbers:
+   {name,email,orders:3,points:120}. The Wishlist number is counted from that customer's own saved watches (see VelantisFavs in header.js).
    ===================================================================== */
 (()=>{
  const $=id=>document.getElementById(id);
@@ -40,10 +40,10 @@
    if(r&&/^\/(?!\/)/.test(r)&&!/[\\\r\n]/.test(r))to=r;
   }catch(e){}
   if(to){location.href=to;return}
-  /* phones + tablets: this page turns into the account page. Desktop: back to the home page, the header shows the name */
-  if(window.matchMedia&&matchMedia('(max-width:960px)').matches){render();window.scrollTo(0,0);return}
-  location.href='index.html';
+  location.href='index.html'; /* everyone (phone, tablet, desktop) lands on the home page, where the welcome message shows */
  };
+ /* Leaves a one-time note for header.js, which shows the welcome message on the page they land on (see WELCOME MESSAGE in header.js) */
+ const flagWelcome=(u,isNew)=>{try{sessionStorage.setItem('velantis_welcome',JSON.stringify({name:String((u&&u.name)||'').trim()||nameFrom(String((u&&u.email)||'')),isNew:!!isNew}))}catch(e){}};
 
  /* ---------- previous button ----------
     Goes back to the page the visitor came from: the ?redirect= page if there is one (the live chat adds it),
@@ -102,9 +102,9 @@
  function bad(input,text){
   input.closest('.au-in').classList.add('is-bad');say(text,true);input.focus({preventScroll:true});
  }
- async function run(form,fn){
+ async function run(form,fn,isNew){
   const btn=form.querySelector('.au-go');btn.disabled=true;say('');
-  try{const user=await fn();if(user){save(user);goBack()}}
+  try{const user=await fn();if(user){save(user);flagWelcome(user,isNew);goBack()}}
   catch(err){say((err&&err.message)||'Something went wrong. Please try again.',true)}
   finally{btn.disabled=false}
  }
@@ -132,13 +132,13 @@
   run(panes.up,async()=>{
    if(API().signUp)return API().signUp({name:name.value.trim(),email:v,password:pass.value});
    return{name:name.value.trim(),email:v}; /* demo: replace with your real sign up */
-  });
+  },true); /* true = brand new account, so the welcome message says "Welcome to Velantis" */
  });
 
  /* ---------- Google + forgot password ---------- */
  $('auGoogle').addEventListener('click',async()=>{
   if(!API().google){say('Google sign-in is not connected yet. Please use your email for now.');return}
-  try{const u=await API().google();if(u){save(u);goBack()}}catch(err){say((err&&err.message)||'Google sign-in did not complete.',true)}
+  try{const u=await API().google();if(u){save(u);flagWelcome(u,u.isNew);goBack()}}catch(err){say((err&&err.message)||'Google sign-in did not complete.',true)}
  });
  $('auForgot').addEventListener('click',async e=>{
   e.preventDefault();
@@ -150,8 +150,28 @@
 
  /* ---------- ACCOUNT PAGE (signed in) ---------- */
  const readUser=()=>{try{const u=JSON.parse(localStorage.getItem(KEY)||'null');return u&&typeof u==='object'&&(u.name||u.email)?u:null}catch(e){return null}};
- const favCount=()=>{try{const f=JSON.parse(localStorage.getItem('velantis_shop_favs')||'[]');return Array.isArray(f)?f.length:0}catch(e){return 0}};
+ const favCount=()=>window.VelantisFavs.read().length; /* this signed-in customer's own saved watches */
  const whole=v=>{v=Number(v);return isFinite(v)&&v>0?Math.floor(v):0};
+ /* PROFILE PICTURE: shows the customer's own photo in the round avatar. Order: 1) u.picture (your backend / Google sign-in can return
+    {picture:'https://...'}), 2) their Gravatar (the public photo tied to an email address; only the email's hash is sent), 3) the letter circle
+    that was already there. If there is no photo, or it fails to load, the letter circle simply stays. */
+ const sha256=async t=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)))].map(x=>x.toString(16).padStart(2,'0')).join('');
+ async function loadAvatar(u){
+  const av=document.querySelector('.ac-av');if(!av)return;
+  const email=String(u.email||'').trim().toLowerCase(),pic=typeof u.picture==='string'&&/^https:\/\//.test(u.picture)?u.picture:'';
+  const stamp=email+'|'+pic;if(av.dataset.pic===stamp)return; /* already handled for this person */
+  av.dataset.pic=stamp;const old=av.querySelector('.ac-pic');if(old)old.remove();
+  const urls=[];if(pic)urls.push(pic);
+  if(email&&window.crypto&&crypto.subtle){try{urls.push('https://gravatar.com/avatar/'+await sha256(email)+'?s=240&d=404')}catch(e){}}
+  const next=()=>{
+   const url=urls.shift();if(!url||av.dataset.pic!==stamp)return;
+   const img=new Image();
+   img.onload=()=>{if(av.dataset.pic!==stamp)return;img.className='ac-pic';img.alt='';img.style.cssText='position:absolute;inset:0;width:100%;height:100%;border-radius:50%;object-fit:cover';av.insertBefore(img,av.querySelector('.ac-dot'))};
+   img.onerror=next; /* no photo here: try the next source, otherwise keep the letter circle */
+   img.src=url;
+  };
+  next();
+ }
  function render(){
   const card=$('auCard'),view=$('acView');if(!card||!view)return;
   const u=readUser();
@@ -159,7 +179,7 @@
   const main=card.closest('main');if(main)main.classList.toggle('is-account',!!u);
   if(!u)return;
   const n=String(u.name||'').trim()||nameFrom(String(u.email||''));
-  $('acName').textContent=n;$('acInit').textContent=n.charAt(0).toUpperCase();
+  $('acName').textContent=n;$('acInit').textContent=n.charAt(0).toUpperCase();loadAvatar(u);
   $('acOrders').textContent=whole(u.orders);$('acFavs').textContent=favCount();$('acPts').textContent=whole(u.points);
   document.title='My Account | Velantis';
  }
@@ -168,7 +188,7 @@
   try{localStorage.removeItem(KEY)}catch(e){}
   location.replace(location.pathname+location.search); /* reload: back to the sign in form, header updated too */
  });
- window.addEventListener('storage',e=>{if(!e.key||e.key===KEY||e.key==='velantis_shop_favs')render()});
+ window.addEventListener('storage',e=>{if(!e.key||e.key===KEY||e.key.indexOf(window.VelantisFavs.BASE)===0)render()});
  window.addEventListener('pageshow',render);
 
  /* login.html#signup opens the Create Account tab */

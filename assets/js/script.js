@@ -1,6 +1,16 @@
 /* PRODUCT PICTURES: the watches in "Iconic Timepieces" are written in index.html (look for YOUR WATCHES). Change a photo by changing its src there.
    Later the admin dashboard will supply these watches instead. */
 const track=document.getElementById('track');
+/* WISHLIST (home page): hearts are saved in the same per-account list the shop page uses (VelantisFavs in header.js), so the customer account page counts both.
+   Shop watches are saved as numbers (1, 2, 3...). Home watches are saved as "h1", "h2"... so they never clash with the shop numbers. */
+const readFavs=()=>window.VelantisFavs.read();
+const writeFavs=l=>window.VelantisFavs.write(l);
+const homeKey=card=>'h'+card.dataset.id;
+const showFavCount=()=>{const b=document.getElementById('navFavCount');if(!b)return;const n=readFavs().length;b.textContent=n;b.hidden=!n};
+const syncFavs=()=>{const saved=new Set(readFavs());track.querySelectorAll('.card').forEach(c=>{const h=c.querySelector('.fav');if(h)h.setAttribute('aria-pressed',saved.has(homeKey(c)))});showFavCount()};
+syncFavs();
+window.addEventListener('pageshow',syncFavs);
+window.addEventListener('storage',e=>{if(!e.key||e.key==='velantis_user'||e.key.indexOf(window.VelantisFavs.BASE)===0)syncFavs()});
 /* ADD TO CART LOADING (all screens): after a click the button shows a spinner for ADD_DELAY ms, then the watch is added and the button says "Added".
    While it is loading, every Add to cart button ignores clicks, so fast repeated clicks can never fire many requests.
    Change ADD_DELAY (milliseconds) to make the loading shorter or longer. */
@@ -8,7 +18,12 @@ const ADD_DELAY=900;
 let adding=false;
 const CHECK='<svg class="i" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 track.addEventListener('click',e=>{
- const f=e.target.closest('.fav');if(f)f.setAttribute('aria-pressed',f.getAttribute('aria-pressed')!=='true');
+ const f=e.target.closest('.fav');
+ if(f){
+  const on=f.getAttribute('aria-pressed')!=='true';f.setAttribute('aria-pressed',on);
+  const card=f.closest('.card');
+  if(card){const k=homeKey(card),list=readFavs().filter(x=>x!==k);if(on)list.push(k);writeFavs(list);showFavCount()}
+ }
  const a=e.target.closest('button.add'); /* the "Shop now" links are <a class="add">: they just open shop.html, so they are skipped here */
  if(a){
   if(adding||a.disabled)return;
@@ -233,12 +248,7 @@ if(mnav){
  const syncCart=()=>{if(cartNav&&cartTop)cartNav.textContent=cartTop.textContent};
  new MutationObserver(syncCart).observe(cartTop,{childList:true,characterData:true,subtree:true});
  syncCart();
- track.addEventListener('click',e=>{
-  if(!e.target.closest('.fav'))return;
-  if(!favNav)return;
-  const n=track.querySelectorAll('.fav[aria-pressed="true"]').length;
-  favNav.textContent=n;favNav.hidden=!n;
- });
+ /* the wishlist badge (favNav) is kept up to date by showFavCount() at the top of this file: it counts the saved list, so home + shop watches are both included */
  /* placeholder links ("#") do nothing for now instead of jumping to the top */
  mnav.addEventListener('click',e=>{const a=e.target.closest('a');if(a&&a.getAttribute('href')==='#')e.preventDefault()});
 }

@@ -16,6 +16,32 @@
    { hold, release, stopHands, resumeHands } so the hero slider pauses while a panel is open.
    Pages without a hero simply don't set them and nothing breaks.
    ===================================================================== */
+
+/* ---------- WISHLIST STORAGE (shared by header.js, script.js, shop.js and auth.js) ----------
+   Each signed-in customer has their OWN saved list, kept under "velantis_shop_favs:<their email>", so a new account always starts empty
+   and never sees the watches another account saved. Visitors who are not signed in use the plain "velantis_shop_favs" list.
+   Shop watches are saved as numbers (1, 2, 3...); home page watches as "h1", "h2"... When your backend is ready, replace read()/write() with API calls. */
+window.VelantisFavs=window.VelantisFavs||(()=>{
+ const BASE='velantis_shop_favs';
+ const who=()=>{try{const u=JSON.parse(localStorage.getItem('velantis_user')||'null');return u&&typeof u==='object'?String(u.email||u.name||'').trim().toLowerCase():''}catch(e){return''}};
+ const key=()=>{const id=who();return id?BASE+':'+id:BASE};
+ const read=()=>{try{const f=JSON.parse(localStorage.getItem(key())||'[]');return Array.isArray(f)?f:[]}catch(e){return[]}};
+ const write=l=>{try{localStorage.setItem(key(),JSON.stringify(l))}catch(e){}};
+ return{BASE,key,read,write};
+})();
+
+/* ---------- CART STORAGE (used by the cart panel below) ----------
+   Same idea as the wishlist: each signed-in customer has their OWN cart, kept under "velantis_cart:<their email>", so a new account always starts
+   with an empty cart and never sees the watches another account added. Visitors who are not signed in use the plain "velantis_cart" cart.
+   When your backend is ready, replace read()/write() with API calls. */
+window.VelantisCart=window.VelantisCart||(()=>{
+ const BASE='velantis_cart';
+ const who=()=>{try{const u=JSON.parse(localStorage.getItem('velantis_user')||'null');return u&&typeof u==='object'?String(u.email||u.name||'').trim().toLowerCase():''}catch(e){return''}};
+ const key=()=>{const id=who();return id?BASE+':'+id:BASE};
+ const read=()=>{try{const c=JSON.parse(localStorage.getItem(key())||'[]');return Array.isArray(c)?c.filter(i=>i&&i.id!=null&&i.b&&i.q>0&&i.p>=0):[]}catch(e){return[]}};
+ const write=l=>{try{localStorage.setItem(key(),JSON.stringify(l))}catch(e){}};
+ return{BASE,key,read,write};
+})();
 (()=>{
  if(window.__velantisHeader)return;window.__velantisHeader=true;
 
@@ -254,8 +280,20 @@
   if(!acc||!btn||!hi||!nm)return;
   const read=()=>{try{const u=JSON.parse(localStorage.getItem(KEY)||'null');return u&&typeof u==='object'&&(u.name||u.email)?u:null}catch(e){return null}};
   const nameOf=u=>String(u.name||'').trim()||String(u.email||'').split('@')[0]||'Member';
+  /* BOTTOM NAV (phones + tablets): a signed-in customer sees their profile circle (the first letter of their name, same look as the picture on the
+     account page) in place of the plain Account icon. Signed out = the normal icon again. */
+  function navAv(u){
+   const a=document.querySelector('.mnav a[data-k="account"]');if(!a)return;
+   let av=a.querySelector('.mn-av');
+   if(!u){if(av)av.remove();a.classList.remove('has-av');a.removeAttribute('aria-label');return}
+   const n=nameOf(u);
+   if(!av){av=document.createElement('span');av.className='mn-av';av.setAttribute('aria-hidden','true');a.insertBefore(av,a.firstChild)}
+   av.textContent=n.charAt(0).toUpperCase();
+   a.classList.add('has-av');a.setAttribute('aria-label','Account, signed in as '+n);
+  }
   function sync(){
    const u=read();
+   navAv(u);
    acc.classList.toggle('is-in',!!u);
    if(u){
     const n=nameOf(u);
@@ -271,11 +309,13 @@
    try{if(window.VelantisAuth&&window.VelantisAuth.signOut)await window.VelantisAuth.signOut()}catch(e){}
    try{localStorage.removeItem(KEY)}catch(e){}
    sync();
+   location.reload(); /* reload so the wishlist hearts and counts switch back to the signed-out list */
    if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
   });
   window.addEventListener('storage',e=>{if(!e.key||e.key===KEY)sync()});
   window.addEventListener('pageshow',sync);
   sync();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>navAv(read())); /* the bottom nav sits lower in the page, so it may not exist yet on the first sync() */
  })();
 
  /* ---------- WISHLIST ICON (desktop header; phones use the Wishlist button in the bottom nav) ----------
@@ -286,7 +326,7 @@
   const a=document.getElementById('wishBtn'),n=document.getElementById('wishCount');if(!a||!n)return;
   a.addEventListener('click',e=>e.preventDefault());
   const show=v=>{v=+v||0;n.textContent=v>99?'99+':v;n.hidden=!v};
-  const saved=()=>{try{return JSON.parse(localStorage.getItem('velantis_shop_favs')||'[]').length}catch(e){return 0}};
+  const saved=()=>window.VelantisFavs.read().length;
   const hook=()=>{
    const src=document.getElementById('navFavCount');
    const sync=()=>show(src?(src.hidden?0:src.textContent):saved());
@@ -298,17 +338,17 @@
 
  /* ---------- CART PANEL ----------
     The cart icon (header + bottom nav) opens it. Adding a watch from the product cards puts it in the cart: the watch flies to the cart icon and the number on it goes up (the cart stays closed).
-    Items are kept in the browser (localStorage) as {id,q,b,m,d,p,img}: the id, quantity and a copy of the watch's brand, model, details,
+    Items are kept in the browser (localStorage), one cart per signed-in account (see VelantisCart), as {id,q,b,m,d,p,img}: the id, quantity and a copy of the watch's brand, model, details,
     price (a number) and picture, all read from the product card's data-* values in index.html. When products come from your backend, give each one a real id.
     CURRENCY is the only place the money symbol is set. Hook your real checkout at the "checkout" line.
     The product cards call window.Cart.add(card,picture); other pages can call window.Cart.open() / close(). */
  (()=>{
-  const ct=$('cartPanel'),body=$('ctBody'),KEY='velantis_cart',CURRENCY='₦',MAX=10;
+  const ct=$('cartPanel'),body=$('ctBody'),CURRENCY='₦',MAX=10;
   if(!ct)return;
   let items=[],opener=null;
-  try{items=JSON.parse(localStorage.getItem(KEY)||'[]').filter(i=>i&&i.id!=null&&i.b&&i.q>0&&i.p>=0)}catch(e){items=[]}
+  items=window.VelantisCart.read(); /* the cart belongs to whoever is signed in (see VelantisCart above) */
   const fmt=n=>CURRENCY+n.toLocaleString('en-US');
-  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(items))}catch(e){}};
+  const save=()=>window.VelantisCart.write(items);
   const isOpen=()=>ct.classList.contains('open');
   let pending=0; /* watches still flying to the cart: the badge number waits for them to land */
   const qty=()=>items.reduce((a,i)=>a+i.q,0);
@@ -426,6 +466,10 @@
    e.preventDefault();isOpen()?close():open();
   });
   render();
+  /* another tab signed in/out or changed the cart, or the Back button restored an old page: load the right cart again */
+  const reload=()=>{items=window.VelantisCart.read();render()};
+  window.addEventListener('storage',e=>{if(!e.key||e.key==='velantis_user'||e.key.indexOf(window.VelantisCart.BASE)===0)reload()});
+  window.addEventListener('pageshow',e=>{if(e.persisted)reload()});
  })();
 })();
 
@@ -602,4 +646,69 @@
  const mq=matchMedia('(max-width:960px)'),dark=m.getAttribute('content');
  const sync=()=>m.setAttribute('content',mq.matches?PHONE_TOP:dark);
  sync();mq.addEventListener?mq.addEventListener('change',sync):mq.addListener(sync);
+})();
+
+/* ---------- WELCOME MESSAGE ----------
+   auth.js leaves a one-time note ("velantis_welcome") after a successful sign in or sign up. This shows a short message at the top of
+   whichever page they land on (the home page), then removes the note so it never repeats on refresh.
+   New account -> "Welcome to Velantis, Name"   |   Signing back in -> "Welcome back, Name"
+   Change the wording in TEXT, how long it stays in SHOW (milliseconds), or the look in the CSS string below. */
+(()=>{
+ let w=null;
+ try{w=JSON.parse(sessionStorage.getItem('velantis_welcome')||'null');sessionStorage.removeItem('velantis_welcome')}catch(e){}
+ if(!w||typeof w!=='object')return;
+ const SHOW=4500;
+ const first=String(w.name||'').trim().split(/\s+/)[0];
+ const TEXT=w.isNew?['Welcome to Velantis'+(first?', '+first:''),'Your account is ready. Enjoy exploring the collection.']:['Welcome back'+(first?', '+first:''),'You are signed in.'];
+ const run=()=>{
+  const st=document.createElement('style');
+  st.textContent='.wlc{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 84px);z-index:320;width:min(92vw,420px);transform:translate(-50%,-14px);opacity:0;display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:14px;background:#fcf6ea;color:#1c1a17;border:1px solid #e6dfd2;box-shadow:0 14px 40px rgba(28,26,23,.18);font-family:var(--sans,system-ui,sans-serif);cursor:pointer;transition:opacity .45s ease,transform .45s cubic-bezier(.2,.8,.2,1)}'
+  +'.wlc.on{opacity:1;transform:translate(-50%,0)}'
+  +'.wlc i{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#a88655;color:#fff}'
+  +'.wlc svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}'
+  +'.wlc b{display:block;font-family:var(--serif,Georgia,serif);font-weight:500;font-size:19px;line-height:1.2}'
+  +'.wlc span{display:block;margin-top:2px;font-size:13px;color:#7b756b}'
+  +'@media (prefers-reduced-motion:reduce){.wlc{transition:opacity .2s}}';
+  document.head.appendChild(st);
+  const t=document.createElement('div');
+  t.className='wlc';t.setAttribute('role','status');t.setAttribute('aria-live','polite');
+  t.innerHTML='<i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><div><b></b><span></span></div>';
+  t.querySelector('b').textContent=TEXT[0];t.querySelector('span').textContent=TEXT[1];
+  document.body.appendChild(t);
+  let timer;
+  const close=()=>{clearTimeout(timer);t.classList.remove('on');setTimeout(()=>t.remove(),500)};
+  t.addEventListener('click',close);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('on')));
+  timer=setTimeout(close,SHOW);
+ };
+ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',run,{once:true}):run();
+})();
+
+/* ---------- KEYBOARD vs BOTTOM NAV (phones + tablets) ----------
+   When the on-screen keyboard opens (tapping an email / password / search / chat box...) the bottom nav bar (Home, About, Shop, Contact, Account)
+   is hidden so the keyboard simply covers that area instead of pushing the buttons up above it. It comes back as soon as the keyboard closes. */
+(()=>{
+ const root=document.documentElement,vv=window.visualViewport,mq=matchMedia('(max-width:960px)');
+ const st=document.createElement('style');
+ st.textContent='html.kb-open .mnav{visibility:hidden;transform:translateY(100%);pointer-events:none}';
+ document.head.appendChild(st);
+ const isField=el=>!!(el&&el.matches&&el.matches('textarea,select,[contenteditable="true"],input:not([type=checkbox]):not([type=radio]):not([type=button]):not([type=submit]):not([type=reset]):not([type=range]):not([type=file]):not([type=color]):not([type=image])'));
+ const size=()=>Math.min(window.innerHeight,vv?vv.height:1e9);
+ let base=0,shrunk=false,t;
+ const shut=()=>{root.classList.remove('kb-open');shrunk=false};
+ const onField=e=>{
+  if(!isField(e.target)||!mq.matches)return;
+  clearTimeout(t);
+  if(!root.classList.contains('kb-open')){base=Math.max(window.innerHeight,vv?vv.height:0);shrunk=false;root.classList.add('kb-open')}
+ };
+ document.addEventListener('focusin',onField);
+ document.addEventListener('click',e=>{if(e.target===document.activeElement)onField(e)}); /* tapping a box that is still focused after the keyboard was closed */
+ document.addEventListener('focusout',()=>{clearTimeout(t);t=setTimeout(()=>{if(!isField(document.activeElement))shut()},150)});
+ const check=()=>{ /* keyboard closed with the phone's own button while the box is still focused: the screen grows back, so show the nav again */
+  if(!root.classList.contains('kb-open'))return;
+  const cur=size();
+  if(cur<base-120)shrunk=true;else if(shrunk&&cur>=base-80)shut();
+ };
+ window.addEventListener('resize',check);if(vv)vv.addEventListener('resize',check);
+ window.addEventListener('pageshow',shut);
 })();
