@@ -43,7 +43,10 @@
   location.href='index.html'; /* everyone (phone, tablet, desktop) lands on the home page, where the welcome message shows */
  };
  /* Leaves a one-time note for header.js, which shows the welcome message on the page they land on (see WELCOME MESSAGE in header.js) */
- const flagWelcome=(u,isNew)=>{try{sessionStorage.setItem('velantis_welcome',JSON.stringify({name:String((u&&u.name)||'').trim()||nameFrom(String((u&&u.email)||'')),isNew:!!isNew}))}catch(e){}};
+ const flagWelcome=(u,isNew)=>{try{sessionStorage.setItem('velantis_welcome',JSON.stringify({name:String((u&&u.name)||'').trim()||nameFrom(String((u&&u.email)||'')),isNew:!!isNew}))}catch(e){}
+  /* Also tell the live chat there is a welcome message waiting, so its button shows the 1 notification */
+  try{localStorage.setItem('vlc_pending_welcome','1')}catch(e){}
+  try{window.VelantisChat&&window.VelantisChat.refresh&&window.VelantisChat.refresh()}catch(e){}};
 
  /* ---------- previous button ----------
     Goes back to the page the visitor came from: the ?redirect= page if there is one (the live chat adds it),
@@ -102,6 +105,11 @@
  function bad(input,text){
   input.closest('.au-in').classList.add('is-bad');say(text,true);input.focus({preventScroll:true});
  }
+ /* remembers the name typed on the sign up form, per email, so signing in later shows that same name (not one made from the email address) */
+ const NAMES='velantis_names';
+ const nameBook=()=>{try{return JSON.parse(localStorage.getItem(NAMES)||'{}')||{}}catch(e){return{}}};
+ const rememberName=(email,name)=>{try{const b=nameBook();b[String(email).toLowerCase()]=String(name).trim();localStorage.setItem(NAMES,JSON.stringify(b))}catch(e){}};
+ const savedName=email=>nameBook()[String(email).toLowerCase()]||'';
  async function run(form,fn,isNew){
   const btn=form.querySelector('.au-go');btn.disabled=true;say('');
   try{const user=await fn();if(user){save(user);flagWelcome(user,isNew);goBack()}}
@@ -117,8 +125,12 @@
   if(!okEmail(v))return bad(email,'Please enter a valid email address.');
   if(!pass.value)return bad(pass,'Please enter your password.');
   run(panes.in,async()=>{
-   if(API().signIn)return API().signIn({email:v,password:pass.value});
-   return{name:nameFrom(v),email:v}; /* demo: replace with your real sign in */
+   const u=API().signIn?await API().signIn({email:v,password:pass.value}):{email:v}; /* demo: replace with your real sign in */
+   if(!u)return u;
+   const mine=savedName(v); /* the name they typed when they created the account */
+   if(mine&&(!u.name||u.name===nameFrom(v)))u.name=mine;
+   if(!u.name)u.name=nameFrom(v);
+   return u;
   });
  });
 
@@ -130,8 +142,10 @@
   if(!okEmail(v))return bad(email,'Please enter a valid email address.');
   if(pass.value.length<8)return bad(pass,'Your password needs at least 8 characters.');
   run(panes.up,async()=>{
-   if(API().signUp)return API().signUp({name:name.value.trim(),email:v,password:pass.value});
-   return{name:name.value.trim(),email:v}; /* demo: replace with your real sign up */
+   const u=API().signUp?await API().signUp({name:name.value.trim(),email:v,password:pass.value}):{name:name.value.trim(),email:v}; /* demo: replace with your real sign up */
+   if(u&&!u.name)u.name=name.value.trim();
+   if(u)rememberName(v,u.name);
+   return u;
   },true); /* true = brand new account, so the welcome message says "Welcome to Velantis" */
  });
 
@@ -172,6 +186,11 @@
   };
   next();
  }
+ /* Total Orders: the number of orders saved for this customer by checkout.js (the same list orders.html shows); falls back to u.orders from your backend */
+ function orderCount(u){
+  try{const l=JSON.parse(localStorage.getItem('velantis_orders:'+String(u.email||u.name||'').trim().toLowerCase())||'null');if(Array.isArray(l))return l.length}catch(e){}
+  return u.orders;
+ }
  function render(){
   const card=$('auCard'),view=$('acView');if(!card||!view)return;
   const u=readUser();
@@ -180,7 +199,7 @@
   if(!u)return;
   const n=String(u.name||'').trim()||nameFrom(String(u.email||''));
   $('acName').textContent=n;$('acInit').textContent=n.charAt(0).toUpperCase();loadAvatar(u);
-  $('acOrders').textContent=whole(u.orders);$('acFavs').textContent=favCount();$('acPts').textContent=whole(u.points);
+  $('acOrders').textContent=whole(orderCount(u));$('acFavs').textContent=favCount();$('acPts').textContent=whole(u.points);
   document.title='My Account | Velantis';
  }
  $('acOut').addEventListener('click',async()=>{

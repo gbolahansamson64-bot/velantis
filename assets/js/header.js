@@ -455,7 +455,9 @@ window.VelantisCart=window.VelantisCart||(()=>{
   });
   ct.querySelector('.ct-more').addEventListener('click',()=>{close();goShop()});
   $('ctGo').addEventListener('click',()=>{
-   /* checkout: add your real checkout here. items holds [{id,q}] and the order total is $('ctTotal').textContent */
+   if(!items.length)return;
+   if(/(^|\/)checkout(\.html)?\/?$/.test(location.pathname)||document.body.dataset.page==='checkout'){close();return} /* already on the checkout page: just close the cart and stay here, no reload */
+   location.href='checkout.html'; /* the checkout page reads the same cart */
   });
   $('ctClose').addEventListener('click',close);
   $('ctOv').addEventListener('click',close);

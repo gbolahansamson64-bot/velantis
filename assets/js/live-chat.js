@@ -351,9 +351,12 @@ textarea{font-size:16px}\
   }
   function scheduleRender() { if (renderQ) return; renderQ = true; requestAnimationFrame(function () { renderQ = false; render(); }); }
 
+  var WELCOME_KEY = 'vlc_pending_welcome';
   function updateBadge() {
     var seen = +LS.get(seenKey()) || 0, n = 0;
     Object.keys(msgs).forEach(function (k) { var m = msgs[k]; if (m.from === 'agent' && m.ts > seen) n++; });
+    // Just signed in / created an account: the welcome message is waiting in the inbox, so show 1 unread until the chat is opened
+    if (!opened && session && session.type === 'user' && LS.get(WELCOME_KEY)) n++;
     badge.textContent = n > 9 ? '9+' : n; badge.classList.toggle('on', n > 0); fab.classList.toggle('loop', n > 0);
   }
 
@@ -399,7 +402,7 @@ textarea{font-size:16px}\
     gate.classList.add('off'); chat.classList.add('on');
     if (!stop) { stop = T.listen(session, addMsg); }
     render();
-    LS.set(seenKey(), String(Date.now())); badge.classList.remove('on');
+    LS.set(seenKey(), String(Date.now())); LS.del(WELCOME_KEY); badge.classList.remove('on'); fab.classList.remove('loop');
     // Only mouse/desktop users get the cursor placed for them. On phones and tablets the keyboard opens when the person TAPS the message box.
     setTimeout(function () { if (!touchLike()) ta.focus({ preventScroll: true }); }, 280);
   }
@@ -708,5 +711,6 @@ textarea{font-size:16px}\
   if (document.body) mount(); else document.addEventListener('DOMContentLoaded', mount);
 
   /* tiny public API:  VelantisChat.open() / .close() \u2014 handy for a "Chat with us" link */
-  window.VelantisChat = { open: openPanel, close: closePanel };
+  window.addEventListener('storage', function (e) { if (e.key === WELCOME_KEY || e.key === CFG.userKey) { session = resolveSession(); if (!opened) updateBadge(); } });
+  window.VelantisChat = { open: openPanel, close: closePanel, refresh: function () { session = resolveSession(); if (!opened) updateBadge(); } };
 })();
